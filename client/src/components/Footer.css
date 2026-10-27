@@ -1,0 +1,119 @@
+.footer {
+  background: var(--espresso);
+  color: var(--cream);
+  padding-top: 90px;
+  scroll-margin-top: var(--nav-h);
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1.1fr 1fr 1fr;
+  gap: 48px;
+}
+
+.footer__script {
+  margin: 18px 0 6px;
+  font-family: var(--font-script);
+  font-size: 2.3rem;
+  line-height: 1.1;
+  color: var(--gold);
+}
+
+.footer__text {
+  max-width: 300px;
+  color: var(--text-light-muted);
+}
+
+.footer h4 {
+  font-size: 1.15rem;
+  margin-bottom: 18px;
+  color: var(--rose);
+}
+
+.footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.footer ul a {
+  color: var(--text-light-muted);
+  transition: color 0.2s;
+}
+
+.footer ul a:hover {
+  color: var(--cream);
+}
+
+.footer__hours li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(246, 239, 229, 0.18);
+}
+
+.footer__hours li span:first-child {
+  font-weight: 700;
+}
+
+.footer__hours li span:last-child {
+  color: var(--text-light-muted);
+  text-align: right;
+}
+
+.footer__social {
+  display: flex;
+  gap: 12px;
+}
+
+.footer__social a {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid rgba(246, 239, 229, 0.3);
+  font-size: 1.25rem;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
+}
+
+.footer__social a:hover {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: var(--espresso);
+  transform: translateY(-3px);
+}
+
+.footer__bottom {
+  margin-top: 70px;
+  padding-top: 24px;
+  padding-bottom: 32px;
+  border-top: 1px solid rgba(246, 239, 229, 0.12);
+  font-size: 0.85rem;
+  color: var(--text-light-muted);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer__brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer {
+    padding-top: 64px;
+  }
+
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}

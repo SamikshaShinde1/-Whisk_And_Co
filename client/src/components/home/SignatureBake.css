@@ -1,0 +1,72 @@
+.signature {
+  overflow: hidden;
+}
+
+.signature__grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.signature__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 8px 0 32px;
+}
+
+.signature__price strong {
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: 2.6rem;
+}
+
+.signature__price span {
+  color: var(--text-muted);
+}
+
+.signature__media {
+  position: relative;
+}
+
+/* big blush circle behind the photo */
+.signature__circle {
+  position: absolute;
+  inset: -8% -14% -8% 8%;
+  border-radius: 50%;
+  background: var(--blush);
+  z-index: 0;
+}
+
+.signature__photo {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow: 0 30px 60px rgba(43, 26, 20, 0.25);
+  border: 10px solid var(--cream);
+}
+
+.signature__photo .img-fallback {
+  font-size: 7rem;
+}
+
+@media (max-width: 900px) {
+  .signature__grid {
+    grid-template-columns: 1fr;
+    gap: 56px;
+    text-align: center;
+  }
+
+  .signature__price {
+    justify-content: center;
+  }
+
+  .signature__media {
+    max-width: 380px;
+    margin: 0 auto;
+    width: 100%;
+    order: -1;
+  }
+}

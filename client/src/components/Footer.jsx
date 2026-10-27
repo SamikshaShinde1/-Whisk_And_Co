@@ -1,0 +1,70 @@
+import { Link } from 'react-router-dom'
+import { FaInstagram, FaWhatsapp } from 'react-icons/fa'
+import Logo from './Logo'
+import { CATEGORIES } from '../data/menu'
+import { SITE, whatsappLink } from '../config/site'
+import './Footer.css'
+
+const YEAR = new Date().getFullYear()
+
+export default function Footer() {
+  return (
+    <footer className="footer" id="contact">
+      <div className="container footer__grid">
+        <div className="footer__brand">
+          <Logo size={52} />
+          <p className="footer__script">See you in the morning</p>
+          <p className="footer__text">Small-batch cakes, breads and treats, baked fresh at home.</p>
+          <div className="footer__social">
+            <a href={SITE.instagramUrl} target="_blank" rel="noreferrer" aria-label="Instagram">
+              <FaInstagram />
+            </a>
+            <a href={whatsappLink()} target="_blank" rel="noreferrer" aria-label="WhatsApp">
+              <FaWhatsapp />
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Opening hours</h4>
+          <ul className="footer__hours">
+            {SITE.hours.map((row) => (
+              <li key={row.days}>
+                <span>{row.days}</span>
+                <span>{row.time}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4>Menu</h4>
+          <ul>
+            {CATEGORIES.map((category) => (
+              <li key={category.id}>
+                <Link to={`/menu?category=${category.id}`}>{category.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li>
+              <a href={SITE.instagramUrl} target="_blank" rel="noreferrer">{SITE.instagramHandle}</a>
+            </li>
+            <li>
+              <a href={whatsappLink()} target="_blank" rel="noreferrer">Chat on WhatsApp</a>
+            </li>
+            <li><Link to="/#about">About us</Link></li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="container footer__bottom">
+        © {YEAR} {SITE.name}. Baked with love.
+      </div>
+    </footer>
+  )
+}

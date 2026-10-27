@@ -1,0 +1,205 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 78% 45%, rgba(238, 181, 176, 0.22), transparent 42%),
+    radial-gradient(circle at 10% 90%, rgba(196, 154, 92, 0.15), transparent 40%),
+    var(--espresso);
+  color: var(--cream);
+  padding: 56px 0 64px;
+}
+
+.hero__stage {
+  display: grid;
+  touch-action: pan-y;
+}
+
+.hero__slide {
+  grid-area: 1 / 1; /* every slide in the same spot */
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 60px;
+  min-height: min(620px, calc(100svh - var(--nav-h) - 140px));
+}
+
+.hero__slide[aria-hidden='true'] {
+  pointer-events: none;
+}
+
+.hero__text h1 {
+  font-size: clamp(2.6rem, 6.4vw, 5.6rem);
+  line-height: 0.98;
+  margin-bottom: 24px;
+}
+
+.hero__text p {
+  max-width: 470px;
+  font-size: 1.1rem;
+  color: var(--text-light-muted);
+  margin-bottom: 36px;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* ---------- 3D tilting photo ---------- */
+.hero__visual {
+  justify-self: center;
+  width: 100%;
+  max-width: 470px;
+  perspective: 1000px;
+}
+
+.hero__tilt {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.hero__photo {
+  aspect-ratio: 4 / 5;
+  border-radius: 999px 999px 36px 36px; /* arch shape */
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  outline: 1.5px solid rgba(196, 154, 92, 0.6);
+  outline-offset: 12px;
+}
+
+.hero__photo img,
+.hero__photo .img-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  font-size: 7rem;
+  pointer-events: none;
+}
+
+/* price tag floats "in front" of the photo for a 3D feel */
+.hero__tag {
+  position: absolute;
+  left: -28px;
+  bottom: 48px;
+  display: grid;
+  padding: 14px 22px;
+  border-radius: 20px;
+  background: var(--cream);
+  color: var(--espresso);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  transform: translateZ(70px);
+}
+
+.hero__tag span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.hero__tag strong {
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: 1.7rem;
+  line-height: 1.2;
+}
+
+/* ---------- dots + next arrow ---------- */
+.hero__controls {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.hero__dots {
+  display: flex;
+  gap: 10px;
+}
+
+.hero__dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(246, 239, 229, 0.3);
+  cursor: pointer;
+  transition: width 0.35s, background 0.35s;
+}
+
+.hero__dot.is-active {
+  width: 34px;
+  background: var(--rose);
+}
+
+.hero__next {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(246, 239, 229, 0.4);
+  background: transparent;
+  color: var(--cream);
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+
+.hero__next:hover {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: var(--espresso);
+  transform: translateX(3px);
+}
+
+@media (max-width: 900px) {
+  .hero {
+    padding: 32px 0 48px;
+  }
+
+  .hero__slide {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    text-align: center;
+    min-height: 0;
+  }
+
+  .hero__visual {
+    order: -1;
+    max-width: 280px;
+  }
+
+  .hero__tag {
+    left: -14px;
+    bottom: 26px;
+    padding: 10px 16px;
+  }
+
+  .hero__tag strong {
+    font-size: 1.3rem;
+  }
+
+  .hero__text p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero__actions,
+  .hero__controls {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero__visual {
+    max-width: 230px;
+  }
+
+  .hero__actions .btn {
+    flex: 1 1 100%;
+  }
+}

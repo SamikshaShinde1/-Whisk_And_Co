@@ -1,0 +1,123 @@
+.product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fffaf4;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  color: var(--text);
+  transition: transform 0.35s, box-shadow 0.35s;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 44px rgba(43, 26, 20, 0.16);
+}
+
+.product-card__media {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.product-card__badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--espresso);
+  color: var(--cream);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.product-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px 22px 22px;
+}
+
+.product-card__category {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.product-card h3 {
+  margin: 8px 0 16px;
+  font-size: 1.35rem;
+}
+
+.product-card__footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.product-card__price {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.product-card__price small {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.product-card__go {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--blush);
+  font-size: 1.1rem;
+  transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+
+.product-card:hover .product-card__go {
+  background: var(--espresso);
+  color: var(--cream);
+  transform: rotate(45deg);
+}
+
+@media (max-width: 560px) {
+  .product-card__body {
+    padding: 14px 14px 16px;
+  }
+
+  .product-card h3 {
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+  }
+
+  .product-card__category {
+    font-size: 0.62rem;
+  }
+
+  .product-card__price {
+    font-size: 0.95rem;
+  }
+
+  .product-card__price small,
+  .product-card__go {
+    display: none;
+  }
+
+  .product-card__badge {
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    font-size: 0.58rem;
+  }
+}

@@ -1,0 +1,93 @@
+.float-btns {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.float-btn {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 2rem;
+}
+
+.float-btn--whatsapp {
+  background: var(--whatsapp);
+  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.45);
+}
+
+/* soft pulsing ring around the WhatsApp button */
+.float-btn--whatsapp::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--whatsapp);
+  animation: float-pulse 2s ease-out infinite;
+}
+
+/* Instagram's colourful gradient */
+.float-btn--instagram {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+  box-shadow: 0 10px 25px rgba(214, 36, 159, 0.4);
+}
+
+@keyframes float-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* label that slides out on hover (desktop only) */
+.float-btn__label {
+  position: absolute;
+  right: 72px;
+  white-space: nowrap;
+  background: var(--espresso);
+  color: var(--cream);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translateX(8px);
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.float-btn:hover .float-btn__label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 640px) {
+  .float-btns {
+    right: 16px;
+    bottom: 16px;
+    gap: 12px;
+  }
+
+  .float-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 1.7rem;
+  }
+
+  .float-btn__label {
+    display: none;
+  }
+}

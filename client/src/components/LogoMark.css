@@ -1,0 +1,15 @@
+.logo-mark {
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--cream);
+}
+
+.logo-mark--fallback {
+  display: grid;
+  place-items: center;
+  background: var(--blush);
+  color: var(--espresso);
+  font-family: var(--font-head);
+  border: 2px solid var(--gold);
+}

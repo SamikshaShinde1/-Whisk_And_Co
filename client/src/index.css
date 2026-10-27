@@ -1,0 +1,293 @@
+/* =========================================================
+   Brand colours & fonts – change them here, they update everywhere
+   ========================================================= */
+:root {
+  --espresso: #2b1a14;
+  --espresso-2: #3a241c;
+  --espresso-3: #4a3026;
+  --cream: #f6efe5;
+  --cream-2: #ede2d2;
+  --blush: #f6d6cf;
+  --rose: #eeb5b0;
+  --gold: #c49a5c;
+  --gold-deep: #8a6431; /* darker gold, readable on cream */
+  --whatsapp: #25d366;
+
+  --text: var(--espresso);
+  --text-muted: #6b574d;
+  --text-light: var(--cream);
+  --text-light-muted: rgba(246, 239, 229, 0.72);
+
+  --font-head: 'DM Serif Display', Georgia, serif;
+  --font-script: 'Pinyon Script', cursive;
+  --font-body: 'Manrope', system-ui, sans-serif;
+
+  --radius: 28px;
+  --radius-sm: 18px;
+  --shadow: 0 12px 30px rgba(43, 26, 20, 0.1);
+  --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.35);
+  --max: 1200px;
+  --nav-h: 76px;
+}
+
+/* =========================================================
+   Base
+   ========================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-head);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  margin: 0 0 0.5em;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   Layout helpers
+   ========================================================= */
+.container {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 110px 0;
+  scroll-margin-top: var(--nav-h);
+}
+
+/* Sections alternate between dark brown and cream */
+.section--dark {
+  background: var(--espresso);
+  color: var(--text-light);
+}
+
+.section--blush {
+  background: var(--blush);
+}
+
+.section-head {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 56px;
+}
+
+.section-title {
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+}
+
+.section-text {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+.section--dark .section-text {
+  color: var(--text-light-muted);
+}
+
+/* Small decorative handwritten word above headings */
+.script {
+  display: block;
+  font-family: var(--font-script);
+  font-size: clamp(1.9rem, 3.5vw, 2.5rem);
+  line-height: 1;
+  color: var(--gold-deep);
+  margin-bottom: 8px;
+}
+
+.section--dark .script {
+  color: var(--gold);
+}
+
+/* =========================================================
+   Buttons (pill shaped)
+   ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 30px;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.25s, background 0.25s, color 0.25s, border-color 0.25s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-dark {
+  background: var(--espresso);
+  color: var(--cream);
+}
+
+.btn-dark:hover {
+  background: var(--espresso-3);
+}
+
+.btn-rose {
+  background: var(--rose);
+  color: var(--espresso);
+}
+
+.btn-rose:hover {
+  background: var(--blush);
+}
+
+.btn-outline {
+  border-color: var(--espresso);
+  color: var(--espresso);
+}
+
+.btn-outline:hover {
+  background: var(--espresso);
+  color: var(--cream);
+}
+
+/* Outline button for dark backgrounds */
+.btn-outline-light {
+  border-color: rgba(246, 239, 229, 0.6);
+  color: var(--cream);
+}
+
+.btn-outline-light:hover {
+  background: var(--cream);
+  border-color: var(--cream);
+  color: var(--espresso);
+}
+
+.btn-whatsapp {
+  background: var(--whatsapp);
+  color: #0b3d1f;
+}
+
+.btn-whatsapp:hover {
+  background: #3ee07c;
+}
+
+/* =========================================================
+   Photos
+   ========================================================= */
+
+/* Soft zoom when hovering a photo */
+.zoom-img {
+  overflow: hidden;
+}
+
+.zoom-img img,
+.zoom-img .img-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.zoom-img:hover img,
+.zoom-img:hover .img-fallback {
+  transform: scale(1.07);
+}
+
+/* Shown instead of a photo if the photo can't load */
+.img-fallback {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.6), transparent 50%),
+    linear-gradient(135deg, var(--tone, var(--blush)), var(--cream-2));
+  font-size: 3.5rem;
+  user-select: none;
+}
+
+/* =========================================================
+   Phones
+   ========================================================= */
+@media (max-width: 640px) {
+  .container {
+    padding: 0 18px;
+  }
+
+  .section {
+    padding: 72px 0;
+  }
+
+  .section-head {
+    margin-bottom: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
