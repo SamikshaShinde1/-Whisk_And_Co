@@ -10,26 +10,42 @@ The owner is a beginner learning React. Use simple English and work in big steps
 
 **Stack:**
 - `client/`: React + Vite, hosted on Vercel.
-- `server/`: Node + Express + Mongoose + bcryptjs + jsonwebtoken + cors + dotenv, hosted on Render, with MongoDB Atlas as the database. This folder doesn't exist yet.
+- `server/`: Node + Express + Mongoose + bcryptjs + jsonwebtoken + cors + dotenv, hosted on Render, with MongoDB Atlas as the database.
 
 **Plan:**
 1. Setup ✅
 2. Full frontend ✅
-3. Backend and an end-to-end order test
-4. Admin login and orders page
+3. Backend ✅ (code is written and tested against a temporary in-memory database). Atlas progress (paused 27 Oct 2026):
+- Done: the cluster `Cluster0` exists, the owner's IP is allowed, a database user exists, and the owner has copied the Node.js driver link.
+- Next: the owner fills in `MONGO_URI` (adding their password and the database name `/pastel-n-postery`), `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `server/.env`.
+- Then: `npm run create-admin`, `npm run dev` in both `server/` and `client/`, place a test order and check it in Atlas → Browse Collections.
+- `JWT_SECRET` in `server/.env` is already generated.
+4. Admin login and orders page (frontend only: `/admin/login` and `/admin/orders`)
 5. GitHub repo "pastel-n-postery"
 6. Deploy: Render for the server, Vercel for the client
 7. README and a resume line
 
-**Planned backend API:**
-- `POST /api/orders`: public; customers place an order.
-- `POST /api/auth/login`: returns a JWT.
-- `GET /api/orders`: admin only (JWT checked by `middleware/requireAdmin.js`).
-- `PATCH /api/orders/:id`: admin only; changes an order's status.
+**Secrets:** the WhatsApp number, admin password, `MONGO_URI` and JWT secret stay in `.env` files only. Keep `.env.example` files up to date. The root `.gitignore` excludes `.env*` except `.env.example`.
 
-**Planned Order model:** `customerName`, `phone`, `items [{name, price, qty}]`, `note`, `deliveryType` (pickup or delivery), `address` (only for delivery), `date`, `total`, `status` (new, baking, ready or delivered; default new), plus timestamps. Prices sent by the client can't be trusted, so the server should recalculate the total from the items.
+## Backend architecture (`server/`)
 
-**Planned admin pieces:** an `Admin` model and `scripts/createAdmin.js`, which creates the admin account from `.env` values. The admin pages will be `/admin/login` and `/admin/orders`.
+- Uses ES modules and Express 5, so errors in async route handlers reach `middleware/errors.js` automatically. That file turns Mongoose `ValidationError`s into a 400 response carrying the first validator's friendly message, which the client shows to the user.
+- `server.js` exits at startup if `MONGO_URI` or `JWT_SECRET` is missing.
+- CORS only allows the origins listed in `CLIENT_URL` (comma-separated).
+- `trust proxy` is set so the rate limiter sees real visitor IPs on Render.
+- `config/db.js` sets `mongoose.set('sanitizeFilter', true)` to block NoSQL injection.
+
+**Routes:**
+- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. Only the item fields `{name, price, qty}` are kept, the server recalculates `total` and ignores the client's total, and `address` is cleared for pickup. The response is only `{_id, total, status}`.
+- `GET /api/orders` (admin): all orders, newest first.
+- `PATCH /api/orders/:id` (admin): body `{status}`, which must be one of `ORDER_STATUSES` (exported from `models/Order.js`).
+- `POST /api/auth/login`: rate-limited to 5 per 15 minutes. Returns `{token, email}`, where the token is a 7-day HS256 JWT. `middleware/requireAdmin.js` checks `Authorization: Bearer <token>`.
+
+**Models:**
+- The validation rules live in `models/Order.js`: a 10-digit phone, `date` as a `YYYY-MM-DD` string, an integer `qty` from 1 to 50, at least one item, and an address required for delivery.
+- `models/Admin.js` stores a bcrypt hash of the password.
+
+**Admin account:** `scripts/createAdmin.js` creates or updates the admin from `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, with bcrypt cost 12 and a minimum password length of 8.
 
 **Secrets:** the WhatsApp number, admin password, `MONGO_URI` and JWT secret stay in `.env` files only. Keep `.env.example` files up to date. The root `.gitignore` excludes `.env*` except `.env.example`.
 
@@ -43,6 +59,14 @@ npm run build     # production build into client/dist
 npm run lint      # oxlint (config: client/.oxlintrc.json)
 npm run preview   # serve the production build (port 4173)
 npm run favicon   # reads ../logo.png and writes public/logo.png, favicon.png and apple-touch-icon.png (uses sharp)
+```
+
+Run these from `server/`:
+
+```
+npm run dev            # API at http://localhost:5000, restarts when files change (node --watch)
+npm start              # run without watching (used on Render)
+npm run create-admin   # create or update the admin login from server/.env
 ```
 
 There is no test framework yet.
