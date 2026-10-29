@@ -7,7 +7,19 @@ import './Footer.css'
 
 const YEAR = new Date().getFullYear()
 
-export default function Footer() {
+// "compact" = one slim line, used on the admin pages
+export default function Footer({ compact = false }) {
+  if (compact) {
+    return (
+      <footer className="footer footer--compact">
+        <div className="container footer__bottom">
+          © {YEAR} {SITE.name}
+          <Link to="/" className="footer__staff">Back to website</Link>
+        </div>
+      </footer>
+    )
+  }
+
   return (
     <footer className="footer" id="contact">
       <div className="container footer__grid">
@@ -64,6 +76,7 @@ export default function Footer() {
 
       <div className="container footer__bottom">
         © {YEAR} {SITE.name}. Baked with love.
+        <Link to="/admin/login" className="footer__staff">Staff login</Link>
       </div>
     </footer>
   )

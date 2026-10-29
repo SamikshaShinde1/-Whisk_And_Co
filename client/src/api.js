@@ -31,3 +31,23 @@ async function request(path, { method = 'GET', body, token } = {}) {
 export function createOrder(order) {
   return request('/api/orders', { method: 'POST', body: order })
 }
+
+// Admin: log in and get a token
+export function login(email, password) {
+  return request('/api/auth/login', { method: 'POST', body: { email, password } })
+}
+
+// Admin: change your own password
+export function changePassword(currentPassword, newPassword, token) {
+  return request('/api/auth/password', { method: 'PATCH', body: { currentPassword, newPassword }, token })
+}
+
+// Admin: all orders, newest first
+export function getOrders(token) {
+  return request('/api/orders', { token })
+}
+
+// Admin: change one order's status
+export function updateOrderStatus(id, status, token) {
+  return request(`/api/orders/${id}`, { method: 'PATCH', body: { status }, token })
+}

@@ -97,6 +97,32 @@
   text-align: center;
 }
 
+/* slim one-line footer for admin pages */
+.footer--compact {
+  padding-top: 0;
+}
+
+.footer--compact .footer__bottom {
+  margin-top: 0;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  border-top: 0;
+}
+
+/* small, quiet link for the bakery owner */
+.footer__staff {
+  margin-left: 14px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(246, 239, 229, 0.25);
+  color: var(--text-light-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer__staff:hover {
+  color: var(--cream);
+}
+
 @media (max-width: 900px) {
   .footer__grid {
     grid-template-columns: 1fr 1fr;

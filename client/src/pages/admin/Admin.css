@@ -1,0 +1,342 @@
+/* ---------- Login page ---------- */
+.admin-login {
+  min-height: calc(100svh - var(--nav-h));
+  display: grid;
+  place-items: center;
+  padding: 60px 18px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(238, 181, 176, 0.35), transparent 45%),
+    var(--cream);
+}
+
+.admin-login__card {
+  width: 100%;
+  max-width: 420px;
+  display: grid;
+  justify-items: center;
+  padding: 44px 32px 36px;
+  border-radius: var(--radius);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.admin-login__card .script {
+  margin-top: 18px;
+}
+
+.admin-login__card h1 {
+  font-size: 2.2rem;
+  margin-bottom: 28px;
+}
+
+.admin-login__card .field {
+  width: 100%;
+  text-align: left;
+}
+
+.admin-login__card .btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* ---------- Orders page ---------- */
+.admin {
+  padding-top: 48px;
+}
+
+.admin__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+/* ---------- Small toolbar buttons (Refresh / Change password / Log out) ---------- */
+.admin__tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(246, 239, 229, 0.3);
+  background: rgba(246, 239, 229, 0.06);
+  color: var(--cream);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
+}
+
+.admin__tool svg {
+  transition: transform 0.4s ease;
+}
+
+.admin__tool:hover:not(:disabled),
+.admin__tool.is-active {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: var(--espresso);
+  transform: translateY(-2px);
+}
+
+.admin__tool:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* each icon moves in its own way on hover */
+.admin__tool--refresh:hover:not(:disabled) svg {
+  transform: rotate(180deg);
+}
+
+.admin__tool--key:hover svg {
+  animation: admin-wiggle 0.5s ease;
+}
+
+.admin__tool--logout:hover svg {
+  transform: translateX(3px);
+}
+
+/* keep spinning while orders are loading */
+.admin__tool--refresh.is-loading svg {
+  animation: admin-spin 0.8s linear infinite;
+}
+
+@keyframes admin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes admin-wiggle {
+  25% {
+    transform: rotate(-18deg);
+  }
+  75% {
+    transform: rotate(18deg);
+  }
+}
+
+.admin__filters {
+  margin-bottom: 32px;
+}
+
+/* ---------- Change password box ---------- */
+.admin__password {
+  overflow: hidden;
+  margin-bottom: 36px;
+}
+
+.admin__password form,
+.admin__password-done {
+  padding: 28px;
+  border-radius: var(--radius);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+}
+
+.admin__password h2 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+
+.admin__password-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 16px;
+}
+
+.admin__password-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin__password-done {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.admin__password-done svg {
+  font-size: 2.6rem;
+  color: #2f8f5b;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 760px) {
+  .admin__password-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin__error {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #fbe3e1;
+  color: #8a2a22;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+.admin__empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px 0;
+}
+
+.admin__table-wrap {
+  border-radius: var(--radius);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.admin__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.admin__table th {
+  padding: 16px 18px;
+  background: var(--espresso);
+  color: var(--cream);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.admin__table td {
+  padding: 16px 18px;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(43, 26, 20, 0.08);
+}
+
+.admin__table tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin__table td > strong,
+.admin__table td > span,
+.admin__table td > small {
+  display: block;
+}
+
+.admin__table small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.admin__note {
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.admin__contact {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.admin__contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+}
+
+.admin__contact a:hover {
+  color: var(--espresso);
+}
+
+.admin__contact a[aria-label] {
+  color: #1f9d55;
+  font-size: 1.1rem;
+}
+
+/* status dropdown, coloured by status */
+.admin__status {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  font-weight: 800;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.admin__status--new {
+  background: var(--blush);
+}
+
+.admin__status--baking {
+  background: #f3e2c4;
+  border-color: var(--gold);
+}
+
+.admin__status--ready {
+  background: #d7eedd;
+}
+
+.admin__status--delivered {
+  background: var(--cream-2);
+  color: var(--text-muted);
+}
+
+/* On phones each order becomes a card instead of a table row */
+@media (max-width: 760px) {
+  .admin__table-wrap {
+    background: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .admin__table thead {
+    display: none;
+  }
+
+  .admin__table,
+  .admin__table tbody,
+  .admin__table tr,
+  .admin__table td {
+    display: block;
+  }
+
+  .admin__table tr {
+    margin-bottom: 16px;
+    padding: 6px 0;
+    border-radius: var(--radius-sm);
+    background: #fffaf4;
+    box-shadow: var(--shadow);
+  }
+
+  .admin__table td {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 12px;
+    padding: 10px 18px;
+    border-bottom: 1px dashed rgba(43, 26, 20, 0.1);
+  }
+
+  .admin__table td::before {
+    content: attr(data-label);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding-top: 3px;
+  }
+
+  .admin__table td > * {
+    grid-column: 2;
+  }
+}

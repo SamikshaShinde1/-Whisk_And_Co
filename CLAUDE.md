@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Website for "Pastel n Postery", a home bakery (Instagram: @pastel_n_postery). It's a portfolio project for an internship resume, so the code should be clean, well organised and commented in plain English.
+Website for "Pastel n Postery", a home bakery (Instagram: @pastel_n_postery). It's a portfolio project for an internship resume, so the code should be clean, well organised and commented in plain English. The developer (the owner of this repo) is building it for a client, the bakery owner, who is not technical. The admin side must be simple and safe for that client: a "Staff login" link in the footer, and "Change password" on the orders page so the handover password can be replaced.
 
 The owner is a beginner learning React. Use simple English and work in big steps. Stop to ask only when you need something from the owner, such as an account, a password or their WhatsApp number. After each big step, say how to test it and remind the owner to commit with git. Leave commits to the owner unless they ask you to commit.
 
@@ -15,12 +15,8 @@ The owner is a beginner learning React. Use simple English and work in big steps
 **Plan:**
 1. Setup ✅
 2. Full frontend ✅
-3. Backend ✅ (code is written and tested against a temporary in-memory database). Atlas progress (paused 27 Oct 2026):
-- Done: the cluster `Cluster0` exists, the owner's IP is allowed, a database user exists, and the owner has copied the Node.js driver link.
-- Next: the owner fills in `MONGO_URI` (adding their password and the database name `/pastel-n-postery`), `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `server/.env`.
-- Then: `npm run create-admin`, `npm run dev` in both `server/` and `client/`, place a test order and check it in Atlas → Browse Collections.
-- `JWT_SECRET` in `server/.env` is already generated.
-4. Admin login and orders page (frontend only: `/admin/login` and `/admin/orders`)
+3. Backend ✅ (connected to MongoDB Atlas; the first real order and the admin account are saved)
+4. Admin login and orders page ✅ (built; the owner is testing it)
 5. GitHub repo "pastel-n-postery"
 6. Deploy: Render for the server, Vercel for the client
 7. README and a resume line
@@ -39,6 +35,7 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - `POST /api/orders` (public): rate-limited to 10 per 15 minutes. Only the item fields `{name, price, qty}` are kept, the server recalculates `total` and ignores the client's total, and `address` is cleared for pickup. The response is only `{_id, total, status}`.
 - `GET /api/orders` (admin): all orders, newest first.
 - `PATCH /api/orders/:id` (admin): body `{status}`, which must be one of `ORDER_STATUSES` (exported from `models/Order.js`).
+- `PATCH /api/auth/password` (admin): body `{currentPassword, newPassword}` (new password at least 8 characters). A wrong current password returns **400, not 401**, so the client does not log the user out.
 - `POST /api/auth/login`: rate-limited to 5 per 15 minutes. Returns `{token, email}`, where the token is a 7-day HS256 JWT. `middleware/requireAdmin.js` checks `Authorization: Bearer <token>`.
 
 **Models:**
@@ -46,8 +43,6 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - `models/Admin.js` stores a bcrypt hash of the password.
 
 **Admin account:** `scripts/createAdmin.js` creates or updates the admin from `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, with bcrypt cost 12 and a minimum password length of 8.
-
-**Secrets:** the WhatsApp number, admin password, `MONGO_URI` and JWT secret stay in `.env` files only. Keep `.env.example` files up to date. The root `.gitignore` excludes `.env*` except `.env.example`.
 
 ## Commands
 
@@ -75,7 +70,7 @@ There is no test framework yet.
 
 **Libraries:**
 - React 19
-- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:id` and `*` (the 404 page).
+- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:id`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders` and `*` (the 404 page). Admin pages skip the intro and the floating buttons.
 - Motion: import from `motion/react`.
 - React Icons: `react-icons/fi` and `react-icons/fa`.
 - Plain CSS, with one CSS file per component.
@@ -99,6 +94,14 @@ There is no test framework yet.
 - The `Intro` overlay plays once per tab session, tracked by `sessionStorage.introSeen`. It is skipped when the user prefers reduced motion.
 - Then come `ScrollManager`, `Navbar`, the routes, `Footer` (which has `id="contact"`) and `FloatingButtons` (Instagram + WhatsApp, bottom-right).
 - `ScrollManager` scrolls to `#hash` sections, otherwise back to the top. It does nothing when the navigation state has `keepScroll: true`; the Menu filter pills set this.
+
+**Admin pages (`pages/admin/`):**
+- `src/adminAuth.js` keeps `{token, email}` in localStorage under the key `pnp-admin`.
+- `AdminOrders` redirects to the login page when there is no token. A 401 from the API clears the token and returns to the login page with a message (passed in navigation state).
+- Status changes are shown on screen straight away and undone if the API call fails.
+- `STATUSES` must match `ORDER_STATUSES` on the server.
+- On screens up to 760px wide, the table turns into cards using `td[data-label]`.
+- The admin pages reuse the `.menu__pill` and `.field` styles from `Menu.css` and `OrderPanel.css`.
 
 **Menu page:** the selected filter is stored in the URL as `?category=<id>`. The footer's category links use this to open a filtered menu.
 

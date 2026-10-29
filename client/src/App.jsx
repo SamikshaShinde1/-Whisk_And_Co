@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Navigate, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'motion/react'
 import Intro from './components/Intro'
 import Navbar from './components/Navbar'
@@ -10,6 +10,8 @@ import Home from './pages/Home'
 import Menu from './pages/Menu'
 import ProductDetail from './pages/ProductDetail'
 import NotFound from './pages/NotFound'
+import AdminLogin from './pages/admin/AdminLogin'
+import AdminOrders from './pages/admin/AdminOrders'
 
 // The intro plays once per visit (until the browser tab is closed).
 function shouldShowIntro() {
@@ -23,6 +25,8 @@ function shouldShowIntro() {
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(shouldShowIntro)
+  // Admin pages skip the intro and the floating buttons
+  const isAdmin = useLocation().pathname.startsWith('/admin')
 
   const finishIntro = useCallback(() => {
     try {
@@ -35,7 +39,7 @@ export default function App() {
 
   return (
     <>
-      <AnimatePresence>{showIntro && <Intro onDone={finishIntro} />}</AnimatePresence>
+      <AnimatePresence>{showIntro && !isAdmin && <Intro onDone={finishIntro} />}</AnimatePresence>
 
       <ScrollManager />
       <Navbar />
@@ -44,11 +48,14 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/menu/:id" element={<ProductDetail />} />
+          <Route path="/admin" element={<Navigate to="/admin/orders" replace />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <Footer />
-      <FloatingButtons />
+      <Footer compact={isAdmin} />
+      {!isAdmin && <FloatingButtons />}
     </>
   )
 }
