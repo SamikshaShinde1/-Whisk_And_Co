@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { FiMinus, FiPlus, FiCheckCircle } from 'react-icons/fi'
+import { FiMinus, FiPlus, FiCheckCircle, FiCopy, FiCheck, FiMapPin } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
 import { createOrder } from '../api'
+import { rememberOrder } from '../recentOrders'
 import { formatPrice } from '../data/menu'
 import { SITE, whatsappLink } from '../config/site'
 import './OrderPanel.css'
@@ -25,7 +27,8 @@ export default function OrderPanel({ item }) {
   const [form, setForm] = useState(EMPTY_FORM)
   const [status, setStatus] = useState('idle') // idle | sending | success | error
   const [error, setError] = useState('')
-  const [orderId, setOrderId] = useState('')
+  const [orderNumber, setOrderNumber] = useState('')
+  const [copied, setCopied] = useState(false)
 
   const total = item.price * qty
   const isCake = item.category === 'cakes'
@@ -33,9 +36,9 @@ export default function OrderPanel({ item }) {
 
   const updateField = (event) => setForm({ ...form, [event.target.name]: event.target.value })
 
-  // Same order, written as a WhatsApp message
+  // Same order, written as a WhatsApp message (with the order number once the order is placed)
   const whatsappMessage = [
-    `Hi ${SITE.name}! I'd like to order:`,
+    orderNumber ? `Hi ${SITE.name}! I just placed order ${orderNumber}:` : `Hi ${SITE.name}! I'd like to order:`,
     `• ${item.name} (${item.unit}) × ${qty} = ${formatPrice(total)}`,
     note && `${noteLabel}: ${note}`,
     form.customerName && `Name: ${form.customerName}`,
@@ -58,7 +61,9 @@ export default function OrderPanel({ item }) {
         note,
         total,
       })
-      setOrderId(saved._id || '')
+      setOrderNumber(saved.orderNumber || '')
+      // Save the number in this browser, so the Track page can offer it next time
+      if (saved.orderNumber) rememberOrder({ orderNumber: saved.orderNumber, item: item.name, date: form.date })
       setStatus('success')
     } catch (err) {
       setError(err.message)
@@ -70,7 +75,18 @@ export default function OrderPanel({ item }) {
     setQty(1)
     setNote('')
     setForm(EMPTY_FORM)
+    setOrderNumber('')
+    setCopied(false)
     setStatus('idle')
+  }
+
+  const copyNumber = async () => {
+    try {
+      await navigator.clipboard.writeText(orderNumber)
+      setCopied(true)
+    } catch {
+      // copying blocked by the browser – the number is still on screen to write down
+    }
   }
 
   return (
@@ -92,8 +108,31 @@ export default function OrderPanel({ item }) {
               We received your order for {qty} × {item.name} ({formatPrice(total)}).
               We will confirm it with you on WhatsApp soon.
             </p>
-            {orderId && <p className="order__id">Order ref: #{orderId.slice(-6).toUpperCase()}</p>}
-            <button className="btn btn-dark" onClick={startOver}>Place another order</button>
+
+            {orderNumber && (
+              <div className="order__number">
+                <span>Your order number</span>
+                <div className="order__number-row">
+                  <strong>{orderNumber}</strong>
+                  <button type="button" onClick={copyNumber} aria-label="Copy order number">
+                    {copied ? <FiCheck /> : <FiCopy />}
+                  </button>
+                </div>
+                <small>Save this number (and use your phone number) to track your order.</small>
+              </div>
+            )}
+
+            <div className="order__success-actions">
+              {orderNumber && (
+                <Link to={`/track?number=${orderNumber}`} className="btn btn-dark">
+                  <FiMapPin /> Track order
+                </Link>
+              )}
+              <a href={whatsappLink(whatsappMessage)} target="_blank" rel="noreferrer" className="btn btn-whatsapp">
+                <FaWhatsapp /> Send on WhatsApp
+              </a>
+            </div>
+            <button type="button" className="order__again" onClick={startOver}>Place another order</button>
           </motion.div>
         ) : (
           // ---------- Order form ----------

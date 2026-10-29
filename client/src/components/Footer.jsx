@@ -69,6 +69,7 @@ export default function Footer({ compact = false }) {
             <li>
               <a href={whatsappLink()} target="_blank" rel="noreferrer">Chat on WhatsApp</a>
             </li>
+            <li><Link to="/track">Track your order</Link></li>
             <li><Link to="/#about">About us</Link></li>
           </ul>
         </div>

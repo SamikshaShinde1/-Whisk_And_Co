@@ -10,6 +10,7 @@ const LINKS = [
   { to: '/menu', label: 'Menu' },
   { to: '/#about', label: 'About' },
   { to: '#contact', label: 'Contact' }, // the footer, which is on every page
+  { to: '/track', label: 'Track order' },
 ]
 
 // Links with "#" jump to a section; the others are full pages (NavLink marks the current one).

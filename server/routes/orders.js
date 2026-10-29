@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { rateLimit } from 'express-rate-limit'
 import Order, { ORDER_STATUSES } from '../models/Order.js'
+import { nextOrderNumber } from '../models/Counter.js'
 import requireAdmin from '../middleware/requireAdmin.js'
 
 const router = Router()
@@ -12,6 +13,15 @@ const orderLimiter = rateLimit({
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   message: { message: 'Too many orders from your device. Please try again later or message us on WhatsApp.' },
+})
+
+// Stops someone from guessing order numbers: at most 30 lookups every 15 minutes
+const trackLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 30,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { message: 'Too many tries. Please wait a few minutes and try again.' },
 })
 
 // POST /api/orders – a customer places an order (public)
@@ -26,7 +36,7 @@ router.post('/', orderLimiter, async (req, res) => {
   // Work out the total on the server instead of trusting the number sent by the browser
   const total = cleanItems.reduce((sum, item) => sum + Number(item.price) * Number(item.qty), 0)
 
-  const order = await Order.create({
+  const order = new Order({
     customerName,
     phone,
     items: cleanItems,
@@ -37,8 +47,41 @@ router.post('/', orderLimiter, async (req, res) => {
     total,
   })
 
+  // Check the details first, so a rejected order doesn't use up an order number
+  await order.validate()
+  order.orderNumber = await nextOrderNumber()
+  await order.save()
+
   // Send back only what the customer needs to see
-  res.status(201).json({ _id: order._id, total: order.total, status: order.status })
+  res.status(201).json({ _id: order._id, orderNumber: order.orderNumber, total: order.total, status: order.status })
+})
+
+// POST /api/orders/track – a customer checks their order (public), body: { number, phone }
+// It's a POST (not a GET) so the phone number travels hidden in the body,
+// instead of in the web address where it would end up in browser history and server logs.
+// The order is only shown when BOTH the order number and the phone number match.
+router.post('/track', trackLimiter, async (req, res) => {
+  const number = String(req.body?.number || '').trim().toUpperCase()
+  const phone = String(req.body?.phone || '').replace(/\D/g, '')
+
+  if (!/^PNP-\d{4,}$/.test(number) || !/^\d{10}$/.test(phone)) {
+    return res.status(400).json({
+      message: 'Please enter your order number (like PNP-1042) and your 10-digit phone number.',
+    })
+  }
+
+  // .select() picks ONLY the safe fields – no name, phone, address or note is ever sent back
+  const order = await Order.findOne({ orderNumber: number, phone }).select(
+    'orderNumber items total date deliveryType status createdAt -_id',
+  )
+
+  // Same message whether the number or the phone was wrong, so nobody can guess which one exists
+  if (!order) {
+    return res.status(404).json({
+      message: "We couldn't find an order with that number and phone. Please check both and try again.",
+    })
+  }
+  res.json(order)
 })
 
 // GET /api/orders – all orders, newest first (admin only)

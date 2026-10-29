@@ -1,0 +1,191 @@
+.track {
+  padding-top: 56px;
+}
+
+.track__inner {
+  max-width: 760px;
+  display: grid;
+  gap: 24px;
+}
+
+/* search form: 2 fields + button in one row on big screens */
+.track__form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 0 14px;
+  padding: 24px 24px 6px;
+  border-radius: var(--radius);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+}
+
+.track__form .btn {
+  margin-bottom: 18px; /* lines up with the inputs */
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+/* "Your recent orders on this device" */
+.track__recent {
+  display: grid;
+  gap: 12px;
+}
+
+.track__recent .track__small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.track__recent-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.track__chip {
+  display: grid;
+  text-align: left;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  border: 1.5px dashed var(--gold);
+  background: #fffaf4;
+  color: var(--espresso);
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
+}
+
+.track__chip strong {
+  font-family: var(--font-head);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+}
+
+.track__chip span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.track__chip:hover,
+.track__chip.is-active {
+  background: var(--blush);
+  border-color: var(--rose);
+  border-style: solid;
+  transform: translateY(-2px);
+}
+
+/* small text buttons and links */
+.track__link {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.track__link:hover {
+  color: var(--espresso);
+}
+
+.track__forgot {
+  margin: -8px 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.track__forgot a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  color: #1f9d55;
+}
+
+.track__forgot a:hover {
+  text-decoration: underline;
+}
+
+/* result card */
+.track__result {
+  padding: 32px;
+  border-radius: var(--radius);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+}
+
+.track__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  padding-bottom: 22px;
+  margin-bottom: 30px;
+  border-bottom: 1px dashed rgba(43, 26, 20, 0.2);
+}
+
+.track__head h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+}
+
+.track__small {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.track__when {
+  text-align: right;
+}
+
+.track__items {
+  list-style: none;
+  margin: 36px 0 24px;
+  padding: 0;
+}
+
+.track__items li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(43, 26, 20, 0.08);
+}
+
+.track__total {
+  font-weight: 800;
+  font-size: 1.1rem;
+  border-bottom: 0 !important;
+}
+
+.track__help {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .track__form {
+    grid-template-columns: 1fr;
+    padding: 20px 18px 4px;
+  }
+
+  .track__result {
+    padding: 24px 18px;
+  }
+
+  .track__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .track__when {
+    text-align: left;
+  }
+}

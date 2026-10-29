@@ -32,7 +32,11 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - `config/db.js` sets `mongoose.set('sanitizeFilter', true)` to block NoSQL injection.
 
 **Routes:**
-- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. Only the item fields `{name, price, qty}` are kept, the server recalculates `total` and ignores the client's total, and `address` is cleared for pickup. The response is only `{_id, total, status}`.
+- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. Only the item fields `{name, price, qty}` are kept, the server recalculates `total` and ignores the client's total, and `address` is cleared for pickup. The order is validated first, and only then gets an `orderNumber` (`PNP-1001`, `PNP-1002`, …) from `models/Counter.js`, which uses an atomic `$inc`. This way, rejected orders don't use up numbers. The response is only `{_id, orderNumber, total, status}`.
+- `POST /api/orders/track` (public): body `{number, phone}`. It is a POST so the phone never appears in URLs, browser history or server logs. Rate-limited to 30 per 15 minutes.
+  - Returns the order only when **both** the order number and the phone match.
+  - It `.select()`s only the safe fields (`orderNumber`, `items`, `total`, `date`, `deliveryType`, `status`, `createdAt`), so no name, phone, address or note is returned.
+  - A wrong number and a wrong phone give the same 404 message.
 - `GET /api/orders` (admin): all orders, newest first.
 - `PATCH /api/orders/:id` (admin): body `{status}`, which must be one of `ORDER_STATUSES` (exported from `models/Order.js`).
 - `PATCH /api/auth/password` (admin): body `{currentPassword, newPassword}` (new password at least 8 characters). A wrong current password returns **400, not 401**, so the client does not log the user out.
@@ -40,6 +44,7 @@ The owner is a beginner learning React. Use simple English and work in big steps
 
 **Models:**
 - The validation rules live in `models/Order.js`: a 10-digit phone, `date` as a `YYYY-MM-DD` string, an integer `qty` from 1 to 50, at least one item, and an address required for delivery.
+- `orderNumber` is `unique` and `sparse`, because orders placed before this feature have no number. The admin table shows `#<last 6 characters of the id>` for those.
 - `models/Admin.js` stores a bcrypt hash of the password.
 
 **Admin account:** `scripts/createAdmin.js` creates or updates the admin from `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, with bcrypt cost 12 and a minimum password length of 8.
@@ -70,7 +75,7 @@ There is no test framework yet.
 
 **Libraries:**
 - React 19
-- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:id`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders` and `*` (the 404 page). Admin pages skip the intro and the floating buttons.
+- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:id`, `/track`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders` and `*` (the 404 page). Admin pages skip the intro and the floating buttons.
 - Motion: import from `motion/react`.
 - React Icons: `react-icons/fi` and `react-icons/fa`.
 - Plain CSS, with one CSS file per component.
@@ -103,6 +108,13 @@ There is no test framework yet.
 - On screens up to 760px wide, the table turns into cards using `td[data-label]`.
 - The admin pages reuse the `.menu__pill` and `.field` styles from `Menu.css` and `OrderPanel.css`.
 
+**Track order:**
+- `pages/Track.jsx` reads `?number=` to pre-fill the order number; the success message in `OrderPanel` links there.
+- `src/recentOrders.js` keeps the last 5 orders placed from this browser in localStorage (key `pnp-recent-orders`). It stores only `{orderNumber, item, date}`, never the phone, name or address. `OrderPanel` saves to it, and the Track page shows them as tap-to-fill buttons with a "Forget these" link.
+- If customers forget their number, the Track page has an "Ask us on WhatsApp" link, and the admin finds the order with the search box on `AdminOrders` (order number, name or phone). Never add tracking by phone alone.
+- `components/OrderProgress.jsx` maps the statuses new, baking, ready and delivered to the steps Received, Baking, Ready and Delivered. Its `STEPS` must match `ORDER_STATUSES`.
+- The WhatsApp message in `OrderPanel` includes the order number once the order has been placed.
+
 **Menu page:** the selected filter is stored in the URL as `?category=<id>`. The footer's category links use this to open a filtered menu.
 
 **Product detail (`pages/ProductDetail.jsx`):**
@@ -121,7 +133,7 @@ There is no test framework yet.
   - `.zoom-img` adds the hover zoom on photos.
   - `Reveal` adds the fade-in when scrolling.
   - `PageHeader` is the dark banner at the top of inner pages.
-- Breakpoints: 900px, 640/560px and 420px.
+- Breakpoints: 900px, 640/560px and 420px. The navbar switches to the hamburger menu at 1000px, because it has 5 links.
 
 **Hero slider:**
 - All the slides share one grid cell, and inactive slides are `inert`.

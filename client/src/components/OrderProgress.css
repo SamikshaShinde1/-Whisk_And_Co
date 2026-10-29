@@ -1,0 +1,111 @@
+.progress__message {
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  line-height: 1.25;
+  margin-bottom: 32px;
+}
+
+.progress__bar {
+  position: relative;
+}
+
+.progress__steps {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* the line runs from the centre of the first dot to the centre of the last one */
+.progress__track {
+  position: absolute;
+  top: 27px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--cream-2);
+}
+
+.progress__fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--rose), var(--gold));
+  transform-origin: left;
+}
+
+.progress__step {
+  position: relative; /* sits above the line */
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.progress__dot {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  border: 3px solid #fffaf4;
+  background: var(--cream-2);
+  color: var(--text-muted);
+}
+
+.progress__label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* finished steps */
+.progress__step.is-done .progress__dot {
+  background: var(--rose);
+  color: var(--espresso);
+}
+
+/* the step the order is on right now */
+.progress__step.is-current .progress__dot {
+  background: var(--espresso);
+  color: var(--cream);
+  box-shadow: 0 0 0 0 rgba(196, 154, 92, 0.6);
+  animation: progress-pulse 2s ease-out infinite;
+}
+
+.progress__step.is-done .progress__label,
+.progress__step.is-current .progress__label {
+  color: var(--espresso);
+}
+
+@keyframes progress-pulse {
+  70% {
+    box-shadow: 0 0 0 14px rgba(196, 154, 92, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(196, 154, 92, 0);
+  }
+}
+
+@media (max-width: 480px) {
+  .progress__track {
+    top: 21px;
+  }
+
+  .progress__dot {
+    width: 46px;
+    height: 46px;
+    font-size: 1.05rem;
+  }
+
+  .progress__label {
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+  }
+}

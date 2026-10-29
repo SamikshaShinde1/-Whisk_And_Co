@@ -10,6 +10,7 @@ import Home from './pages/Home'
 import Menu from './pages/Menu'
 import ProductDetail from './pages/ProductDetail'
 import NotFound from './pages/NotFound'
+import Track from './pages/Track'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminOrders from './pages/admin/AdminOrders'
 
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/menu/:id" element={<ProductDetail />} />
+          <Route path="/track" element={<Track />} />
           <Route path="/admin" element={<Navigate to="/admin/orders" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/orders" element={<AdminOrders />} />

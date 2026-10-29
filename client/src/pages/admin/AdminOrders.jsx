@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'motion/react'
-import { FiKey, FiLogOut, FiRefreshCw, FiPhone } from 'react-icons/fi'
+import { FiKey, FiLogOut, FiRefreshCw, FiPhone, FiSearch, FiX } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
 import PageHeader from '../../components/PageHeader'
 import ChangePassword from './ChangePassword'
@@ -33,6 +33,7 @@ export default function AdminOrders() {
   const [filter, setFilter] = useState('all')
   const [savingId, setSavingId] = useState(null)
   const [showPassword, setShowPassword] = useState(false)
+  const [search, setSearch] = useState('')
 
   const logout = useCallback(
     (message) => {
@@ -91,8 +92,17 @@ export default function AdminOrders() {
     }
   }
 
-  const count = (status) => orders.filter((o) => o.status === status).length
-  const shown = filter === 'all' ? orders : orders.filter((o) => o.status === filter)
+  // Search by order number, customer name or phone (e.g. when a customer forgot their order number)
+  const query = search.trim().toLowerCase()
+  const queryDigits = query.replace(/\D/g, '')
+  const matchesSearch = (o) =>
+    (o.orderNumber || '').toLowerCase().includes(query) ||
+    o.customerName.toLowerCase().includes(query) ||
+    (queryDigits.length >= 3 && o.phone.includes(queryDigits))
+  const found = query ? orders.filter(matchesSearch) : orders
+
+  const count = (status) => found.filter((o) => o.status === status).length
+  const shown = filter === 'all' ? found : found.filter((o) => o.status === filter)
 
   return (
     <>
@@ -122,6 +132,22 @@ export default function AdminOrders() {
             )}
           </AnimatePresence>
 
+          <label className="admin__search">
+            <FiSearch aria-hidden="true" />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by order number, name or phone"
+              aria-label="Search orders"
+            />
+            {search && (
+              <button type="button" onClick={() => setSearch('')} aria-label="Clear search">
+                <FiX />
+              </button>
+            )}
+          </label>
+
           {/* Filter by status, with a count on each pill */}
           <div className="menu__filters admin__filters" role="group" aria-label="Filter by status">
             {['all', ...STATUSES].map((status) => (
@@ -131,7 +157,7 @@ export default function AdminOrders() {
                 onClick={() => setFilter(status)}
                 aria-pressed={filter === status}
               >
-                {status} ({status === 'all' ? orders.length : count(status)})
+                {status} ({status === 'all' ? found.length : count(status)})
               </button>
             ))}
           </div>
@@ -139,7 +165,11 @@ export default function AdminOrders() {
           {error && <p className="admin__error" role="alert">{error}</p>}
 
           {!loading && shown.length === 0 && !error && (
-            <p className="admin__empty">No {filter === 'all' ? '' : `"${filter}" `}orders yet. 🧁</p>
+            <p className="admin__empty">
+              {query
+                ? `No ${filter === 'all' ? '' : `"${filter}" `}orders match "${search.trim()}".`
+                : `No ${filter === 'all' ? '' : `"${filter}" `}orders yet. 🧁`}
+            </p>
           )}
 
           {shown.length > 0 && (
@@ -160,7 +190,7 @@ export default function AdminOrders() {
                     <tr key={order._id}>
                       <td data-label="Placed">
                         {formatPlaced(order.createdAt)}
-                        <small>#{order._id.slice(-6).toUpperCase()}</small>
+                        <small>{order.orderNumber || `#${order._id.slice(-6).toUpperCase()}`}</small>
                       </td>
                       <td data-label="Customer">
                         <strong>{order.customerName}</strong>

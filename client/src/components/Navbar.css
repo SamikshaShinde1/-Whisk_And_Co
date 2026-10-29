@@ -103,7 +103,7 @@
   margin-top: 22px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .navbar__links,
   .navbar__cta {
     display: none;

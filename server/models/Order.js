@@ -20,6 +20,9 @@ const itemSchema = new mongoose.Schema(
 
 const orderSchema = new mongoose.Schema(
   {
+    // Short number customers use to track their order, e.g. "PNP-1042".
+    // "sparse" lets older orders (placed before order numbers existed) have none.
+    orderNumber: { type: String, unique: true, sparse: true },
     customerName: { type: String, required: [true, 'Please enter your name'], trim: true, maxlength: 60 },
     phone: {
       type: String,

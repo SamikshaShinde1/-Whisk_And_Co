@@ -32,6 +32,12 @@ export function createOrder(order) {
   return request('/api/orders', { method: 'POST', body: order })
 }
 
+// Customers: check an order's progress (needs BOTH the order number and the phone number).
+// Sent as a POST so the phone number stays out of the web address.
+export function trackOrder(number, phone) {
+  return request('/api/orders/track', { method: 'POST', body: { number, phone } })
+}
+
 // Admin: log in and get a token
 export function login(email, password) {
   return request('/api/auth/login', { method: 'POST', body: { email, password } })
