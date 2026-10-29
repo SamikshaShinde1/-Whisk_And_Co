@@ -3,16 +3,18 @@
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '')
 
 // Small helper around fetch: sends JSON, reads JSON, and throws a friendly error if something fails.
+// A file upload (FormData) is sent as it is; the browser sets its own Content-Type for it.
 async function request(path, { method = 'GET', body, token } = {}) {
+  const isFile = body instanceof FormData
   let response
   try {
     response = await fetch(`${API_URL}${path}`, {
       method,
       headers: {
-        'Content-Type': 'application/json',
+        ...(!isFile && { 'Content-Type': 'application/json' }),
         ...(token && { Authorization: `Bearer ${token}` }),
       },
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFile ? body : body ? JSON.stringify(body) : undefined,
     })
   } catch {
     throw new Error('Could not reach the bakery server. Please check your internet and try again.')
@@ -36,6 +38,36 @@ export function createOrder(order) {
 // Sent as a POST so the phone number stays out of the web address.
 export function trackOrder(number, phone) {
   return request('/api/orders/track', { method: 'POST', body: { number, phone } })
+}
+
+// The menu customers see, including sold-out items (they have available: false). No archived items.
+export function getProducts() {
+  return request('/api/products')
+}
+
+// Admin: every item, including archived ones
+export function getAllProducts(token) {
+  return request('/api/products/all', { token })
+}
+
+// Admin: add, change, archive (update with { archived: true }) and delete menu items
+export function createProduct(product, token) {
+  return request('/api/products', { method: 'POST', body: product, token })
+}
+
+export function updateProduct(id, changes, token) {
+  return request(`/api/products/${id}`, { method: 'PUT', body: changes, token })
+}
+
+export function deleteProduct(id, token) {
+  return request(`/api/products/${id}`, { method: 'DELETE', token })
+}
+
+// Admin: upload a photo, get back { url }
+export function uploadProductImage(file, token) {
+  const form = new FormData()
+  form.append('image', file)
+  return request('/api/products/upload', { method: 'POST', body: form, token })
 }
 
 // Admin: log in and get a token

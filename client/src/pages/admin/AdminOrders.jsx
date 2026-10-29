@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { AnimatePresence } from 'motion/react'
-import { FiKey, FiLogOut, FiRefreshCw, FiPhone, FiSearch, FiX } from 'react-icons/fi'
+import { FiBookOpen, FiKey, FiLogOut, FiRefreshCw, FiPhone, FiSearch, FiX } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
 import PageHeader from '../../components/PageHeader'
 import ChangePassword from './ChangePassword'
 import { getOrders, updateOrderStatus } from '../../api'
-import { clearAdmin, getAdmin } from '../../adminAuth'
 import { formatPrice } from '../../data/menu'
 import usePageTitle from '../../hooks/usePageTitle'
+import useAdminSession from '../../hooks/useAdminSession'
 import './Admin.css'
 
 // Must match ORDER_STATUSES in server/models/Order.js
@@ -24,8 +24,7 @@ const formatDate = (day) =>
 
 export default function AdminOrders() {
   usePageTitle('Orders')
-  const navigate = useNavigate()
-  const [admin] = useState(getAdmin)
+  const { admin, logout, handleSessionError } = useAdminSession()
 
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -35,21 +34,12 @@ export default function AdminOrders() {
   const [showPassword, setShowPassword] = useState(false)
   const [search, setSearch] = useState('')
 
-  const logout = useCallback(
-    (message) => {
-      clearAdmin()
-      navigate('/admin/login', { replace: true, state: message ? { message } : undefined })
-    },
-    [navigate],
-  )
-
-  // An expired or invalid token sends you back to the login page
+  // Logged-out errors go back to the login page; other errors are shown on this page
   const handleError = useCallback(
     (err) => {
-      if (err.status === 401) logout('Your session has expired. Please log in again.')
-      else setError(err.message)
+      if (!handleSessionError(err)) setError(err.message)
     },
-    [logout],
+    [handleSessionError],
   )
 
   const fetchOrders = useCallback(
@@ -111,6 +101,9 @@ export default function AdminOrders() {
           <button className={`admin__tool admin__tool--refresh ${loading ? 'is-loading' : ''}`} onClick={refresh} disabled={loading}>
             <FiRefreshCw /> {loading ? 'Loading…' : 'Refresh'}
           </button>
+          <Link to="/admin/menu" className="admin__tool admin__tool--menu">
+            <FiBookOpen /> Manage menu
+          </Link>
           <button
             className={`admin__tool admin__tool--key ${showPassword ? 'is-active' : ''}`}
             onClick={() => setShowPassword(!showPassword)}

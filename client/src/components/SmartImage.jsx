@@ -2,9 +2,10 @@ import { useState } from 'react'
 
 // Shows the photo. If the photo is missing, shows a pastel placeholder with an emoji instead.
 export default function SmartImage({ src, alt, emoji = '🧁', tone, className = '', eager = false }) {
-  const [failed, setFailed] = useState(!src)
+  // Remember WHICH photo failed, so a new photo (e.g. once the menu has loaded) gets its own chance
+  const [failedSrc, setFailedSrc] = useState(null)
 
-  if (failed) {
+  if (!src || failedSrc === src) {
     return (
       <div className={`img-fallback ${className}`} style={{ '--tone': tone }} role="img" aria-label={alt}>
         <span aria-hidden="true">{emoji}</span>
@@ -18,7 +19,7 @@ export default function SmartImage({ src, alt, emoji = '🧁', tone, className =
       alt={alt}
       className={className}
       loading={eager ? 'eager' : 'lazy'}
-      onError={() => setFailed(true)}
+      onError={() => setFailedSrc(src)}
     />
   )
 }

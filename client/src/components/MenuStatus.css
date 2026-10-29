@@ -1,0 +1,95 @@
+/* ---------- Shimmer placeholders while the menu loads ---------- */
+.skeleton {
+  border-radius: 10px;
+  background: linear-gradient(100deg, var(--cream-2) 30%, #fbf6ef 50%, var(--cream-2) 70%);
+  background-size: 300% 100%;
+  animation: skeleton-shine 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shine {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.skeleton-card {
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+}
+
+.skeleton-card__photo {
+  aspect-ratio: 1;
+  border-radius: 0;
+}
+
+.skeleton-card__body {
+  display: grid;
+  gap: 12px;
+  padding: 22px;
+}
+
+.skeleton-line {
+  height: 14px;
+}
+
+.skeleton-line--short {
+  width: 40%;
+  height: 10px;
+}
+
+.skeleton-line--price {
+  width: 30%;
+}
+
+/* ---------- Loading / error message ---------- */
+.menu-status {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  margin: 0 0 28px;
+  text-align: center;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.menu-status__slow {
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0;
+  animation: menu-status-show 0.6s ease 4s forwards; /* appears only if loading takes a while */
+}
+
+@keyframes menu-status-show {
+  to {
+    opacity: 1;
+  }
+}
+
+.menu-status--error {
+  gap: 16px;
+  padding: 36px 20px;
+  border-radius: var(--radius);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+.menu-status--error p {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+
+  .menu-status__slow {
+    animation: none;
+    opacity: 1;
+  }
+}

@@ -11,6 +11,7 @@
 
 .signature__price {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   gap: 8px;
   margin: 8px 0 32px;

@@ -2,15 +2,18 @@ import { Link } from 'react-router-dom'
 import { FaWhatsapp } from 'react-icons/fa'
 import Reveal from '../Reveal'
 import SmartImage from '../SmartImage'
-import { formatPrice, getItem } from '../../data/menu'
+import { formatPrice } from '../../data/menu'
 import { SITE, whatsappLink } from '../../config/site'
+import useProducts, { findProduct } from '../../hooks/useProducts'
 import './PreorderSection.css'
 
-// Items shown as small cards in this section
-const PREORDER_IDS = ['custom-birthday-cake', 'assorted-cookie-box', 'sourdough']
+// Items shown as small cards in this section (their web address names in the menu)
+const PREORDER_SLUGS = ['custom-birthday-cake', 'assorted-cookie-box', 'sourdough']
 
 export default function PreorderSection() {
-  const items = PREORDER_IDS.map(getItem)
+  const { products } = useProducts()
+  // Skips any item that was deleted (sold-out ones stay, in grey)
+  const items = PREORDER_SLUGS.map((slug) => findProduct(products, slug)).filter(Boolean)
 
   return (
     <section className="section section--blush preorder" id="preorder">
@@ -29,16 +32,20 @@ export default function PreorderSection() {
 
         <div className="preorder__list">
           {items.map((item, i) => (
-            <Reveal key={item.id} delay={i * 0.1} y={24}>
-              <Link to={`/menu/${item.id}`} className="mini-card">
-                <div className="mini-card__photo zoom-img">
+            <Reveal key={item.slug} delay={i * 0.1} y={24}>
+              <Link to={`/menu/${item.slug}`} className="mini-card">
+                <div className={`mini-card__photo zoom-img ${item.available ? '' : 'is-soldout'}`}>
                   <SmartImage src={item.image} alt={item.name} />
                 </div>
                 <div className="mini-card__body">
                   <h3>{item.name}</h3>
                   <span>{formatPrice(item.price, item.priceFrom)} / {item.unit}</span>
                 </div>
-                <span className="mini-card__cta">Preorder</span>
+                {item.available ? (
+                  <span className="mini-card__cta">Preorder</span>
+                ) : (
+                  <span className="soldout-badge">Sold out</span>
+                )}
               </Link>
             </Reveal>
           ))}

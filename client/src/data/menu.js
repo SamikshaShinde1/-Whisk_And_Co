@@ -1,8 +1,6 @@
-// The full menu: categories, items, prices (₹) and photos.
+// Menu categories, price formatting, and the starting menu items.
 //
-// HOW TO USE YOUR OWN PHOTO
-// 1. Put the photo in client/public/images, e.g. client/public/images/red-velvet.jpg
-// 2. Change that item's image to:  image: '/images/red-velvet.jpg'
+// To change items, prices or photos, use the admin page: Staff login → Manage menu.
 
 // Builds a link to a free Unsplash photo from its id.
 export const unsplash = (id, width = 800) =>
@@ -18,6 +16,9 @@ export const CATEGORIES = [
   { id: 'beverages', name: 'Beverages', emoji: '☕', tone: '#d9c2a7' },
 ]
 
+// MENU is the STARTING menu only. "npm run seed-products" (in server/) copied it into MongoDB once.
+// The live menu now comes from the database and is edited on the website at /admin/menu,
+// so changing an item here does nothing on the website any more.
 export const MENU = [
   // ---------- Cakes ----------
   {
@@ -274,14 +275,9 @@ export const MENU = [
 export const CRAFT_IMAGE = unsplash('1517686469429-8bdb88b9f907', 1000)
 
 // ---------- Helpers ----------
-export const BEST_SELLERS = MENU.filter((item) => item.bestSeller)
-
-export function getItem(id) {
-  return MENU.find((item) => item.id === id)
-}
-
+// (If a category was ever removed, show its id instead of breaking the page.)
 export function getCategory(id) {
-  return CATEGORIES.find((category) => category.id === id)
+  return CATEGORIES.find((category) => category.id === id) || { id, name: id, emoji: '🧁', tone: '#f6d6cf' }
 }
 
 // 650 -> "₹650", and "From ₹900" for items with a starting price

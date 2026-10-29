@@ -5,14 +5,20 @@ import { formatPrice, getCategory } from '../data/menu'
 import './ProductCard.css'
 
 // A menu item card. Clicking it opens the item's detail page.
+// Sold-out items stay on the menu, with a grey photo and a "Sold out" label.
 export default function ProductCard({ item }) {
   const category = getCategory(item.category)
+  const soldOut = !item.available
 
   return (
-    <Link to={`/menu/${item.id}`} className="product-card">
-      <div className="product-card__media zoom-img">
+    <Link to={`/menu/${item.slug}`} className={`product-card ${soldOut ? 'product-card--soldout' : ''}`}>
+      <div className={`product-card__media zoom-img ${soldOut ? 'is-soldout' : ''}`}>
         <SmartImage src={item.image} alt={item.name} emoji={category.emoji} tone={category.tone} />
-        {item.bestSeller && <span className="product-card__badge">Best seller</span>}
+        {soldOut ? (
+          <span className="soldout-badge product-card__badge-pos">Sold out</span>
+        ) : (
+          item.bestSeller && <span className="product-card__badge">Best seller</span>
+        )}
       </div>
       <div className="product-card__body">
         <span className="product-card__category">{category.name}</span>

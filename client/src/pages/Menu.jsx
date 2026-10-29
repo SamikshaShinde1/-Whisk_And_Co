@@ -2,21 +2,24 @@ import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import PageHeader from '../components/PageHeader'
 import ProductCard from '../components/ProductCard'
-import { CATEGORIES, MENU } from '../data/menu'
+import { LoadError, LoadingCards, LoadingNote } from '../components/MenuStatus'
+import { CATEGORIES } from '../data/menu'
 import usePageTitle from '../hooks/usePageTitle'
+import useProducts from '../hooks/useProducts'
 import './Menu.css'
 
 const FILTERS = [{ id: 'all', name: 'All' }, ...CATEGORIES]
 
 export default function Menu() {
   usePageTitle('Menu')
+  const { products, loading, error, retry } = useProducts()
 
   // The chosen category lives in the URL (e.g. /menu?category=cakes), so links can open a filter.
   const [searchParams, setSearchParams] = useSearchParams()
   const requested = searchParams.get('category')
   const active = CATEGORIES.some((c) => c.id === requested) ? requested : 'all'
 
-  const items = active === 'all' ? MENU : MENU.filter((item) => item.category === active)
+  const items = active === 'all' ? products : products.filter((item) => item.category === active)
 
   const choose = (id) => {
     setSearchParams(id === 'all' ? {} : { category: id }, { state: { keepScroll: true } })
@@ -45,16 +48,29 @@ export default function Menu() {
             ))}
           </div>
 
-          <p className="menu__count" aria-live="polite">
-            Showing {items.length} {items.length === 1 ? 'item' : 'items'}
-          </p>
+          {loading && (
+            <>
+              <LoadingNote />
+              <div className="menu__grid">
+                <LoadingCards count={6} />
+              </div>
+            </>
+          )}
+
+          {error && <LoadError message={error} onRetry={retry} />}
+
+          {!loading && !error && (
+            <p className="menu__count" aria-live="polite">
+              Showing {items.length} {items.length === 1 ? 'item' : 'items'}
+            </p>
+          )}
 
           {/* "layout" makes cards slide smoothly into their new places when the filter changes */}
           <motion.div layout className="menu__grid">
             <AnimatePresence mode="popLayout">
               {items.map((item) => (
                 <motion.div
-                  key={item.id}
+                  key={item.slug}
                   layout
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}

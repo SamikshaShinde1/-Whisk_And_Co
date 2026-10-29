@@ -34,6 +34,24 @@
   text-transform: uppercase;
 }
 
+/* "Sold out" label in the photo's corner */
+.product-card__badge-pos {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+}
+
+/* sold out: grey photo (from .is-soldout) and quieter text */
+.product-card--soldout h3,
+.product-card--soldout .product-card__price {
+  color: var(--text-muted);
+}
+
+.product-card--soldout:hover .is-soldout img {
+  filter: grayscale(0.6);
+  opacity: 0.8;
+}
+
 .product-card__body {
   display: flex;
   flex-direction: column;

@@ -1,14 +1,20 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../Reveal'
 import SmartImage from '../SmartImage'
-import { formatPrice, getItem } from '../../data/menu'
+import { formatPrice } from '../../data/menu'
+import useProducts, { findProduct } from '../../hooks/useProducts'
 import './SignatureBake.css'
 
-// "Signature bake": one special item, shown big
-const SIGNATURE_ID = 'fudge-brownie'
+// "Signature bake": one special item, shown big (its web address name in the menu)
+const SIGNATURE_SLUG = 'fudge-brownie'
 
 export default function SignatureBake() {
-  const item = getItem(SIGNATURE_ID)
+  const { products, loading } = useProducts()
+  const item = findProduct(products, SIGNATURE_SLUG)
+
+  // Hide the section if the brownie was deleted
+  if (!loading && !item) return null
+  const soldOut = item && !item.available
 
   return (
     <section className="section signature">
@@ -20,17 +26,20 @@ export default function SignatureBake() {
             Dense, gooey and deeply chocolatey, with that crackly, shiny top everyone fights over.
             Baked in small trays and cut into generous squares, it is the one bake we are proudest of.
           </p>
-          <div className="signature__price">
-            <strong>{formatPrice(item.price)}</strong>
-            <span>/ {item.unit}</span>
-          </div>
-          <Link to={`/menu/${item.id}`} className="btn btn-dark">Order a brownie</Link>
+          {item && (
+            <div className="signature__price">
+              <strong>{formatPrice(item.price, item.priceFrom)}</strong>
+              <span>/ {item.unit}</span>
+              {soldOut && <span className="soldout-badge">Sold out</span>}
+            </div>
+          )}
+          <Link to={`/menu/${SIGNATURE_SLUG}`} className="btn btn-dark">Order a brownie</Link>
         </Reveal>
 
         <Reveal className="signature__media" delay={0.15}>
           <div className="signature__circle" aria-hidden="true" />
-          <div className="signature__photo zoom-img">
-            <SmartImage src={item.image} alt={item.name} emoji="🍫" />
+          <div className={`signature__photo zoom-img ${soldOut ? 'is-soldout' : ''}`}>
+            <SmartImage src={item?.image} alt={item?.name || 'Fudge brownie'} emoji="🍫" />
           </div>
         </Reveal>
       </div>

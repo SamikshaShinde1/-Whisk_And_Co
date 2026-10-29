@@ -78,6 +78,43 @@
   margin-bottom: 32px;
 }
 
+/* "Sold out" label in the photo's corner */
+.product__badge-pos {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+/* Shown instead of the order form when the item is sold out */
+.product__soldout {
+  padding: 28px;
+  border-radius: var(--radius);
+  border: 1.5px dashed var(--rose);
+  background: #fffaf4;
+}
+
+.product__soldout h2 {
+  margin: 14px 0 8px;
+  font-size: 1.7rem;
+}
+
+.product__soldout p {
+  margin: 0 0 22px;
+  color: var(--text-muted);
+}
+
+/* grey shapes while the menu loads */
+.product__info--loading {
+  display: grid;
+  gap: 18px;
+  padding-top: 12px;
+}
+
+.product__title-skeleton {
+  height: 56px;
+  width: 80%;
+}
+
 .product__suggestions {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

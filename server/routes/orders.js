@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import { rateLimit } from 'express-rate-limit'
+import mongoose from 'mongoose'
 import Order, { ORDER_STATUSES } from '../models/Order.js'
+import Product from '../models/Product.js'
 import { nextOrderNumber } from '../models/Counter.js'
 import requireAdmin from '../middleware/requireAdmin.js'
 
@@ -28,10 +30,24 @@ const trackLimiter = rateLimit({
 router.post('/', orderLimiter, async (req, res) => {
   const { customerName, phone, items, note, deliveryType, address, date } = req.body
 
-  // Keep only the fields we expect from each item
-  const cleanItems = Array.isArray(items)
-    ? items.map(({ name, price, qty }) => ({ name, price, qty }))
-    : []
+  // The browser sends only which item and how many: [{ slug: 'red-velvet-cake', qty: 2 }].
+  // The name and price always come from our database, so nobody can change a price.
+  const wanted = Array.isArray(items) ? items : []
+  const slugs = wanted.map((item) => String(item?.slug || ''))
+  // mongoose.trusted: this $in is ours (sanitizeFilter would otherwise block it); every slug is a plain string
+  const products = await Product.find({ slug: mongoose.trusted({ $in: slugs }) })
+
+  const cleanItems = []
+  for (const item of wanted) {
+    const product = products.find((p) => p.slug === String(item?.slug || ''))
+    if (!product || product.archived) {
+      return res.status(400).json({ message: 'One of the items is no longer on the menu. Please refresh the page.' })
+    }
+    if (!product.available) {
+      return res.status(400).json({ message: `Sorry, ${product.name} is sold out right now.` })
+    }
+    cleanItems.push({ name: product.name, price: product.price, qty: item.qty })
+  }
 
   // Work out the total on the server instead of trusting the number sent by the browser
   const total = cleanItems.reduce((sum, item) => sum + Number(item.price) * Number(item.qty), 0)

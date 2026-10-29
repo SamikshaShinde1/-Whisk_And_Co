@@ -13,6 +13,7 @@ import NotFound from './pages/NotFound'
 import Track from './pages/Track'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminOrders from './pages/admin/AdminOrders'
+import AdminMenu from './pages/admin/AdminMenu'
 
 // The intro plays once per visit (until the browser tab is closed).
 function shouldShowIntro() {
@@ -48,11 +49,12 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/menu/:id" element={<ProductDetail />} />
+          <Route path="/menu/:slug" element={<ProductDetail />} />
           <Route path="/track" element={<Track />} />
           <Route path="/admin" element={<Navigate to="/admin/orders" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin/menu" element={<AdminMenu />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

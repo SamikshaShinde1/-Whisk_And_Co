@@ -6,6 +6,7 @@ import cors from 'cors'
 import { connectDB } from './config/db.js'
 import orderRoutes from './routes/orders.js'
 import authRoutes from './routes/auth.js'
+import productRoutes from './routes/products.js'
 import { notFound, errorHandler } from './middleware/errors.js'
 
 dotenv.config({ quiet: true }) // loads the values from server/.env into process.env
@@ -37,6 +38,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/orders', orderRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/products', productRoutes)
 
 app.use(notFound)
 app.use(errorHandler)

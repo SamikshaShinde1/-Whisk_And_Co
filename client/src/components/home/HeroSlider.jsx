@@ -3,25 +3,28 @@ import { Link } from 'react-router-dom'
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react'
 import { FiArrowRight } from 'react-icons/fi'
 import SmartImage from '../SmartImage'
-import { formatPrice, getItem } from '../../data/menu'
+import { formatPrice } from '../../data/menu'
+import useProducts, { findProduct } from '../../hooks/useProducts'
 import './HeroSlider.css'
 
-// Each slide shows one product from the menu (photo + price come from data/menu.js).
+// Each slide shows one product from the menu (its photo + price come from the database).
+// "slug" is the item's web address name. If that item is sold out, the photo turns grey;
+// if it was deleted, the slide still shows its words, with a placeholder picture and a link to the menu.
 const SLIDES = [
   {
-    itemId: 'chocolate-truffle-cake',
+    slug: 'chocolate-truffle-cake',
     script: 'freshly baked',
     title: 'Baked with love, served with joy',
     text: 'Rich cakes, soft breads and little treats, made fresh in our home kitchen and baked to order.',
   },
   {
-    itemId: 'chocolate-chip-cookies',
+    slug: 'chocolate-chip-cookies',
     script: 'little treats',
     title: 'Small bites, big smiles',
     text: 'Cupcakes, cookies and brownies for every sweet craving, and for every celebration in between.',
   },
   {
-    itemId: 'sourdough',
+    slug: 'sourdough',
     script: 'every morning',
     title: 'Fresh bread, warm hearts',
     text: 'Slow-fermented sourdough and soft everyday loaves with crackly golden crusts.',
@@ -37,6 +40,7 @@ const fadeUp = {
 
 export default function HeroSlider() {
   const [index, setIndex] = useState(0)
+  const { products } = useProducts()
   const next = () => setIndex((i) => (i + 1) % SLIDES.length)
 
   // Auto-play: move on every 6 seconds (the timer restarts when the slide changes).
@@ -87,11 +91,11 @@ export default function HeroSlider() {
           onDragEnd={onDragEnd}
         >
           {SLIDES.map((slide, i) => {
-            const item = getItem(slide.itemId)
+            const item = findProduct(products, slide.slug)
             const active = i === index
             return (
               <motion.div
-                key={slide.itemId}
+                key={slide.slug}
                 className="hero__slide"
                 aria-hidden={!active}
                 inert={!active}
@@ -107,7 +111,7 @@ export default function HeroSlider() {
                   <motion.h1 variants={fadeUp}>{slide.title}</motion.h1>
                   <motion.p variants={fadeUp}>{slide.text}</motion.p>
                   <motion.div className="hero__actions" variants={fadeUp}>
-                    <Link to={`/menu/${item.id}`} className="btn btn-rose">Order now</Link>
+                    <Link to={item ? `/menu/${item.slug}` : '/menu'} className="btn btn-rose">Order now</Link>
                     <Link to="/menu" className="btn btn-outline-light">View menu</Link>
                   </motion.div>
                 </div>
@@ -120,13 +124,15 @@ export default function HeroSlider() {
                   }}
                 >
                   <motion.div className="hero__tilt" style={{ rotateX, rotateY }}>
-                    <div className="hero__photo">
-                      <SmartImage src={item.image} alt={item.name} emoji="🎂" eager={i === 0} />
+                    <div className={`hero__photo ${item && !item.available ? 'is-soldout' : ''}`}>
+                      <SmartImage src={item?.image} alt={item?.name || ''} emoji="🎂" eager={i === 0} />
                     </div>
-                    <div className="hero__tag">
-                      <span>{item.name}</span>
-                      <strong>{formatPrice(item.price)}</strong>
-                    </div>
+                    {item && (
+                      <div className="hero__tag">
+                        <span>{item.name}</span>
+                        <strong>{item.available ? formatPrice(item.price, item.priceFrom) : 'Sold out'}</strong>
+                      </div>
+                    )}
                   </motion.div>
                 </motion.div>
               </motion.div>
@@ -138,7 +144,7 @@ export default function HeroSlider() {
           <div className="hero__dots">
             {SLIDES.map((slide, i) => (
               <button
-                key={slide.itemId}
+                key={slide.slug}
                 className={`hero__dot ${i === index ? 'is-active' : ''}`}
                 onClick={() => setIndex(i)}
                 aria-label={`Go to slide ${i + 1}`}

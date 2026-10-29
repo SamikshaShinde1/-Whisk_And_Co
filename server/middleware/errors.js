@@ -20,6 +20,19 @@ export function errorHandler(err, req, res, next) {
   if (err.type === 'entity.parse.failed') {
     return res.status(400).json({ message: 'Invalid request.' })
   }
+  // Photo upload problems (multer)
+  if (err.name === 'MulterError') {
+    const message = err.code === 'LIMIT_FILE_SIZE' ? 'That photo is too big. Please use one under 5 MB.' : 'Could not read that photo.'
+    return res.status(400).json({ message })
+  }
+  // Two items got the same unique value at the same moment (very rare)
+  if (err.code === 11000) {
+    return res.status(409).json({ message: 'That already exists. Please try again.' })
+  }
+  // Errors we created ourselves with a status and a friendly message
+  if (err.status >= 400 && err.status < 500) {
+    return res.status(err.status).json({ message: err.message })
+  }
 
   console.error(err)
   res.status(500).json({ message: 'Something went wrong on our side. Please try again.' })

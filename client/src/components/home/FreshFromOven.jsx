@@ -2,11 +2,15 @@ import { Link } from 'react-router-dom'
 import { FiArrowRight } from 'react-icons/fi'
 import Reveal from '../Reveal'
 import ProductCard from '../ProductCard'
-import { BEST_SELLERS } from '../../data/menu'
+import { LoadError, LoadingCards } from '../MenuStatus'
+import useProducts from '../../hooks/useProducts'
 import './FreshFromOven.css'
 
-// "Fresh from the oven": our best sellers
+// "Fresh from the oven": our best sellers (items marked "Best seller" on the Manage menu page)
 export default function FreshFromOven() {
+  const { products, loading, error, retry } = useProducts()
+  const bestSellers = products.filter((item) => item.bestSeller)
+
   return (
     <section className="section">
       <div className="container">
@@ -16,9 +20,12 @@ export default function FreshFromOven() {
           <p className="section-text">The bakes our customers order again and again.</p>
         </Reveal>
 
+        {error && <LoadError message={error} onRetry={retry} />}
+
         <div className="fresh__grid">
-          {BEST_SELLERS.map((item, i) => (
-            <Reveal key={item.id} delay={i * 0.12}>
+          {loading && <LoadingCards count={3} />}
+          {bestSellers.map((item, i) => (
+            <Reveal key={item.slug} delay={i * 0.12}>
               <ProductCard item={item} />
             </Reveal>
           ))}

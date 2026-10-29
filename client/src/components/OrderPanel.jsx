@@ -57,9 +57,9 @@ export default function OrderPanel({ item }) {
       const saved = await createOrder({
         ...form,
         address: form.deliveryType === 'delivery' ? form.address : '',
-        items: [{ name: item.name, price: item.price, qty }],
+        // Only which item and how many: the server looks up the real name and price
+        items: [{ slug: item.slug, qty }],
         note,
-        total,
       })
       setOrderNumber(saved.orderNumber || '')
       // Save the number in this browser, so the Track page can offer it next time

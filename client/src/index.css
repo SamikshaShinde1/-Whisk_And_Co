@@ -263,6 +263,31 @@ p {
 }
 
 /* =========================================================
+   Sold out (used on cards, the product page and the Home page)
+   ========================================================= */
+
+/* Put .is-soldout on the box around a photo: the photo turns grey */
+.is-soldout img,
+.is-soldout .img-fallback {
+  filter: grayscale(1);
+  opacity: 0.6;
+  transition: filter 0.4s, opacity 0.4s, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* The little "Sold out" label */
+.soldout-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #fbe3e1;
+  color: #8a2a22;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
    Phones
    ========================================================= */
 @media (max-width: 640px) {

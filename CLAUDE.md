@@ -32,13 +32,23 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - `config/db.js` sets `mongoose.set('sanitizeFilter', true)` to block NoSQL injection.
 
 **Routes:**
-- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. Only the item fields `{name, price, qty}` are kept, the server recalculates `total` and ignores the client's total, and `address` is cleared for pickup. The order is validated first, and only then gets an `orderNumber` (`PNP-1001`, `PNP-1002`, …) from `models/Counter.js`, which uses an atomic `$inc`. This way, rejected orders don't use up numbers. The response is only `{_id, orderNumber, total, status}`.
+- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. The client sends items as `{slug, qty}` only. The server looks up each product (using `mongoose.trusted` for its own `$in`, because `sanitizeFilter` would block it), takes the name and price from the database, and rejects unknown or sold-out items with a 400. It ignores any client total, and `address` is cleared for pickup. The order is validated first, and only then gets an `orderNumber` (`PNP-1001`, `PNP-1002`, …) from `models/Counter.js`, which uses an atomic `$inc`. This way, rejected orders don't use up numbers. The response is only `{_id, orderNumber, total, status}`.
 - `POST /api/orders/track` (public): body `{number, phone}`. It is a POST so the phone never appears in URLs, browser history or server logs. Rate-limited to 30 per 15 minutes.
   - Returns the order only when **both** the order number and the phone match.
   - It `.select()`s only the safe fields (`orderNumber`, `items`, `total`, `date`, `deliveryType`, `status`, `createdAt`), so no name, phone, address or note is returned.
   - A wrong number and a wrong phone give the same 404 message.
 - `GET /api/orders` (admin): all orders, newest first.
 - `PATCH /api/orders/:id` (admin): body `{status}`, which must be one of `ORDER_STATUSES` (exported from `models/Order.js`).
+- `GET /api/products` (public): every item that is not archived, including sold-out ones (`available: false`), oldest `_id` first (the original menu order).
+  - Sold-out items stay visible on the site in grey; the orders route refuses them.
+  - The filter is `archived: mongoose.trusted({ $ne: true })`, so items saved before the `archived` field existed still count as not archived.
+- `GET /api/products/all` (admin): every item, including archived ones, for the Manage menu page.
+- **Archive instead of delete**, like Instagram: `PUT {archived: true}` hides an item from the website and from ordering, and `{archived: false}` restores it. `DELETE` removes an item for good.
+- `POST /api/products`, `PUT /api/products/:id` and `DELETE /api/products/:id` (admin):
+  - Only the fields listed in `EDITABLE` in `routes/products.js` are accepted.
+  - The `slug` is created once from the name (`-2`, `-3`… if it is taken) and never changes, so shared links keep working.
+  - `PUT` accepts partial bodies (the Sold out switch sends only `{available}`) and runs validators.
+- `POST /api/products/upload` (admin): multipart field `image`, JPG/PNG/WebP up to 5 MB, held in memory by multer and sent to Cloudinary (`config/cloudinary.js`, folder `pastel-n-postery`, resized to at most 1600px wide). Returns `{url}`. Returns 503 if the `CLOUDINARY_*` keys are missing; the rest of the server works without them. The Cloudinary keys are read when needed, because route modules are imported before `dotenv.config()` runs.
 - `PATCH /api/auth/password` (admin): body `{currentPassword, newPassword}` (new password at least 8 characters). A wrong current password returns **400, not 401**, so the client does not log the user out.
 - `POST /api/auth/login`: rate-limited to 5 per 15 minutes. Returns `{token, email}`, where the token is a 7-day HS256 JWT. `middleware/requireAdmin.js` checks `Authorization: Bearer <token>`.
 
@@ -46,6 +56,8 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - The validation rules live in `models/Order.js`: a 10-digit phone, `date` as a `YYYY-MM-DD` string, an integer `qty` from 1 to 50, at least one item, and an address required for delivery.
 - `orderNumber` is `unique` and `sparse`, because orders placed before this feature have no number. The admin table shows `#<last 6 characters of the id>` for those.
 - `models/Admin.js` stores a bcrypt hash of the password.
+- `models/Product.js`: `slug`, `name`, `category`, `price`, `priceFrom` (shows "From ₹…"), `unit`, `description`, `image` (an https link or `/images/...`), `bestSeller` and `available`. `CATEGORY_IDS` must match `CATEGORIES` in `client/src/data/menu.js`.
+- `scripts/seedProducts.js` (`npm run seed-products`) copies `MENU` from `client/src/data/menu.js` into MongoDB, one item at a time in menu order. It skips slugs that already exist, so it never overwrites the admin's edits.
 
 **Admin account:** `scripts/createAdmin.js` creates or updates the admin from `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, with bcrypt cost 12 and a minimum password length of 8.
 
@@ -67,6 +79,7 @@ Run these from `server/`:
 npm run dev            # API at http://localhost:5000, restarts when files change (node --watch)
 npm start              # run without watching (used on Render)
 npm run create-admin   # create or update the admin login from server/.env
+npm run seed-products  # one time: copy the starting menu into MongoDB (safe to re-run)
 ```
 
 There is no test framework yet.
@@ -75,7 +88,7 @@ There is no test framework yet.
 
 **Libraries:**
 - React 19
-- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:id`, `/track`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders` and `*` (the 404 page). Admin pages skip the intro and the floating buttons.
+- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:slug`, `/track`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders`, `/admin/menu` and `*` (the 404 page). Admin pages skip the intro and the floating buttons.
 - Motion: import from `motion/react`.
 - React Icons: `react-icons/fi` and `react-icons/fa`.
 - Plain CSS, with one CSS file per component.
@@ -84,15 +97,25 @@ There is no test framework yet.
 **Single sources of truth:**
 - `src/config/site.js` (`SITE`): name, Instagram link, opening hours and preorder note.
   - `whatsappLink(message)` builds every WhatsApp link from `VITE_WHATSAPP_NUMBER`.
-- `src/data/menu.js`: `CATEGORIES`, `MENU`, `BEST_SELLERS` (items marked `bestSeller: true`) and `CRAFT_IMAGE`.
-  - Helpers: `getItem`, `getCategory`, `formatPrice(amount, from)` and `unsplash(id, width)`.
-  - Each item's `image` is either an Unsplash URL or `/images/<file>` for the owner's own photos.
-  - Several of the Unsplash IDs the owner supplied show the wrong food. These are listed in the chat history, and the owner plans to replace them with their own photos.
+- **The live menu is in MongoDB** and is edited at `/admin/menu`. Items are identified by `slug` everywhere in the client (links, keys, `findProduct`), not `id`.
+- `src/hooks/useProducts.js`: `useProducts()` returns `{products, loading, error, retry}`.
+  - It loads the menu once per visit, shares the same request between every section, and sorts it by `CATEGORIES` order.
+  - `clearMenuCache()` is called after every admin change. `findProduct(products, slug)` finds one item.
+  - Home sections refer to items by slug (`HeroSlider` `SLIDES`, `SIGNATURE_SLUG`, `PREORDER_SLUGS`) and must cope with a deleted item.
+- **Sold out:** items with `available: false` stay on the menu.
+  - Put `.is-soldout` on the photo's wrapper to make the photo grey, and use `.soldout-badge` for the label (both in `index.css`).
+  - `ProductCard`, the Home sections and `ProductDetail` all do this.
+  - `ProductDetail` shows a "Sold out for now" box with a WhatsApp "Ask when it's back" button instead of `OrderPanel`.
+  - "You may also like" only suggests available items.
+- `components/MenuStatus.jsx`: `LoadingCards` (shimmer cards, placed inside the real grid), `LoadingNote` (adds a "warming up" line after 4 seconds, because Render's free tier sleeps) and `LoadError` (with a Try again button).
+- `src/data/menu.js`: `CATEGORIES`, `CRAFT_IMAGE`, `getCategory` (with a fallback), `formatPrice(amount, from)` and `unsplash(id, width)`.
+  - `MENU` is now only seed data for `npm run seed-products`. Editing it does not change the website.
+  - Several of the Unsplash photos show the wrong food. The owner plans to replace them with their own photos, through the photo upload on `/admin/menu`.
 - `src/data/reviews.js`: **placeholder reviews, not real ones**. They must be replaced with real customer reviews before launch.
 - `src/api.js`: every backend call goes through `request()`, which reads `VITE_API_URL` (default `http://localhost:5000`), adds a Bearer token when one is given, and throws errors with a friendly `.message`. Admin calls should be added here.
 
 **Images:**
-- `SmartImage` shows a tinted emoji placeholder when a photo fails to load.
+- `SmartImage` shows a tinted emoji placeholder when a photo is missing or fails to load. It remembers which `src` failed, so a photo that arrives later still gets shown.
 - `LogoMark` shows a "P" badge when `public/logo.png` is missing. The owner hasn't added `logo.png` yet.
 
 **App shell (`App.jsx`):**
@@ -102,6 +125,14 @@ There is no test framework yet.
 
 **Admin pages (`pages/admin/`):**
 - `src/adminAuth.js` keeps `{token, email}` in localStorage under the key `pnp-admin`.
+- `hooks/useAdminSession.js` gives `{admin, logout, handleSessionError}` to every admin page. `handleSessionError(err)` returns true after handling a 401.
+- `AdminMenu` (`/admin/menu`) shows:
+  - category and "Sold out" filter pills,
+  - a list with a Sold out `role="switch"` toggle (changed on screen straight away and undone if the API call fails), Edit and Delete,
+  - an "Archived" filter pill, where archived items have Restore and "Delete forever" buttons,
+  - `ProductForm` (add or edit, photo upload with a local preview, or a pasted link), in `components/Modal.jsx` (the native `<dialog>`),
+  - a "Remove?" dialog (also in `Modal`) with two choices: Archive or "Delete forever". For an item that is already archived, it only offers "Delete forever".
+- `AdminOrders` and `AdminMenu` link to each other from their toolbars.
 - `AdminOrders` redirects to the login page when there is no token. A 401 from the API clears the token and returns to the login page with a message (passed in navigation state).
 - Status changes are shown on screen straight away and undone if the API call fails.
 - `STATUSES` must match `ORDER_STATUSES` on the server.
@@ -118,7 +149,7 @@ There is no test framework yet.
 **Menu page:** the selected filter is stored in the URL as `?category=<id>`. The footer's category links use this to open a filtered menu.
 
 **Product detail (`pages/ProductDetail.jsx`):**
-- `OrderPanel` has `key={item.id}`, so its form resets when you open another item.
+- `OrderPanel` has `key={item.slug}`, so its form resets when you open another item. It sends `items: [{slug, qty}]`; the server sets the name and price.
 - `OrderPanel` holds the quantity, the note ("Message on cake" for cakes) and the form.
 - It posts the order with `createOrder` and builds the pre-typed WhatsApp message from the same state.
 

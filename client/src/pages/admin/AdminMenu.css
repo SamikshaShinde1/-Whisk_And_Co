@@ -1,0 +1,509 @@
+/* ---------- Messages ---------- */
+.admin-menu__notice {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #d7eedd;
+  color: #1f5c38;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+/* ---------- The list of items ---------- */
+.admin-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.admin-item {
+  display: grid;
+  grid-template-columns: 76px 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 18px 12px 12px;
+  border-radius: var(--radius-sm);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+  transition: opacity 0.3s;
+}
+
+.admin-item__photo {
+  width: 76px;
+  height: 76px;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.admin-item__photo img,
+.admin-item__photo .img-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  font-size: 2rem;
+}
+
+/* sold-out items look faded */
+.admin-item.is-soldout .admin-item__photo,
+.admin-item.is-soldout .admin-item__info > strong {
+  opacity: 0.5;
+}
+
+.admin-item.is-soldout .admin-item__photo {
+  filter: grayscale(1);
+}
+
+.admin-item__info {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.admin-item__info > strong {
+  font-size: 1.02rem;
+}
+
+.admin-item__info > span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.admin-item__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-item__badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--espresso);
+  color: var(--cream);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-item__badge--soldout {
+  background: #fbe3e1;
+  color: #8a2a22;
+}
+
+.admin-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Sold out switch ---------- */
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 118px;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.switch:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.switch__track {
+  position: relative;
+  flex-shrink: 0;
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: #e3c9c4;
+  transition: background 0.25s;
+}
+
+.switch__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(43, 26, 20, 0.25);
+  transition: transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.switch[aria-checked='true'] .switch__track {
+  background: #3e9b62;
+}
+
+.switch[aria-checked='true'] .switch__thumb {
+  transform: translateX(18px);
+}
+
+.switch:focus-visible .switch__track {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ---------- Small Edit / Delete buttons ---------- */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px solid rgba(43, 26, 20, 0.15);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--espresso);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.25s;
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--rose);
+  border-color: var(--rose);
+  transform: translateY(-2px);
+}
+
+.icon-btn--danger:hover:not(:disabled) {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: #fff;
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.btn-danger {
+  background: #c0392b;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #a93226;
+}
+
+/* ---------- "Remove?" pop-up: Archive or Delete forever ---------- */
+.admin-menu__confirm {
+  margin: 0 0 24px;
+}
+
+.remove-choices {
+  display: grid;
+  gap: 12px;
+}
+
+.remove-choice {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1.5px solid rgba(43, 26, 20, 0.12);
+  border-radius: var(--radius-sm);
+  background: var(--cream);
+  color: var(--espresso);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
+}
+
+.remove-choice:hover:not(:disabled) {
+  background: var(--blush);
+  border-color: var(--rose);
+  transform: translateY(-2px);
+}
+
+.remove-choice:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.remove-choice__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 11px;
+  border-radius: 50%;
+  background: #fffaf4;
+}
+
+.remove-choice strong,
+.remove-choice small {
+  display: block;
+}
+
+.remove-choice strong {
+  font-size: 1rem;
+}
+
+.remove-choice small {
+  margin-top: 2px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.remove-choice--danger strong,
+.remove-choice--danger .remove-choice__icon {
+  color: #c0392b;
+}
+
+.remove-choice--danger:hover:not(:disabled) {
+  background: #fbe3e1;
+  border-color: #e8a59d;
+}
+
+.remove-choices__cancel {
+  justify-self: center;
+  margin-top: 4px;
+  padding: 8px 16px;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.remove-choices__cancel:hover {
+  color: var(--espresso);
+  text-decoration: underline;
+}
+
+.admin__filters .menu__pill svg {
+  vertical-align: -2px;
+}
+
+.admin-menu__tip--center {
+  max-width: 560px;
+  margin: 0 auto 22px;
+  text-align: center;
+}
+
+.admin-item__badge--archived {
+  background: var(--cream-2);
+  color: var(--espresso);
+}
+
+.icon-btn--restore:hover:not(:disabled) {
+  background: #d7eedd;
+  border-color: #9fd3b0;
+}
+
+.admin-menu__tip {
+  margin: 0 0 24px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--cream-2);
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Add / Edit form ---------- */
+.product-form__photo-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 22px;
+  align-items: start;
+  margin-bottom: 22px;
+}
+
+.product-form__photo {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  border: 1.5px dashed var(--gold);
+  background: var(--cream);
+}
+
+.product-form__photo img,
+.product-form__photo .img-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  font-size: 3.5rem;
+}
+
+.product-form__photo.is-uploading img {
+  opacity: 0.55;
+}
+
+.product-form__uploading {
+  position: absolute;
+  inset: auto 10px 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--espresso);
+  color: var(--cream);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  animation: upload-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes upload-pulse {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.product-form__upload {
+  position: relative;
+  padding: 12px 22px;
+}
+
+/* the real file picker is invisible; the pretty button opens it */
+.product-form__upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.product-form__upload:focus-within {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.product-form__hint {
+  margin: 10px 0 16px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.product-form__link {
+  margin-bottom: 0;
+}
+
+.product-form__link > span {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+}
+
+.product-form__grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.8fr 1fr;
+  gap: 0 14px;
+}
+
+/* dropdowns look like the other inputs */
+.product-form .field select {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(43, 26, 20, 0.18);
+  background: var(--cream);
+  font: inherit;
+  color: inherit;
+}
+
+.product-form .field select:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(196, 154, 92, 0.25);
+}
+
+.product-form__checks {
+  display: grid;
+  gap: 10px;
+  margin: 4px 0 22px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--espresso);
+}
+
+.check em {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.product-form .admin__error {
+  margin: 0 0 18px;
+}
+
+.product-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 760px) {
+  .admin-item {
+    grid-template-columns: 64px 1fr;
+    gap: 12px 14px;
+    padding: 12px;
+  }
+
+  .admin-item__photo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .admin-item__actions {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(43, 26, 20, 0.12);
+  }
+
+  .product-form__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .product-form__grid .field:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .product-form__photo-row {
+    grid-template-columns: 1fr;
+  }
+
+  .product-form__photo {
+    width: 160px;
+  }
+
+  .product-form__actions .btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 420px) {
+  .icon-btn span {
+    display: none; /* icons only on very small screens */
+  }
+
+  .icon-btn {
+    padding: 9px 12px;
+  }
+}
