@@ -8,7 +8,9 @@ import Reveal from '../components/Reveal'
 import OrderPanel from '../components/OrderPanel'
 import { LoadError, LoadingNote } from '../components/MenuStatus'
 import NotFound from './NotFound'
-import { formatPrice, getCategory } from '../data/menu'
+import PriceTag from '../components/PriceTag'
+import { getCategory } from '../data/menu'
+import { formatDay } from '../indiaTime'
 import { SITE, whatsappLink } from '../config/site'
 import usePageTitle from '../hooks/usePageTitle'
 import useProducts, { findProduct } from '../hooks/useProducts'
@@ -88,6 +90,8 @@ export default function ProductDetail() {
               <SmartImage src={item.image} alt={item.name} emoji={category.emoji} tone={category.tone} eager />
               {soldOut ? (
                 <span className="soldout-badge product__badge-pos">Sold out</span>
+              ) : item.specialActive ? (
+                <span className="special-badge product__badge-pos">✨ {item.specialTag}</span>
               ) : (
                 item.bestSeller && <span className="product__badge">Best seller</span>
               )}
@@ -103,8 +107,13 @@ export default function ProductDetail() {
               <span className="script">{category.name.toLowerCase()}</span>
               <h1>{item.name}</h1>
               <p className="product__price">
-                {formatPrice(item.price, item.priceFrom)} <span>/ {item.unit}</span>
+                <PriceTag item={item} /> <span>/ {item.unit}</span>
               </p>
+              {item.specialActive && !soldOut && (
+                <p className="product__offer-note">
+                  ✨ {item.specialTag}{item.specialEnd ? `, until ${formatDay(item.specialEnd)}` : ''}. Order soon!
+                </p>
+              )}
               <p className="product__desc">{item.description}</p>
 
               {soldOut ? (

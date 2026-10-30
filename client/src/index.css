@@ -41,6 +41,7 @@
   --success-text: #2f8f5b;
   --baking-bg: #f3e2c4;
   --switch-off: #e3c9c4;
+  --offer: #a3303d; /* offer prices */
 
   --font-head: 'DM Serif Display', Georgia, serif;
   --font-script: 'Pinyon Script', cursive;
@@ -81,6 +82,7 @@
   --success-text: #6fd39a;
   --baking-bg: #4a3a22;
   --switch-off: #5c443c;
+  --offer: #ff9aa5;
 }
 
 /* A smooth colour fade while switching theme (useTheme adds this class for a moment) */
@@ -350,6 +352,72 @@ p {
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+/* =========================================================
+   Special offers (cards, product page, Home page)
+   ========================================================= */
+
+/* The "Diwali Special" label: gold with a shine that sweeps across */
+.special-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #e9c98f, var(--gold) 55%, #b98a4a);
+  color: var(--espresso);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 18px rgba(196, 154, 92, 0.45);
+}
+
+.special-badge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.65) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: shine 3.2s ease-in-out infinite;
+}
+
+@keyframes shine {
+  60%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Old price crossed out, offer price in rose-red */
+.price-offer__old {
+  margin-right: 2px;
+  font-size: 0.78em;
+  color: var(--text-muted);
+  text-decoration-thickness: 1.5px;
+}
+
+.price-offer__new {
+  color: var(--offer);
+}
+
+/* Hidden on screen, but read out by screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .special-badge::after {
+    animation: none;
+  }
 }
 
 /* =========================================================

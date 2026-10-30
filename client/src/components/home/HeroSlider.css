@@ -91,7 +91,7 @@
   transform: translateZ(70px);
 }
 
-.hero__tag span {
+.hero__tag > span {
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -201,5 +201,34 @@
 
   .hero__actions .btn {
     flex: 1 1 100%;
+  }
+}
+
+/* Special offer slides: a glowing gold frame around the photo */
+.hero__photo--special {
+  outline: 2px solid var(--gold);
+  animation: hero-glow 2.8s ease-in-out infinite;
+}
+
+@keyframes hero-glow {
+  50% {
+    box-shadow:
+      var(--shadow-lg),
+      0 0 50px rgba(196, 154, 92, 0.75),
+      0 0 110px rgba(238, 181, 176, 0.45);
+  }
+}
+
+/* the "✨ Diwali Special" label sits on top of the price tag */
+.hero__tag .hero__special {
+  justify-self: start;
+  margin: -30px 0 8px;
+  color: var(--espresso);
+  font-size: 0.62rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__photo--special {
+    animation: none;
   }
 }

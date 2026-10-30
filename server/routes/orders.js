@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { rateLimit } from 'express-rate-limit'
 import mongoose from 'mongoose'
 import Order, { ORDER_STATUSES } from '../models/Order.js'
-import Product from '../models/Product.js'
+import Product, { priceNow } from '../models/Product.js'
 import { nextOrderNumber } from '../models/Counter.js'
 import requireAdmin from '../middleware/requireAdmin.js'
 
@@ -46,7 +46,8 @@ router.post('/', orderLimiter, async (req, res) => {
     if (!product.available) {
       return res.status(400).json({ message: `Sorry, ${product.name} is sold out right now.` })
     }
-    cleanItems.push({ name: product.name, price: product.price, qty: item.qty })
+    // priceNow: the offer price while a special is running today, otherwise the normal price
+    cleanItems.push({ name: product.name, price: priceNow(product), qty: item.qty })
   }
 
   // Work out the total on the server instead of trusting the number sent by the browser

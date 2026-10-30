@@ -3,6 +3,7 @@ import { Navigate, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'motion/react'
 import Intro from './components/Intro'
 import Navbar from './components/Navbar'
+import SpecialBanner from './components/SpecialBanner'
 import Footer from './components/Footer'
 import FloatingButtons from './components/FloatingButtons'
 import ScrollManager from './components/ScrollManager'
@@ -45,6 +46,7 @@ export default function App() {
 
       <ScrollManager />
       <Navbar />
+      {!isAdmin && <SpecialBanner />}
       <main>
         <Routes>
           <Route path="/" element={<Home />} />

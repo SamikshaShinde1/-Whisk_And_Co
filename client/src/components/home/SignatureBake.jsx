@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../Reveal'
 import SmartImage from '../SmartImage'
-import { formatPrice } from '../../data/menu'
+import PriceTag from '../PriceTag'
 import useProducts, { findProduct } from '../../hooks/useProducts'
 import './SignatureBake.css'
 
@@ -28,7 +28,7 @@ export default function SignatureBake() {
           </p>
           {item && (
             <div className="signature__price">
-              <strong>{formatPrice(item.price, item.priceFrom)}</strong>
+              <strong><PriceTag item={item} /></strong>
               <span>/ {item.unit}</span>
               {soldOut && <span className="soldout-badge">Sold out</span>}
             </div>

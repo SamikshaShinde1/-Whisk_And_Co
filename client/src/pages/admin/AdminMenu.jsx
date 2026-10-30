@@ -7,6 +7,7 @@ import Modal from '../../components/Modal'
 import ProductForm from './ProductForm'
 import { deleteProduct, getAllProducts, updateProduct } from '../../api'
 import { CATEGORIES, formatPrice, getCategory } from '../../data/menu'
+import { formatDay, todayInIndia } from '../../indiaTime'
 import usePageTitle from '../../hooks/usePageTitle'
 import useAdminSession from '../../hooks/useAdminSession'
 import { clearMenuCache } from '../../hooks/useProducts'
@@ -16,14 +17,28 @@ import './AdminMenu.css'
 const categoryOrder = (item) => CATEGORIES.findIndex((c) => c.id === item.category)
 
 // Filter pills. "Archived" items are only shown under their own pill.
-const FILTERS = [{ id: 'all', name: 'All' }, ...CATEGORIES, { id: 'soldout', name: 'Sold out' }, { id: 'archived', name: 'Archived' }]
+const FILTERS = [
+  { id: 'all', name: 'All' },
+  ...CATEGORIES,
+  { id: 'specials', name: 'Specials' },
+  { id: 'soldout', name: 'Sold out' },
+  { id: 'archived', name: 'Archived' },
+]
 
 function matchesFilter(product, filter) {
   if (filter === 'archived') return product.archived
   if (product.archived) return false
   if (filter === 'all') return true
   if (filter === 'soldout') return !product.available
+  if (filter === 'specials') return product.isSpecial
   return product.category === filter
+}
+
+// The special-offer label in the list: is it live now, starting later, or over?
+function specialLabel(product) {
+  if (product.specialActive) return { text: `✨ ${product.specialTag} · live`, kind: 'live' }
+  if (product.specialStart > todayInIndia()) return { text: `${product.specialTag} · starts ${formatDay(product.specialStart)}`, kind: 'later' }
+  return { text: `${product.specialTag} · ended`, kind: 'ended' }
 }
 
 export default function AdminMenu() {
@@ -133,7 +148,7 @@ export default function AdminMenu() {
 
   return (
     <>
-      <PageHeader script="admin" title="Manage menu" text="Add, edit, or mark items as sold out.">
+      <PageHeader script="admin" title="Manage menu" text="Add, edit, mark items as sold out, or run festive specials.">
         <div className="admin__toolbar">
           <button className="admin__tool admin__tool--add" onClick={() => setEditing('new')}>
             <FiPlus /> Add item
@@ -172,7 +187,13 @@ export default function AdminMenu() {
           {error && <p className="admin__error" role="alert">{error}</p>}
           {loading && <p className="admin__empty">Loading the menu…</p>}
           {!loading && shown.length === 0 && !error && (
-            <p className="admin__empty">{filter === 'archived' ? 'Nothing archived. 🗃️' : 'No items here yet. 🧁'}</p>
+            <p className="admin__empty">
+              {filter === 'archived'
+                ? 'Nothing archived. 🗃️'
+                : filter === 'specials'
+                  ? 'No specials yet. Edit an item and switch on “Special offer”. ✨'
+                  : 'No items here yet. 🧁'}
+            </p>
           )}
 
           <ul className="admin-menu__list">
@@ -191,10 +212,16 @@ export default function AdminMenu() {
                   <div className="admin-item__info">
                     <strong>{product.name}</strong>
                     <span>
-                      {category.name} · {formatPrice(product.price, product.priceFrom)} / {product.unit}
+                      {category.name} · {formatPrice(product.price, product.priceFrom)}
+                      {product.isSpecial && product.offerPrice && <> → <strong>{formatPrice(product.offerPrice)} offer</strong></>} / {product.unit}
                     </span>
                     <span className="admin-item__badges">
                       {product.archived && <span className="admin-item__badge admin-item__badge--archived">Archived</span>}
+                      {product.isSpecial && (
+                        <span className={`admin-item__badge admin-item__badge--special is-${specialLabel(product).kind}`}>
+                          {specialLabel(product).text}
+                        </span>
+                      )}
                       {product.bestSeller && <span className="admin-item__badge">Best seller</span>}
                       {!product.available && <span className="admin-item__badge admin-item__badge--soldout">Sold out</span>}
                     </span>

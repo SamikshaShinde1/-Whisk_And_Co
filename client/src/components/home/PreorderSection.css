@@ -55,7 +55,7 @@
   margin-bottom: 4px;
 }
 
-.mini-card__body span {
+.mini-card__body > span {
   font-size: 0.9rem;
   color: var(--text-muted);
 }

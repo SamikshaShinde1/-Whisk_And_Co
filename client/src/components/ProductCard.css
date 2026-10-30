@@ -139,3 +139,12 @@
     font-size: 0.58rem;
   }
 }
+
+/* Specials running today: a thin gold ring around the card */
+.product-card--special {
+  box-shadow: 0 0 0 2px var(--gold), var(--shadow);
+}
+
+.product-card--special:hover {
+  box-shadow: 0 0 0 2px var(--gold), 0 22px 44px rgba(196, 154, 92, 0.35);
+}

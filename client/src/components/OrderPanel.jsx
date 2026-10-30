@@ -5,7 +5,7 @@ import { FiMinus, FiPlus, FiCheckCircle, FiCopy, FiCheck, FiMapPin } from 'react
 import { FaWhatsapp } from 'react-icons/fa'
 import { createOrder } from '../api'
 import { rememberOrder } from '../recentOrders'
-import { formatPrice } from '../data/menu'
+import { formatPrice, priceNow } from '../data/menu'
 import { SITE, whatsappLink } from '../config/site'
 import './OrderPanel.css'
 
@@ -30,7 +30,7 @@ export default function OrderPanel({ item }) {
   const [orderNumber, setOrderNumber] = useState('')
   const [copied, setCopied] = useState(false)
 
-  const total = item.price * qty
+  const total = priceNow(item) * qty // the offer price during a special (the server checks it again)
   const isCake = item.category === 'cakes'
   const noteLabel = isCake ? 'Message on cake' : 'Special note'
 

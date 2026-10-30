@@ -284,3 +284,16 @@ export function getCategory(id) {
 export function formatPrice(amount, from = false) {
   return `${from ? 'From ' : ''}₹${amount.toLocaleString('en-IN')}`
 }
+
+// ---------- Special offers ----------
+// "specialActive" is worked out by the server (is the offer running today in India?).
+
+// True when the item is a special running today AND has a lower offer price
+export function hasOffer(item) {
+  return Boolean(item.specialActive && item.offerPrice && item.offerPrice < item.price)
+}
+
+// The price a customer pays today (the server charges the same)
+export function priceNow(item) {
+  return hasOffer(item) ? item.offerPrice : item.price
+}

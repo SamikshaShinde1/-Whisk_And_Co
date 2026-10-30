@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FiImage, FiUploadCloud } from 'react-icons/fi'
+import { FiImage, FiStar, FiUploadCloud } from 'react-icons/fi'
 import SmartImage from '../../components/SmartImage'
 import { createProduct, updateProduct, uploadProductImage } from '../../api'
 import { CATEGORIES, getCategory } from '../../data/menu'
@@ -14,14 +14,23 @@ const EMPTY = {
   image: '',
   bestSeller: false,
   available: true,
+  isSpecial: false,
+  specialTag: '',
+  offerPrice: '',
+  specialStart: '',
+  specialEnd: '',
 }
+
+// Ideas shown when typing the special tag (any other tag can be typed too)
+const TAG_IDEAS = ['Diwali Special', 'Christmas Special', 'New Year Special', 'Holi Special', 'Raksha Bandhan Special', "Valentine's Special", 'Eid Special']
 
 const MAX_PHOTO_MB = 5
 
 // The "Add item" / "Edit item" form. With a product it edits it; without one it adds a new item.
 export default function ProductForm({ product, token, onSaved, onCancel, onAuthError }) {
   const isNew = !product
-  const [form, setForm] = useState(() => (product ? { ...EMPTY, ...product } : EMPTY))
+  // (an empty offer price is saved as null, but an input box needs '')
+  const [form, setForm] = useState(() => (product ? { ...EMPTY, ...product, offerPrice: product.offerPrice ?? '' } : EMPTY))
   const [preview, setPreview] = useState('') // the photo on this computer, shown while it uploads
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -69,6 +78,10 @@ export default function ProductForm({ product, token, onSaved, onCancel, onAuthE
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+    // Same rule as the server, checked here first for a quicker message
+    if (form.isSpecial && form.offerPrice !== '' && Number(form.offerPrice) >= Number(form.price)) {
+      return setError('The offer price must be lower than the normal price.')
+    }
     setSaving(true)
     setError('')
     const data = {
@@ -81,6 +94,11 @@ export default function ProductForm({ product, token, onSaved, onCancel, onAuthE
       image: form.image,
       bestSeller: form.bestSeller,
       available: form.available,
+      isSpecial: form.isSpecial,
+      specialTag: form.specialTag,
+      offerPrice: form.offerPrice === '' ? null : Number(form.offerPrice),
+      specialStart: form.specialStart,
+      specialEnd: form.specialEnd,
     }
     try {
       const saved = isNew ? await createProduct(data, token) : await updateProduct(product._id, data, token)
@@ -170,6 +188,52 @@ export default function ProductForm({ product, token, onSaved, onCancel, onAuthE
           <input type="checkbox" name="priceFrom" checked={form.priceFrom} onChange={update} />
           <span>Starting price <em>(shows “From ₹…”)</em></span>
         </label>
+      </div>
+
+      {/* ---------- Special offer ---------- */}
+      <div className={`product-form__special ${form.isSpecial ? 'is-on' : ''}`}>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={form.isSpecial}
+          className="switch"
+          onClick={() => setForm({ ...form, isSpecial: !form.isSpecial })}
+        >
+          <span className="switch__track" aria-hidden="true">
+            <span className="switch__thumb" />
+          </span>
+          <FiStar aria-hidden="true" /> Special offer
+        </button>
+
+        {form.isSpecial && (
+          <>
+            <div className="product-form__grid product-form__grid--special">
+              <label className="field">
+                <span>Tag</span>
+                <input name="specialTag" value={form.specialTag} onChange={update} required maxLength={40} list="special-tags" placeholder="Diwali Special" />
+                <datalist id="special-tags">
+                  {TAG_IDEAS.map((tag) => <option key={tag} value={tag} />)}
+                </datalist>
+              </label>
+              <label className="field">
+                <span>Offer price (₹) <em>(optional)</em></span>
+                <input name="offerPrice" type="number" min="1" max={form.price ? Number(form.price) - 1 : undefined} step="1" value={form.offerPrice} onChange={update} placeholder="Lower than the price" />
+              </label>
+              <label className="field">
+                <span>Starts <em>(optional)</em></span>
+                <input name="specialStart" type="date" value={form.specialStart} onChange={update} />
+              </label>
+              <label className="field">
+                <span>Ends <em>(optional)</em></span>
+                <input name="specialEnd" type="date" min={form.specialStart || undefined} value={form.specialEnd} onChange={update} />
+              </label>
+            </div>
+            <p className="product-form__hint">
+              Specials show on the Home page, in the banner and on the first hero slide, but only between these dates
+              (both days included). Leave the dates empty to run the offer until you switch it off.
+            </p>
+          </>
+        )}
       </div>
 
       {error && <p className="admin__error" role="alert">{error}</p>}

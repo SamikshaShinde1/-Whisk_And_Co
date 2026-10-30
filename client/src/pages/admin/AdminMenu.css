@@ -508,3 +508,48 @@
     padding: 9px 12px;
   }
 }
+
+/* ---------- Special offers ---------- */
+.admin-item__badge--special.is-live {
+  background: linear-gradient(135deg, #e9c98f, var(--gold));
+  color: var(--espresso);
+}
+
+.admin-item__badge--special.is-later {
+  background: var(--baking-bg);
+  color: var(--text);
+}
+
+.admin-item__badge--special.is-ended {
+  background: var(--bg-2);
+  color: var(--text-muted);
+}
+
+/* The "Special offer" box in the Add / Edit form */
+.product-form__special {
+  margin: 0 0 22px;
+  padding: 14px 16px 4px;
+  border: 1.5px dashed rgba(var(--line-rgb), 0.2);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.25s, background 0.25s;
+}
+
+.product-form__special.is-on {
+  border-color: var(--gold);
+  background: rgba(196, 154, 92, 0.08);
+}
+
+.product-form__special .switch {
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+}
+
+.product-form__grid--special {
+  grid-template-columns: 1.3fr 1fr;
+}
+
+@media (max-width: 560px) {
+  .product-form__grid--special {
+    grid-template-columns: 1fr;
+  }
+}

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { FaWhatsapp } from 'react-icons/fa'
 import Reveal from '../Reveal'
 import SmartImage from '../SmartImage'
-import { formatPrice } from '../../data/menu'
+import PriceTag from '../PriceTag'
 import { SITE, whatsappLink } from '../../config/site'
 import useProducts, { findProduct } from '../../hooks/useProducts'
 import './PreorderSection.css'
@@ -39,7 +39,7 @@ export default function PreorderSection() {
                 </div>
                 <div className="mini-card__body">
                   <h3>{item.name}</h3>
-                  <span>{formatPrice(item.price, item.priceFrom)} / {item.unit}</span>
+                  <span><PriceTag item={item} /> / {item.unit}</span>
                 </div>
                 {item.available ? (
                   <span className="mini-card__cta">Preorder</span>

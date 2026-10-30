@@ -8,7 +8,10 @@ import { cloudinaryReady, uploadImage } from '../config/cloudinary.js'
 const router = Router()
 
 // The only fields the admin may set. Anything else in the request is ignored.
-const EDITABLE = ['name', 'category', 'price', 'priceFrom', 'unit', 'description', 'image', 'bestSeller', 'available', 'archived']
+const EDITABLE = [
+  'name', 'category', 'price', 'priceFrom', 'unit', 'description', 'image', 'bestSeller', 'available', 'archived',
+  'isSpecial', 'specialTag', 'offerPrice', 'specialStart', 'specialEnd',
+]
 
 function pickEditable(body = {}) {
   const fields = {}
@@ -76,12 +79,13 @@ router.post('/', requireAdmin, async (req, res) => {
 
 // PUT /api/products/:id – change an item (admin only).
 // Send only the fields you want to change, e.g. { "available": false } for "Sold out".
+// Load, change, then save, so every rule is checked against the whole item
+// (e.g. "offer price lower than price" works even when only one of them is sent).
 router.put('/:id', requireAdmin, async (req, res) => {
-  const product = await Product.findByIdAndUpdate(req.params.id, pickEditable(req.body), {
-    returnDocument: 'after',
-    runValidators: true, // check the same rules as when creating
-  })
+  const product = await Product.findById(req.params.id)
   if (!product) return res.status(404).json({ message: 'Item not found.' })
+  product.set(pickEditable(req.body))
+  await product.save()
   res.json(product)
 })
 

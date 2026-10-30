@@ -1,4 +1,5 @@
 import HeroSlider from '../components/home/HeroSlider'
+import SpecialOffers from '../components/home/SpecialOffers'
 import FreshFromOven from '../components/home/FreshFromOven'
 import TheCraft from '../components/home/TheCraft'
 import SignatureBake from '../components/home/SignatureBake'
@@ -13,6 +14,8 @@ export default function Home() {
   return (
     <>
       <HeroSlider />
+      {/* only shows while a festive special is running */}
+      <SpecialOffers />
       <FreshFromOven />
       <TheCraft />
       <SignatureBake />

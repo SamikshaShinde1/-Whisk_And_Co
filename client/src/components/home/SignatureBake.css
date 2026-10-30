@@ -23,7 +23,7 @@
   font-size: 2.6rem;
 }
 
-.signature__price span {
+.signature__price > span {
   color: var(--text-muted);
 }
 

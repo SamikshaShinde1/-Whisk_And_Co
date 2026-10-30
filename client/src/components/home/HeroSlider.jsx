@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react'
 import { FiArrowRight } from 'react-icons/fi'
 import SmartImage from '../SmartImage'
-import { formatPrice } from '../../data/menu'
+import PriceTag from '../PriceTag'
 import useProducts, { findProduct } from '../../hooks/useProducts'
+import useSpecials from '../../hooks/useSpecials'
+import { formatDay } from '../../indiaTime'
 import './HeroSlider.css'
 
 // Each slide shows one product from the menu (its photo + price come from the database).
@@ -33,6 +35,18 @@ const SLIDES = [
 
 const SLIDE_TIME_MS = 6000
 
+// While festive specials are running, each one (up to 3) becomes a slide at the very front
+function specialSlide(item) {
+  return {
+    key: `special-${item.slug}`,
+    slug: item.slug,
+    special: true,
+    script: item.specialTag.toLowerCase(),
+    title: item.name,
+    text: `A limited-time festive treat, baked fresh to order.${item.specialEnd ? ` Offer ends ${formatDay(item.specialEnd)}.` : ''}`,
+  }
+}
+
 const fadeUp = {
   hide: { opacity: 0, y: 30 },
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.2, 0.7, 0.2, 1] } },
@@ -41,13 +55,17 @@ const fadeUp = {
 export default function HeroSlider() {
   const [index, setIndex] = useState(0)
   const { products } = useProducts()
-  const next = () => setIndex((i) => (i + 1) % SLIDES.length)
+  const { specials } = useSpecials()
+  const slides = [...specials.slice(0, 3).map(specialSlide), ...SLIDES.map((slide) => ({ ...slide, key: slide.slug }))]
+  const count = slides.length
+  const current = index % count // stays valid if the number of slides changes
+  const next = () => setIndex((current + 1) % count)
 
   // Auto-play: move on every 6 seconds (the timer restarts when the slide changes).
   useEffect(() => {
-    const timer = setTimeout(() => setIndex((i) => (i + 1) % SLIDES.length), SLIDE_TIME_MS)
+    const timer = setTimeout(() => setIndex((current + 1) % count), SLIDE_TIME_MS)
     return () => clearTimeout(timer)
-  }, [index])
+  }, [current, count])
 
   // 3D tilt: track where the mouse is inside the hero (-0.5 to 0.5),
   // then turn that into a gentle rotation with a springy feel.
@@ -70,7 +88,7 @@ export default function HeroSlider() {
   // Swipe left/right on phones
   const onDragEnd = (_event, info) => {
     if (info.offset.x < -60) next()
-    else if (info.offset.x > 60) setIndex((i) => (i - 1 + SLIDES.length) % SLIDES.length)
+    else if (info.offset.x > 60) setIndex((current - 1 + count) % count)
   }
 
   return (
@@ -90,12 +108,12 @@ export default function HeroSlider() {
           dragElastic={0.12}
           onDragEnd={onDragEnd}
         >
-          {SLIDES.map((slide, i) => {
+          {slides.map((slide, i) => {
             const item = findProduct(products, slide.slug)
-            const active = i === index
+            const active = i === current
             return (
               <motion.div
-                key={slide.slug}
+                key={slide.key}
                 className="hero__slide"
                 aria-hidden={!active}
                 inert={!active}
@@ -124,13 +142,14 @@ export default function HeroSlider() {
                   }}
                 >
                   <motion.div className="hero__tilt" style={{ rotateX, rotateY }}>
-                    <div className={`hero__photo ${item && !item.available ? 'is-soldout' : ''}`}>
+                    <div className={`hero__photo ${item && !item.available ? 'is-soldout' : ''} ${slide.special ? 'hero__photo--special' : ''}`}>
                       <SmartImage src={item?.image} alt={item?.name || ''} emoji="🎂" eager={i === 0} />
                     </div>
                     {item && (
                       <div className="hero__tag">
+                        {slide.special && <span className="special-badge hero__special">✨ {item.specialTag}</span>}
                         <span>{item.name}</span>
-                        <strong>{item.available ? formatPrice(item.price, item.priceFrom) : 'Sold out'}</strong>
+                        <strong>{item.available ? <PriceTag item={item} /> : 'Sold out'}</strong>
                       </div>
                     )}
                   </motion.div>
@@ -142,13 +161,13 @@ export default function HeroSlider() {
 
         <div className="hero__controls">
           <div className="hero__dots">
-            {SLIDES.map((slide, i) => (
+            {slides.map((slide, i) => (
               <button
-                key={slide.slug}
-                className={`hero__dot ${i === index ? 'is-active' : ''}`}
+                key={slide.key}
+                className={`hero__dot ${i === current ? 'is-active' : ''}`}
                 onClick={() => setIndex(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                aria-current={i === index}
+                aria-current={i === current}
               />
             ))}
           </div>

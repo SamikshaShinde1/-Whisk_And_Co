@@ -26,13 +26,14 @@ The owner is a beginner learning React. Use simple English and work in big steps
 ## Backend architecture (`server/`)
 
 - Uses ES modules and Express 5, so errors in async route handlers reach `middleware/errors.js` automatically. That file turns Mongoose `ValidationError`s into a 400 response carrying the first validator's friendly message, which the client shows to the user.
-- `server.js` exits at startup if `MONGO_URI` or `JWT_SECRET` is missing.
+- `app.js` exports `createApp()` (middleware, routes, error handling). It is a function so `CLIENT_URL` is read after `.env` loads. `server.js` loads `.env`, exits at startup if `MONGO_URI` or `JWT_SECRET` is missing, connects and listens. Tests use `createApp()` directly.
+- `utils/indiaTime.js`: `todayInIndia()` returns today as `YYYY-MM-DD` in Asia/Kolkata. Use it for every "today" check (Render runs in UTC). The client has the same helper in `src/indiaTime.js`, plus `formatDay`.
 - CORS only allows the origins listed in `CLIENT_URL` (comma-separated).
 - `trust proxy` is set so the rate limiter sees real visitor IPs on Render.
 - `config/db.js` sets `mongoose.set('sanitizeFilter', true)` to block NoSQL injection.
 
 **Routes:**
-- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. The client sends items as `{slug, qty}` only. The server looks up each product (using `mongoose.trusted` for its own `$in`, because `sanitizeFilter` would block it), takes the name and price from the database, and rejects unknown or sold-out items with a 400. It ignores any client total, and `address` is cleared for pickup. The order is validated first, and only then gets an `orderNumber` (`PNP-1001`, `PNP-1002`, …) from `models/Counter.js`, which uses an atomic `$inc`. This way, rejected orders don't use up numbers. The response is only `{_id, orderNumber, total, status}`.
+- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. The client sends items as `{slug, qty}` only. The server looks up each product (using `mongoose.trusted` for its own `$in`, because `sanitizeFilter` would block it), takes the name and the price from the database (`priceNow(product)`, which is the offer price while a special is active), and rejects unknown or sold-out items with a 400. It ignores any client total, and `address` is cleared for pickup. The order is validated first, and only then gets an `orderNumber` (`PNP-1001`, `PNP-1002`, …) from `models/Counter.js`, which uses an atomic `$inc`. This way, rejected orders don't use up numbers. The response is only `{_id, orderNumber, total, status}`.
 - `POST /api/orders/track` (public): body `{number, phone}`. It is a POST so the phone never appears in URLs, browser history or server logs. Rate-limited to 30 per 15 minutes.
   - Returns the order only when **both** the order number and the phone match.
   - It `.select()`s only the safe fields (`orderNumber`, `items`, `total`, `date`, `deliveryType`, `status`, `createdAt`), so no name, phone, address or note is returned.
@@ -47,7 +48,7 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - `POST /api/products`, `PUT /api/products/:id` and `DELETE /api/products/:id` (admin):
   - Only the fields listed in `EDITABLE` in `routes/products.js` are accepted.
   - The `slug` is created once from the name (`-2`, `-3`… if it is taken) and never changes, so shared links keep working.
-  - `PUT` accepts partial bodies (the Sold out switch sends only `{available}`) and runs validators.
+  - `PUT` accepts partial bodies (the Sold out switch sends only `{available}`). It loads the item, `set()`s the fields and `save()`s, so cross-field validators (offer price, dates) always see the whole item.
 - `POST /api/products/upload` (admin): multipart field `image`, JPG/PNG/WebP up to 5 MB, held in memory by multer and sent to Cloudinary (`config/cloudinary.js`, folder `pastel-n-postery`, resized to at most 1600px wide). Returns `{url}`. Returns 503 if the `CLOUDINARY_*` keys are missing; the rest of the server works without them. The Cloudinary keys are read when needed, because route modules are imported before `dotenv.config()` runs.
 - `PATCH /api/auth/password` (admin): body `{currentPassword, newPassword}` (new password at least 8 characters). A wrong current password returns **400, not 401**, so the client does not log the user out.
 - `POST /api/auth/login`: rate-limited to 5 per 15 minutes. Returns `{token, email}`, where the token is a 7-day HS256 JWT. `middleware/requireAdmin.js` checks `Authorization: Bearer <token>`.
@@ -56,7 +57,9 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - The validation rules live in `models/Order.js`: a 10-digit phone, `date` as a `YYYY-MM-DD` string, an integer `qty` from 1 to 50, at least one item, and an address required for delivery.
 - `orderNumber` is `unique` and `sparse`, because orders placed before this feature have no number. The admin table shows `#<last 6 characters of the id>` for those.
 - `models/Admin.js` stores a bcrypt hash of the password.
-- `models/Product.js`: `slug`, `name`, `category`, `price`, `priceFrom` (shows "From ₹…"), `unit`, `description`, `image` (an https link or `/images/...`), `bestSeller` and `available`. `CATEGORY_IDS` must match `CATEGORIES` in `client/src/data/menu.js`.
+- `models/Product.js`: `slug`, `name`, `category`, `price`, `priceFrom` (shows "From ₹…"), `unit`, `description`, `image` (an https link or `/images/...`), `bestSeller`, `available` and `archived`. `CATEGORY_IDS` must match `CATEGORIES` in `client/src/data/menu.js`.
+- **Special offers** (also in `models/Product.js`): `isSpecial`, `specialTag` (required while `isSpecial`), `offerPrice` (optional, null when empty, must be lower than `price` while `isSpecial`), and `specialStart` / `specialEnd` (`YYYY-MM-DD` or empty for no limit, both days included, end on or after start).
+  - The `specialActive` virtual (sent in JSON; `id: false` keeps out the extra `id`) is true when today in India is inside the dates. The client never works out "active" by itself.
 - `scripts/seedProducts.js` (`npm run seed-products`) copies `MENU` from `client/src/data/menu.js` into MongoDB, one item at a time in menu order. It skips slugs that already exist, so it never overwrites the admin's edits.
 
 **Admin account:** `scripts/createAdmin.js` creates or updates the admin from `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, with bcrypt cost 12 and a minimum password length of 8.
@@ -80,9 +83,10 @@ npm run dev            # API at http://localhost:5000, restarts when files chang
 npm start              # run without watching (used on Render)
 npm run create-admin   # create or update the admin login from server/.env
 npm run seed-products  # one time: copy the starting menu into MongoDB (safe to re-run)
+npm test               # backend tests (node:test + supertest + mongodb-memory-server, in server/tests/)
 ```
 
-There is no test framework yet.
+Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`startTestServer()` starts an in-memory MongoDB and signs an admin JWT; `daysFromToday(n)` and `orderFor(items)` help build data). The first run downloads MongoDB, so it is slow once. The client has no tests.
 
 ## Frontend architecture
 
@@ -108,7 +112,16 @@ There is no test framework yet.
   - `ProductDetail` shows a "Sold out for now" box with a WhatsApp "Ask when it's back" button instead of `OrderPanel`.
   - "You may also like" only suggests available items.
 - `components/MenuStatus.jsx`: `LoadingCards` (shimmer cards, placed inside the real grid), `LoadingNote` (adds a "warming up" line after 4 seconds, because Render's free tier sleeps) and `LoadError` (with a Try again button).
-- `src/data/menu.js`: `CATEGORIES`, `CRAFT_IMAGE`, `getCategory` (with a fallback), `formatPrice(amount, from)` and `unsplash(id, width)`.
+- `src/data/menu.js`: `CATEGORIES`, `CRAFT_IMAGE`, `getCategory` (with a fallback), `formatPrice(amount, from)`, `hasOffer(item)`, `priceNow(item)` and `unsplash(id, width)`.
+- **Special offers on the site** (all driven by `item.specialActive`):
+  - `components/PriceTag.jsx` shows every menu price, with the old price struck through during an offer. Use it, not `formatPrice`, for item prices.
+  - `.special-badge` (gold, with a shine) replaces "Best seller" on cards and the product page; `.product-card--special` adds a gold ring.
+  - `hooks/useSpecials.js` returns `{specials, title}` ("Diwali Specials", or "Festive specials" for mixed tags).
+  - `SpecialBanner` sits under the navbar (not on admin pages); closing it is remembered in `sessionStorage` (`pnp-banner-closed`) for that set of offers.
+  - `home/SpecialOffers` (`id="specials"`) comes right after the hero and returns null when nothing is active.
+  - `HeroSlider` puts up to 3 active specials in front of `SLIDES`.
+  - `OrderPanel` uses `priceNow(item)` for its total.
+  - Manage menu: the form has a "Special offer" switch with tag, offer price and dates; the list has a "Specials" filter and a live / starts / ended badge.
   - `MENU` is now only seed data for `npm run seed-products`. Editing it does not change the website.
   - Several of the Unsplash photos show the wrong food. The owner plans to replace them with their own photos, through the photo upload on `/admin/menu`.
 - `src/data/reviews.js`: **placeholder reviews, not real ones**. They must be replaced with real customer reviews before launch.
