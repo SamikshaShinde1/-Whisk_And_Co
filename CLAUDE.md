@@ -158,6 +158,16 @@ There is no test framework yet.
   - Espresso `#2b1a14`, cream `#f6efe5`, blush `#f6d6cf`, rose `#eeb5b0` and gold `#c49a5c`.
   - `--gold-deep` is for gold text on cream backgrounds.
   - Fonts: DM Serif Display for uppercase headings, Pinyon Script for the `.script` accent words, Manrope for body text.
+- **Dark and light mode:** `<html data-theme="light|dark">` switches a set of theme tokens in `index.css`. New CSS must use these tokens, not the brand colours, for anything that should change:
+  - `--bg`, `--bg-2`, `--surface` (cards), `--blush-bg`, `--text`, `--text-muted`.
+  - `--night` / `--night-2` for the always-dark navbar, footer, hero, page headers and `.section--dark`. Brand `--cream` text stays fixed on those.
+  - `--ink` / `--on-ink` / `--ink-hover` for filled buttons, badges and active pills (espresso in light mode, cream in dark).
+  - `rgba(var(--line-rgb), x)` for lines and `rgba(var(--shadow-rgb), x)` for shadows.
+  - `--danger-*`, `--success-*`, `--baking-bg` and `--switch-off` for status colours.
+  - Text on `--rose` stays `var(--espresso)` in both modes.
+  - `hooks/useTheme.js` keeps the choice (`light`, `dark` or `system`, the default) in localStorage under `pnp-theme` and follows the device for `system`. It adds `html.theme-fade` for 450 ms to fade colours, and updates the `theme-color` meta.
+  - An inline script in `client/index.html` repeats the same rules before React loads, so the page never flashes. Keep the two in sync.
+  - `components/ThemeToggle.jsx` is the sun/moon button in the navbar, with a Light, Dark and System menu.
 - Sections alternate between `.section--dark` and cream (or `.section--blush`).
 - Shared classes:
   - Buttons: `.btn-dark`, `.btn-rose`, `.btn-outline`, `.btn-outline-light` and `.btn-whatsapp`.

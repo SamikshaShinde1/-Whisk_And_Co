@@ -1,7 +1,7 @@
 .order {
   padding: 28px;
   border-radius: var(--radius);
-  background: #fffaf4;
+  background: var(--surface);
   box-shadow: var(--shadow);
 }
 
@@ -12,7 +12,7 @@
   gap: 20px;
   padding-bottom: 22px;
   margin-bottom: 22px;
-  border-bottom: 1px dashed rgba(43, 26, 20, 0.2);
+  border-bottom: 1px dashed rgba(var(--line-rgb), 0.2);
 }
 
 .order__label {
@@ -32,7 +32,7 @@
   gap: 4px;
   padding: 4px;
   border-radius: 999px;
-  border: 1.5px solid rgba(43, 26, 20, 0.2);
+  border: 1.5px solid rgba(var(--line-rgb), 0.2);
 }
 
 .qty button {
@@ -40,7 +40,7 @@
   height: 40px;
   border-radius: 50%;
   border: 0;
-  background: var(--blush);
+  background: var(--blush-bg);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -49,6 +49,7 @@
 
 .qty button:hover:not(:disabled) {
   background: var(--rose);
+  color: var(--espresso);
 }
 
 .qty button:disabled {
@@ -110,8 +111,8 @@
   width: 100%;
   padding: 13px 16px;
   border-radius: 14px;
-  border: 1.5px solid rgba(43, 26, 20, 0.18);
-  background: var(--cream);
+  border: 1.5px solid rgba(var(--line-rgb), 0.18);
+  background: var(--bg);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -131,7 +132,7 @@
   display: inline-flex;
   padding: 4px;
   border-radius: 999px;
-  background: var(--cream-2);
+  background: var(--bg-2);
 }
 
 .toggle label {
@@ -144,8 +145,8 @@
 }
 
 .toggle label.is-active {
-  background: var(--espresso);
-  color: var(--cream);
+  background: var(--ink);
+  color: var(--on-ink);
 }
 
 .toggle label:has(input:focus-visible) {
@@ -162,8 +163,8 @@
 .order__error {
   padding: 12px 16px;
   border-radius: 12px;
-  background: #fbe3e1;
-  color: #8a2a22;
+  background: var(--danger-bg);
+  color: var(--danger-ink);
   font-weight: 600;
   font-size: 0.92rem;
 }
@@ -195,7 +196,7 @@
 
 .order__success-icon {
   font-size: 3.4rem;
-  color: #2f8f5b;
+  color: var(--success-text);
   margin-bottom: 14px;
 }
 
@@ -213,7 +214,7 @@
   padding: 18px;
   border-radius: var(--radius-sm);
   border: 1.5px dashed var(--gold);
-  background: var(--cream);
+  background: var(--bg);
 }
 
 .order__number > span {
@@ -245,7 +246,7 @@
   height: 38px;
   border-radius: 50%;
   border: 0;
-  background: var(--blush);
+  background: var(--blush-bg);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -254,6 +255,7 @@
 
 .order__number button:hover {
   background: var(--rose);
+  color: var(--espresso);
 }
 
 .order__number small {
@@ -284,7 +286,7 @@
 }
 
 .order__again:hover {
-  color: var(--espresso);
+  color: var(--text);
 }
 
 @media (max-width: 560px) {

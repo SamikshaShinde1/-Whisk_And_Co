@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { FiMenu, FiX } from 'react-icons/fi'
 import Logo from './Logo'
+import ThemeToggle from './ThemeToggle'
 import './Navbar.css'
 
 const LINKS = [
@@ -46,6 +47,8 @@ export default function Navbar() {
         </nav>
 
         <Link to="/menu" className="btn btn-rose navbar__cta">Order now</Link>
+
+        <ThemeToggle />
 
         <button
           className="navbar__toggle"

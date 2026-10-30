@@ -10,7 +10,7 @@
   flex-direction: column;
   padding: 36px 32px 32px;
   border-radius: var(--radius);
-  background: var(--espresso-2);
+  background: var(--night-2);
   border: 1px solid rgba(246, 239, 229, 0.08);
   transition: transform 0.35s, border-color 0.35s;
 }

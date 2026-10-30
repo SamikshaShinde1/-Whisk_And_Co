@@ -16,7 +16,7 @@
   gap: 0 14px;
   padding: 24px 24px 6px;
   border-radius: var(--radius);
-  background: #fffaf4;
+  background: var(--surface);
   box-shadow: var(--shadow);
 }
 
@@ -50,8 +50,8 @@
   padding: 10px 18px;
   border-radius: var(--radius-sm);
   border: 1.5px dashed var(--gold);
-  background: #fffaf4;
-  color: var(--espresso);
+  background: var(--surface);
+  color: var(--text);
   cursor: pointer;
   transition: background 0.25s, border-color 0.25s, transform 0.25s;
 }
@@ -69,7 +69,7 @@
 
 .track__chip:hover,
 .track__chip.is-active {
-  background: var(--blush);
+  background: var(--blush-bg);
   border-color: var(--rose);
   border-style: solid;
   transform: translateY(-2px);
@@ -88,7 +88,7 @@
 }
 
 .track__link:hover {
-  color: var(--espresso);
+  color: var(--text);
 }
 
 .track__forgot {
@@ -103,7 +103,7 @@
   align-items: center;
   gap: 5px;
   font-weight: 700;
-  color: #1f9d55;
+  color: var(--success-text);
 }
 
 .track__forgot a:hover {
@@ -114,7 +114,7 @@
 .track__result {
   padding: 32px;
   border-radius: var(--radius);
-  background: #fffaf4;
+  background: var(--surface);
   box-shadow: var(--shadow);
 }
 
@@ -125,7 +125,7 @@
   gap: 16px;
   padding-bottom: 22px;
   margin-bottom: 30px;
-  border-bottom: 1px dashed rgba(43, 26, 20, 0.2);
+  border-bottom: 1px dashed rgba(var(--line-rgb), 0.2);
 }
 
 .track__head h2 {
@@ -157,7 +157,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(43, 26, 20, 0.08);
+  border-bottom: 1px solid rgba(var(--line-rgb), 0.08);
 }
 
 .track__total {

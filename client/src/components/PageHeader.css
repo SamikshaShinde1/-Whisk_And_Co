@@ -1,7 +1,7 @@
 .page-header {
   background:
     radial-gradient(circle at 85% 20%, rgba(238, 181, 176, 0.2), transparent 40%),
-    var(--espresso);
+    var(--night);
   color: var(--cream);
   padding: 72px 0 80px;
   text-align: center;

@@ -13,8 +13,8 @@
   width: 100%;
   padding: 15px 52px 15px 50px;
   border-radius: 999px;
-  border: 1.5px solid rgba(43, 26, 20, 0.18);
-  background: #fffaf4;
+  border: 1.5px solid rgba(var(--line-rgb), 0.18);
+  background: var(--surface);
   box-shadow: var(--shadow);
   font: inherit;
   font-size: 1rem; /* 16px or more stops iPhones zooming in on the box */
@@ -59,8 +59,8 @@
   height: 36px;
   border: 0;
   border-radius: 50%;
-  background: var(--cream-2);
-  color: var(--espresso);
+  background: var(--bg-2);
+  color: var(--text);
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.25s;
@@ -68,6 +68,7 @@
 
 .menu__search-clear:hover {
   background: var(--rose);
+  color: var(--espresso);
 }
 
 /* ---------- "No treats found" ---------- */
@@ -76,7 +77,7 @@
   margin: 30px auto 10px;
   padding: 40px 24px;
   border-radius: var(--radius);
-  background: #fffaf4;
+  background: var(--surface);
   box-shadow: var(--shadow);
   text-align: center;
 }
@@ -117,7 +118,7 @@
 .menu__pill {
   padding: 11px 22px;
   border-radius: 999px;
-  border: 1.5px solid rgba(43, 26, 20, 0.25);
+  border: 1.5px solid rgba(var(--line-rgb), 0.25);
   background: transparent;
   font-size: 0.78rem;
   font-weight: 700;
@@ -128,13 +129,13 @@
 }
 
 .menu__pill:hover {
-  border-color: var(--espresso);
+  border-color: var(--ink);
 }
 
 .menu__pill.is-active {
-  background: var(--espresso);
-  border-color: var(--espresso);
-  color: var(--cream);
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--on-ink);
 }
 
 .menu__count {

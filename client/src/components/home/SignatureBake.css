@@ -36,7 +36,7 @@
   position: absolute;
   inset: -8% -14% -8% 8%;
   border-radius: 50%;
-  background: var(--blush);
+  background: var(--blush-bg);
   z-index: 0;
 }
 
@@ -45,8 +45,8 @@
   z-index: 1;
   aspect-ratio: 1;
   border-radius: 50%;
-  box-shadow: 0 30px 60px rgba(43, 26, 20, 0.25);
-  border: 10px solid var(--cream);
+  box-shadow: 0 30px 60px rgba(var(--shadow-rgb), 0.25);
+  border: 10px solid var(--bg);
 }
 
 .signature__photo .img-fallback {

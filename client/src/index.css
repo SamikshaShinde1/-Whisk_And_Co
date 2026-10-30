@@ -13,10 +13,34 @@
   --gold-deep: #8a6431; /* darker gold, readable on cream */
   --whatsapp: #25d366;
 
-  --text: var(--espresso);
-  --text-muted: #6b574d;
   --text-light: var(--cream);
   --text-light-muted: rgba(246, 239, 229, 0.72);
+
+  /* ----- Colours that change in dark mode -----
+     Use these (not the brand colours above) for page backgrounds, cards, text and lines,
+     so the whole site switches between light and dark by itself. */
+  color-scheme: light; /* tells the browser to draw light scrollbars, date pickers, etc. */
+  --bg: var(--cream); /* page background */
+  --bg-2: var(--cream-2); /* slightly darker boxes, tracks, small buttons */
+  --surface: #fffaf4; /* cards, forms, pop-ups */
+  --blush-bg: var(--blush); /* soft pink backgrounds */
+  --night: var(--espresso); /* navbar, footer, hero and dark sections */
+  --night-2: var(--espresso-2);
+  --ink: var(--espresso); /* filled buttons, badges, active pills */
+  --on-ink: var(--cream); /* text on --ink */
+  --ink-hover: var(--espresso-3);
+  --text: var(--espresso);
+  --text-muted: #6b574d;
+  --line-rgb: 43, 26, 20; /* for lines: rgba(var(--line-rgb), 0.15) */
+  --shadow-rgb: 43, 26, 20;
+  --danger-bg: #fbe3e1;
+  --danger-ink: #8a2a22;
+  --danger-text: #c0392b;
+  --success-bg: #d7eedd;
+  --success-ink: #1f5c38;
+  --success-text: #2f8f5b;
+  --baking-bg: #f3e2c4;
+  --switch-off: #e3c9c4;
 
   --font-head: 'DM Serif Display', Georgia, serif;
   --font-script: 'Pinyon Script', cursive;
@@ -28,6 +52,47 @@
   --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.35);
   --max: 1200px;
   --nav-h: 76px;
+}
+
+/* Dark mode: cream turns into warm dark brown. Blush, rose and gold accents stay.
+   The data-theme attribute is set by index.html (before the page draws) and by useTheme. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #241813;
+  --bg-2: #33241d;
+  --surface: #2e2019;
+  --blush-bg: #432a25;
+  --night: #160e0b;
+  --night-2: #22160f;
+  --ink: var(--cream);
+  --on-ink: var(--espresso);
+  --ink-hover: #e8dccb;
+  --text: #f3e9dd;
+  --text-muted: #c2ad9e;
+  --gold-deep: #d4ae74; /* gold text needs to be lighter on a dark page */
+  --line-rgb: 246, 239, 229;
+  --shadow-rgb: 0, 0, 0;
+  --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  --danger-bg: #4d2522;
+  --danger-ink: #f6b9b1;
+  --danger-text: #f08a7e;
+  --success-bg: #1e3a29;
+  --success-ink: #a8e0bb;
+  --success-text: #6fd39a;
+  --baking-bg: #4a3a22;
+  --switch-off: #5c443c;
+}
+
+/* A smooth colour fade while switching theme (useTheme adds this class for a moment) */
+html.theme-fade,
+html.theme-fade *,
+html.theme-fade *::before,
+html.theme-fade *::after {
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease !important;
 }
 
 /* =========================================================
@@ -45,7 +110,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--cream);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   font-size: 16px;
@@ -110,12 +175,12 @@ p {
 
 /* Sections alternate between dark brown and cream */
 .section--dark {
-  background: var(--espresso);
+  background: var(--night);
   color: var(--text-light);
 }
 
 .section--blush {
-  background: var(--blush);
+  background: var(--blush-bg);
 }
 
 .section-head {
@@ -181,12 +246,12 @@ p {
 }
 
 .btn-dark {
-  background: var(--espresso);
-  color: var(--cream);
+  background: var(--ink);
+  color: var(--on-ink);
 }
 
 .btn-dark:hover {
-  background: var(--espresso-3);
+  background: var(--ink-hover);
 }
 
 .btn-rose {
@@ -199,13 +264,13 @@ p {
 }
 
 .btn-outline {
-  border-color: var(--espresso);
-  color: var(--espresso);
+  border-color: var(--ink);
+  color: var(--ink);
 }
 
 .btn-outline:hover {
-  background: var(--espresso);
-  color: var(--cream);
+  background: var(--ink);
+  color: var(--on-ink);
 }
 
 /* Outline button for dark backgrounds */
@@ -257,7 +322,7 @@ p {
   place-items: center;
   background:
     radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.6), transparent 50%),
-    linear-gradient(135deg, var(--tone, var(--blush)), var(--cream-2));
+    linear-gradient(135deg, var(--tone, var(--blush)), var(--bg-2));
   font-size: 3.5rem;
   user-select: none;
 }
@@ -279,8 +344,8 @@ p {
   display: inline-block;
   padding: 6px 14px;
   border-radius: 999px;
-  background: #fbe3e1;
-  color: #8a2a22;
+  background: var(--danger-bg);
+  color: var(--danger-ink);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.12em;

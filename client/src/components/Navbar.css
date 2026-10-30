@@ -2,7 +2,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--espresso);
+  background: var(--night);
   color: var(--cream);
   transition: box-shadow 0.3s;
 }
@@ -111,5 +111,15 @@
 
   .navbar__toggle {
     display: grid;
+    margin-left: 0;
+  }
+
+  /* on phones the theme button sits on the right, next to the menu button */
+  .navbar__inner .theme {
+    margin-left: auto;
+  }
+
+  .navbar__inner {
+    gap: 12px;
   }
 }

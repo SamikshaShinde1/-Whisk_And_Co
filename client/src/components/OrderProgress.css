@@ -27,7 +27,7 @@
   right: 12.5%;
   height: 4px;
   border-radius: 4px;
-  background: var(--cream-2);
+  background: var(--bg-2);
 }
 
 .progress__fill {
@@ -52,8 +52,8 @@
   display: grid;
   place-items: center;
   font-size: 1.3rem;
-  border: 3px solid #fffaf4;
-  background: var(--cream-2);
+  border: 3px solid var(--surface);
+  background: var(--bg-2);
   color: var(--text-muted);
 }
 
@@ -73,15 +73,15 @@
 
 /* the step the order is on right now */
 .progress__step.is-current .progress__dot {
-  background: var(--espresso);
-  color: var(--cream);
+  background: var(--ink);
+  color: var(--on-ink);
   box-shadow: 0 0 0 0 rgba(196, 154, 92, 0.6);
   animation: progress-pulse 2s ease-out infinite;
 }
 
 .progress__step.is-done .progress__label,
 .progress__step.is-current .progress__label {
-  color: var(--espresso);
+  color: var(--text);
 }
 
 @keyframes progress-pulse {

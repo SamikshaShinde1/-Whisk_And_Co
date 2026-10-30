@@ -6,7 +6,7 @@
   padding: 60px 18px;
   background:
     radial-gradient(circle at 20% 20%, rgba(238, 181, 176, 0.35), transparent 45%),
-    var(--cream);
+    var(--bg);
 }
 
 .admin-login__card {
@@ -16,7 +16,7 @@
   justify-items: center;
   padding: 44px 32px 36px;
   border-radius: var(--radius);
-  background: #fffaf4;
+  background: var(--surface);
   box-shadow: var(--shadow);
   text-align: center;
 }
@@ -140,8 +140,8 @@
   margin: 0 auto 22px;
   padding: 0 8px 0 18px;
   border-radius: 999px;
-  border: 1.5px solid rgba(43, 26, 20, 0.15);
-  background: #fffaf4;
+  border: 1.5px solid rgba(var(--line-rgb), 0.15);
+  background: var(--surface);
   color: var(--text-muted);
   transition: border-color 0.25s, box-shadow 0.25s;
 }
@@ -159,7 +159,7 @@
   outline: 0;
   background: none;
   font: inherit;
-  color: var(--espresso);
+  color: var(--text);
 }
 
 /* hide the browser's own clear "x" – we have our own button */
@@ -174,13 +174,14 @@
   height: 32px;
   border: 0;
   border-radius: 50%;
-  background: var(--cream-2);
-  color: var(--espresso);
+  background: var(--bg-2);
+  color: var(--text);
   cursor: pointer;
 }
 
 .admin__search button:hover {
   background: var(--rose);
+  color: var(--espresso);
 }
 
 /* ---------- Change password box ---------- */
@@ -193,7 +194,7 @@
 .admin__password-done {
   padding: 28px;
   border-radius: var(--radius);
-  background: #fffaf4;
+  background: var(--surface);
   box-shadow: var(--shadow);
 }
 
@@ -222,7 +223,7 @@
 
 .admin__password-done svg {
   font-size: 2.6rem;
-  color: #2f8f5b;
+  color: var(--success-text);
   margin-bottom: 8px;
 }
 
@@ -236,8 +237,8 @@
   width: 100%;
   padding: 12px 16px;
   border-radius: 12px;
-  background: #fbe3e1;
-  color: #8a2a22;
+  background: var(--danger-bg);
+  color: var(--danger-ink);
   font-weight: 600;
   font-size: 0.92rem;
   text-align: center;
@@ -251,7 +252,7 @@
 
 .admin__table-wrap {
   border-radius: var(--radius);
-  background: #fffaf4;
+  background: var(--surface);
   box-shadow: var(--shadow);
   overflow: hidden;
 }
@@ -264,7 +265,7 @@
 
 .admin__table th {
   padding: 16px 18px;
-  background: var(--espresso);
+  background: var(--night);
   color: var(--cream);
   font-size: 0.7rem;
   font-weight: 800;
@@ -276,7 +277,7 @@
 .admin__table td {
   padding: 16px 18px;
   vertical-align: top;
-  border-bottom: 1px solid rgba(43, 26, 20, 0.08);
+  border-bottom: 1px solid rgba(var(--line-rgb), 0.08);
 }
 
 .admin__table tr:last-child td {
@@ -314,11 +315,11 @@
 }
 
 .admin__contact a:hover {
-  color: var(--espresso);
+  color: var(--text);
 }
 
 .admin__contact a[aria-label] {
-  color: #1f9d55;
+  color: var(--success-text);
   font-size: 1.1rem;
 }
 
@@ -334,20 +335,20 @@
 }
 
 .admin__status--new {
-  background: var(--blush);
+  background: var(--blush-bg);
 }
 
 .admin__status--baking {
-  background: #f3e2c4;
+  background: var(--baking-bg);
   border-color: var(--gold);
 }
 
 .admin__status--ready {
-  background: #d7eedd;
+  background: var(--success-bg);
 }
 
 .admin__status--delivered {
-  background: var(--cream-2);
+  background: var(--bg-2);
   color: var(--text-muted);
 }
 
@@ -374,7 +375,7 @@
     margin-bottom: 16px;
     padding: 6px 0;
     border-radius: var(--radius-sm);
-    background: #fffaf4;
+    background: var(--surface);
     box-shadow: var(--shadow);
   }
 
@@ -383,7 +384,7 @@
     grid-template-columns: 110px 1fr;
     gap: 12px;
     padding: 10px 18px;
-    border-bottom: 1px dashed rgba(43, 26, 20, 0.1);
+    border-bottom: 1px dashed rgba(var(--line-rgb), 0.1);
   }
 
   .admin__table td::before {

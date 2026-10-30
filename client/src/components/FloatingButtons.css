@@ -57,8 +57,8 @@
   position: absolute;
   right: 72px;
   white-space: nowrap;
-  background: var(--espresso);
-  color: var(--cream);
+  background: var(--ink);
+  color: var(--on-ink);
   font-size: 0.8rem;
   font-weight: 700;
   padding: 8px 14px;

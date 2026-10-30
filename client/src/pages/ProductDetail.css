@@ -13,12 +13,12 @@
 }
 
 .product__crumbs a:hover {
-  color: var(--espresso);
+  color: var(--text);
   text-decoration: underline;
 }
 
 .product__crumbs span {
-  color: var(--espresso);
+  color: var(--text);
   font-weight: 700;
 }
 
@@ -34,7 +34,7 @@
   top: calc(var(--nav-h) + 24px);
   aspect-ratio: 1;
   border-radius: var(--radius);
-  box-shadow: 0 30px 60px rgba(43, 26, 20, 0.2);
+  box-shadow: 0 30px 60px rgba(var(--shadow-rgb), 0.2);
 }
 
 .product__photo .img-fallback {
@@ -47,8 +47,8 @@
   left: 20px;
   padding: 8px 16px;
   border-radius: 999px;
-  background: var(--espresso);
-  color: var(--cream);
+  background: var(--ink);
+  color: var(--on-ink);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -90,7 +90,7 @@
   padding: 28px;
   border-radius: var(--radius);
   border: 1.5px dashed var(--rose);
-  background: #fffaf4;
+  background: var(--surface);
 }
 
 .product__soldout h2 {

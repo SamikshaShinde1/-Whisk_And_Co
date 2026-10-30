@@ -4,9 +4,9 @@
   padding: 0;
   border: 0;
   border-radius: var(--radius);
-  background: #fffaf4;
+  background: var(--surface);
   color: var(--text);
-  box-shadow: 0 30px 80px rgba(43, 26, 20, 0.35);
+  box-shadow: 0 30px 80px rgba(var(--shadow-rgb), 0.35);
 }
 
 .modal--normal {
@@ -22,7 +22,7 @@
 }
 
 .modal::backdrop {
-  background: rgba(43, 26, 20, 0.55);
+  background: rgba(var(--shadow-rgb), 0.55);
   backdrop-filter: blur(3px);
 }
 
@@ -47,8 +47,8 @@ body:has(.modal[open]) {
   justify-content: space-between;
   gap: 16px;
   padding: 22px 28px 16px;
-  background: #fffaf4;
-  border-bottom: 1px dashed rgba(43, 26, 20, 0.15);
+  background: var(--surface);
+  border-bottom: 1px dashed rgba(var(--line-rgb), 0.15);
 }
 
 .modal__head h2 {
@@ -64,8 +64,8 @@ body:has(.modal[open]) {
   height: 38px;
   border: 0;
   border-radius: 50%;
-  background: var(--cream-2);
-  color: var(--espresso);
+  background: var(--bg-2);
+  color: var(--text);
   font-size: 1.15rem;
   cursor: pointer;
   transition: background 0.25s, transform 0.25s;
@@ -73,6 +73,7 @@ body:has(.modal[open]) {
 
 .modal__close:hover {
   background: var(--rose);
+  color: var(--espresso);
   transform: rotate(90deg);
 }
 

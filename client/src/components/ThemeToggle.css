@@ -1,0 +1,96 @@
+.theme {
+  position: relative;
+}
+
+/* Round button, same style as the hamburger button */
+.theme__button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(246, 239, 229, 0.35);
+  background: transparent;
+  color: var(--cream);
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.theme__button:hover,
+.theme__button[aria-expanded='true'] {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: var(--espresso);
+}
+
+.theme__icon {
+  animation: theme-spin 0.5s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+@keyframes theme-spin {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+}
+
+/* The small Light / Dark / System menu */
+.theme__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 60;
+  display: grid;
+  gap: 2px;
+  min-width: 160px;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+  animation: theme-menu-in 0.2s ease-out;
+}
+
+@keyframes theme-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.theme__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.theme__option:hover {
+  background: var(--bg-2);
+}
+
+.theme__option.is-active {
+  background: var(--blush-bg);
+  font-weight: 800;
+}
+
+.theme__check {
+  margin-left: auto;
+  color: var(--gold-deep);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme__icon,
+  .theme__menu {
+    animation: none;
+  }
+}
