@@ -2,6 +2,111 @@
   padding-top: 56px;
 }
 
+/* ---------- Search box ---------- */
+.menu__search {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto 26px;
+}
+
+.menu__search input {
+  width: 100%;
+  padding: 15px 52px 15px 50px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(43, 26, 20, 0.18);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+  font: inherit;
+  font-size: 1rem; /* 16px or more stops iPhones zooming in on the box */
+  color: var(--text);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.menu__search input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.menu__search input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(196, 154, 92, 0.22), var(--shadow);
+}
+
+/* hide the browser's own ✕, because we draw our own */
+.menu__search input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.menu__search-icon {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  translate: 0 -50%;
+  font-size: 1.15rem;
+  color: var(--gold-deep);
+  pointer-events: none;
+}
+
+.menu__search-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--cream-2);
+  color: var(--espresso);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.menu__search-clear:hover {
+  background: var(--rose);
+}
+
+/* ---------- "No treats found" ---------- */
+.menu__empty {
+  max-width: 460px;
+  margin: 30px auto 10px;
+  padding: 40px 24px;
+  border-radius: var(--radius);
+  background: #fffaf4;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.menu__empty-emoji {
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+.menu__empty h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-head);
+  font-size: 1.6rem;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.menu__empty p {
+  margin: 0 0 22px;
+  color: var(--text-muted);
+}
+
+.menu__empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
 .menu__filters {
   display: flex;
   flex-wrap: wrap;

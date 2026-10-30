@@ -146,7 +146,7 @@ There is no test framework yet.
 - `components/OrderProgress.jsx` maps the statuses new, baking, ready and delivered to the steps Received, Baking, Ready and Delivered. Its `STEPS` must match `ORDER_STATUSES`.
 - The WhatsApp message in `OrderPanel` includes the order number once the order has been placed.
 
-**Menu page:** the selected filter is stored in the URL as `?category=<id>`. The footer's category links use this to open a filtered menu.
+**Menu page:** the selected filter is stored in the URL as `?category=<id>`, and the search as `?q=<text>` (written 300 ms after typing stops, with `replace`). The search matches every typed word against name, category name and description, and works together with the category. The footer's category links use `?category=` to open a filtered menu.
 
 **Product detail (`pages/ProductDetail.jsx`):**
 - `OrderPanel` has `key={item.slug}`, so its form resets when you open another item. It sends `items: [{slug, qty}]`; the server sets the name and price.
