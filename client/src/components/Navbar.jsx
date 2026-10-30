@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { FiMenu, FiX } from 'react-icons/fi'
 import Logo from './Logo'
 import ThemeToggle from './ThemeToggle'
+import CartButton from './cart/CartButton'
 import './Navbar.css'
 
 const LINKS = [
@@ -26,6 +27,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const close = () => setOpen(false)
+  const isAdmin = useLocation().pathname.startsWith('/admin') // no shopping cart on admin pages
 
   // Add a shadow once the page is scrolled
   useEffect(() => {
@@ -48,7 +50,10 @@ export default function Navbar() {
 
         <Link to="/menu" className="btn btn-rose navbar__cta">Order now</Link>
 
-        <ThemeToggle />
+        <div className="navbar__icons">
+          <ThemeToggle />
+          {!isAdmin && <CartButton />}
+        </div>
 
         <button
           className="navbar__toggle"

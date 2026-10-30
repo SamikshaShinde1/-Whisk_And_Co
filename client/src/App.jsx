@@ -4,6 +4,8 @@ import { AnimatePresence } from 'motion/react'
 import Intro from './components/Intro'
 import Navbar from './components/Navbar'
 import SpecialBanner from './components/SpecialBanner'
+import CartProvider from './components/cart/CartProvider'
+import CartDrawer from './components/cart/CartDrawer'
 import Footer from './components/Footer'
 import FloatingButtons from './components/FloatingButtons'
 import ScrollManager from './components/ScrollManager'
@@ -12,6 +14,7 @@ import Menu from './pages/Menu'
 import ProductDetail from './pages/ProductDetail'
 import NotFound from './pages/NotFound'
 import Track from './pages/Track'
+import Checkout from './pages/Checkout'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminMenu from './pages/admin/AdminMenu'
@@ -41,7 +44,8 @@ export default function App() {
   }, [])
 
   return (
-    <>
+    // CartProvider shares the shopping cart with every page
+    <CartProvider>
       <AnimatePresence>{showIntro && !isAdmin && <Intro onDone={finishIntro} />}</AnimatePresence>
 
       <ScrollManager />
@@ -52,6 +56,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/menu/:slug" element={<ProductDetail />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/track" element={<Track />} />
           <Route path="/admin" element={<Navigate to="/admin/orders" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -62,6 +67,7 @@ export default function App() {
       </main>
       <Footer compact={isAdmin} />
       {!isAdmin && <FloatingButtons />}
-    </>
+      {!isAdmin && <CartDrawer />}
+    </CartProvider>
   )
 }

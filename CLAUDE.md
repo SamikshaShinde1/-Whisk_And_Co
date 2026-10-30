@@ -33,10 +33,10 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - `config/db.js` sets `mongoose.set('sanitizeFilter', true)` to block NoSQL injection.
 
 **Routes:**
-- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. The client sends items as `{slug, qty}` only. The server looks up each product (using `mongoose.trusted` for its own `$in`, because `sanitizeFilter` would block it), takes the name and the price from the database (`priceNow(product)`, which is the offer price while a special is active), and rejects unknown or sold-out items with a 400. It ignores any client total, and `address` is cleared for pickup. The order is validated first, and only then gets an `orderNumber` (`PNP-1001`, `PNP-1002`, …) from `models/Counter.js`, which uses an atomic `$inc`. This way, rejected orders don't use up numbers. The response is only `{_id, orderNumber, total, status}`.
+- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. The client sends items as `{slug, qty, note}` only, one line per cart line (the same slug may appear twice with different notes). The server looks up each product (using `mongoose.trusted` for its own `$in`, because `sanitizeFilter` would block it), takes the name and the price from the database (`priceNow(product)`, which is the offer price while a special is active), and rejects unknown or sold-out items with a 400. It ignores any client total, and `address` is cleared for pickup. The order is validated first, and only then gets an `orderNumber` (`PNP-1001`, `PNP-1002`, …) from `models/Counter.js`, which uses an atomic `$inc`. This way, rejected orders don't use up numbers. The response is only `{_id, orderNumber, total, status}`.
 - `POST /api/orders/track` (public): body `{number, phone}`. It is a POST so the phone never appears in URLs, browser history or server logs. Rate-limited to 30 per 15 minutes.
   - Returns the order only when **both** the order number and the phone match.
-  - It `.select()`s only the safe fields (`orderNumber`, `items`, `total`, `date`, `deliveryType`, `status`, `createdAt`), so no name, phone, address or note is returned.
+  - It `.select()`s only the safe fields (`orderNumber`, `items.name`, `items.price`, `items.qty`, `total`, `date`, `deliveryType`, `status`, `createdAt`), so no name, phone, address, order note or item note is returned.
   - A wrong number and a wrong phone give the same 404 message.
 - `GET /api/orders` (admin): all orders, newest first.
 - `PATCH /api/orders/:id` (admin): body `{status}`, which must be one of `ORDER_STATUSES` (exported from `models/Order.js`).
@@ -54,7 +54,7 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - `POST /api/auth/login`: rate-limited to 5 per 15 minutes. Returns `{token, email}`, where the token is a 7-day HS256 JWT. `middleware/requireAdmin.js` checks `Authorization: Bearer <token>`.
 
 **Models:**
-- The validation rules live in `models/Order.js`: a 10-digit phone, `date` as a `YYYY-MM-DD` string, an integer `qty` from 1 to 50, at least one item, and an address required for delivery.
+- The validation rules live in `models/Order.js`: a 10-digit phone, `date` as a `YYYY-MM-DD` string, an integer `qty` from 1 to 50, an optional item `note` (max 200, e.g. the message on a cake), between 1 and `MAX_ORDER_LINES` (20) items (the route also rejects more than 20 before any lookup), and an address required for delivery.
 - `orderNumber` is `unique` and `sparse`, because orders placed before this feature have no number. The admin table shows `#<last 6 characters of the id>` for those.
 - `models/Admin.js` stores a bcrypt hash of the password.
 - `models/Product.js`: `slug`, `name`, `category`, `price`, `priceFrom` (shows "From ₹…"), `unit`, `description`, `image` (an https link or `/images/...`), `bestSeller`, `available` and `archived`. `CATEGORY_IDS` must match `CATEGORIES` in `client/src/data/menu.js`.
@@ -92,7 +92,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
 
 **Libraries:**
 - React 19
-- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:slug`, `/track`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders`, `/admin/menu` and `*` (the 404 page). Admin pages skip the intro and the floating buttons.
+- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:slug`, `/checkout`, `/track`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders`, `/admin/menu` and `*` (the 404 page). Admin pages skip the intro, the floating buttons, the special banner and the cart (button and drawer).
 - Motion: import from `motion/react`.
 - React Icons: `react-icons/fi` and `react-icons/fa`.
 - Plain CSS, with one CSS file per component.
@@ -153,18 +153,32 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
 - The admin pages reuse the `.menu__pill` and `.field` styles from `Menu.css` and `OrderPanel.css`.
 
 **Track order:**
-- `pages/Track.jsx` reads `?number=` to pre-fill the order number; the success message in `OrderPanel` links there.
-- `src/recentOrders.js` keeps the last 5 orders placed from this browser in localStorage (key `pnp-recent-orders`). It stores only `{orderNumber, item, date}`, never the phone, name or address. `OrderPanel` saves to it, and the Track page shows them as tap-to-fill buttons with a "Forget these" link.
+- `pages/Track.jsx` reads `?number=` to pre-fill the order number; the thank-you screen in `Checkout` links there.
+- `src/recentOrders.js` keeps the last 5 orders placed from this browser in localStorage (key `pnp-recent-orders`). It stores only `{orderNumber, item, date}`, never the phone, name or address. `Checkout` saves to it (item = first name + "+ N more"), and the Track page shows them as tap-to-fill buttons with a "Forget these" link.
 - If customers forget their number, the Track page has an "Ask us on WhatsApp" link, and the admin finds the order with the search box on `AdminOrders` (order number, name or phone). Never add tracking by phone alone.
 - `components/OrderProgress.jsx` maps the statuses new, baking, ready and delivered to the steps Received, Baking, Ready and Delivered. Its `STEPS` must match `ORDER_STATUSES`.
-- The WhatsApp message in `OrderPanel` includes the order number once the order has been placed.
+- `src/orderMessage.js` builds every WhatsApp order message (`OrderPanel` for one item, `Checkout` for the cart). It includes the order number once the order has been placed.
 
 **Menu page:** the selected filter is stored in the URL as `?category=<id>`, and the search as `?q=<text>` (written 300 ms after typing stops, with `replace`). The search matches every typed word against name, category name and description, and works together with the category. The footer's category links use `?category=` to open a filtered menu.
 
 **Product detail (`pages/ProductDetail.jsx`):**
-- `OrderPanel` has `key={item.slug}`, so its form resets when you open another item. It sends `items: [{slug, qty}]`; the server sets the name and price.
-- `OrderPanel` holds the quantity, the note ("Message on cake" for cakes) and the form.
-- It posts the order with `createOrder` and builds the pre-typed WhatsApp message from the same state.
+- `OrderPanel` has `key={item.slug}`, so it resets when you open another item. It holds the quantity and the note ("Message on cake" for cakes), with "Add to cart" (adds and opens the drawer), "Buy now" (adds and goes to `/checkout`) and "Order on WhatsApp". It no longer has a details form; details are asked once, at checkout.
+
+**Shopping cart:**
+- `hooks/useCart.js` holds the `CartContext`, `useCart()` (`{lines, count, addItem, updateLine, removeLine, clearCart, isOpen, openCart, closeCart, bump}`), `useCartDetails()` (joins lines with the live menu: `{items, total, hasProblems, loading}`, where each item has `product`, `unitPrice` from `priceNow`, `lineTotal` and `problem` "Sold out" or "No longer on the menu"), and the limits `MAX_QTY` 50, `MAX_LINES` 20 and `MAX_NOTE` 200, which match the server.
+- `components/cart/CartProvider.jsx` wraps the whole `App`.
+  - It saves lines `{id, slug, qty, note}` in localStorage (`pnp-cart`) and syncs other tabs with the `storage` event.
+  - Only slugs are stored, never prices.
+  - Adding the same slug with the same note raises the quantity; a different note makes a new line.
+  - `addItem` returns false when the cart is full.
+- `CartButton` (navbar, next to `ThemeToggle` in `.navbar__icons`) shows the count; `bump` is its `key`, which replays the bounce.
+- `CartDrawer` is a native `<dialog>` sliding in from the right, with photo, price each, qty +/-, remove, a note input and the total. Sold-out lines must be removed before "Checkout".
+- `ProductCard` is an `<article>` holding a `Link` plus a round + button (a button can't go inside a link). There is no + on sold-out items.
+- `pages/Checkout.jsx`:
+  - It has name, phone, pickup or delivery, address, date and an optional order note, plus a sticky summary (on top on phones).
+  - It sends one `createOrder` with all lines.
+  - On success it keeps a snapshot for the thank-you screen (order number, copy, Track, "Send on WhatsApp"), then clears the cart.
+  - It shows "Your cart is empty" with "Browse menu" when there are no lines.
 
 **Design ("FOLD"-style artisan bakery):**
 - Colours and fonts are set as tokens in `src/index.css`:

@@ -181,6 +181,12 @@
   padding-right: 16px;
 }
 
+/* the WhatsApp button sits under the two cart buttons, full width */
+.order__whatsapp {
+  width: 100%;
+  margin-top: 12px;
+}
+
 .order__hint {
   margin: 14px 0 0;
   font-size: 0.82rem;

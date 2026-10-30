@@ -2,7 +2,10 @@ import mongoose from 'mongoose'
 
 export const ORDER_STATUSES = ['new', 'baking', 'ready', 'delivered']
 
-// One line of an order, e.g. { name: 'Red Velvet Cake', price: 700, qty: 2 }
+// The most different lines one order (one cart) can have
+export const MAX_ORDER_LINES = 20
+
+// One line of an order, e.g. { name: 'Red Velvet Cake', price: 700, qty: 2, note: 'Happy Birthday Riya!' }
 const itemSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true, maxlength: 100 },
@@ -14,6 +17,8 @@ const itemSchema = new mongoose.Schema(
       max: [50, 'Quantity can be at most 50'],
       validate: { validator: Number.isInteger, message: 'Quantity must be a whole number' },
     },
+    // A note for this item only, e.g. the message on a cake
+    note: { type: String, trim: true, maxlength: [200, 'A note is too long (200 characters max).'], default: '' },
   },
   { _id: false },
 )
@@ -31,9 +36,12 @@ const orderSchema = new mongoose.Schema(
     },
     items: {
       type: [itemSchema],
-      validate: { validator: (items) => items.length > 0, message: 'Your order is empty' },
+      validate: [
+        { validator: (items) => items.length > 0, message: 'Your order is empty' },
+        { validator: (items) => items.length <= MAX_ORDER_LINES, message: `One order can have at most ${MAX_ORDER_LINES} different items` },
+      ],
     },
-    note: { type: String, trim: true, maxlength: 200, default: '' },
+    note: { type: String, trim: true, maxlength: 200, default: '' }, // a note for the whole order
     deliveryType: { type: String, enum: ['pickup', 'delivery'], default: 'pickup' },
     address: {
       type: String,

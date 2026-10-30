@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { rateLimit } from 'express-rate-limit'
 import mongoose from 'mongoose'
-import Order, { ORDER_STATUSES } from '../models/Order.js'
+import Order, { MAX_ORDER_LINES, ORDER_STATUSES } from '../models/Order.js'
 import Product, { priceNow } from '../models/Product.js'
 import { nextOrderNumber } from '../models/Counter.js'
 import requireAdmin from '../middleware/requireAdmin.js'
@@ -30,9 +30,13 @@ const trackLimiter = rateLimit({
 router.post('/', orderLimiter, async (req, res) => {
   const { customerName, phone, items, note, deliveryType, address, date } = req.body
 
-  // The browser sends only which item and how many: [{ slug: 'red-velvet-cake', qty: 2 }].
+  // The browser sends only which item, how many, and a note: [{ slug: 'red-velvet-cake', qty: 2, note: '…' }]
+  // (one line per item in the cart).
   // The name and price always come from our database, so nobody can change a price.
   const wanted = Array.isArray(items) ? items : []
+  if (wanted.length > MAX_ORDER_LINES) {
+    return res.status(400).json({ message: `One order can have at most ${MAX_ORDER_LINES} different items.` })
+  }
   const slugs = wanted.map((item) => String(item?.slug || ''))
   // mongoose.trusted: this $in is ours (sanitizeFilter would otherwise block it); every slug is a plain string
   const products = await Product.find({ slug: mongoose.trusted({ $in: slugs }) })
@@ -47,7 +51,12 @@ router.post('/', orderLimiter, async (req, res) => {
       return res.status(400).json({ message: `Sorry, ${product.name} is sold out right now.` })
     }
     // priceNow: the offer price while a special is running today, otherwise the normal price
-    cleanItems.push({ name: product.name, price: priceNow(product), qty: item.qty })
+    cleanItems.push({
+      name: product.name,
+      price: priceNow(product),
+      qty: item.qty,
+      note: typeof item.note === 'string' ? item.note : '',
+    })
   }
 
   // Work out the total on the server instead of trusting the number sent by the browser
@@ -89,7 +98,8 @@ router.post('/track', trackLimiter, async (req, res) => {
 
   // .select() picks ONLY the safe fields – no name, phone, address or note is ever sent back
   const order = await Order.findOne({ orderNumber: number, phone }).select(
-    'orderNumber items total date deliveryType status createdAt -_id',
+    // (only name, price and qty of each item: item notes like a cake message stay private too)
+    'orderNumber items.name items.price items.qty total date deliveryType status createdAt -_id',
   )
 
   // Same message whether the number or the phone was wrong, so nobody can guess which one exists

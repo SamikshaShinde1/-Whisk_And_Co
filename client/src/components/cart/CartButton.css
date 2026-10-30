@@ -1,0 +1,63 @@
+/* Same round style as the theme and menu buttons */
+.cart-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(246, 239, 229, 0.35);
+  background: transparent;
+  color: var(--cream);
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.cart-button:hover {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: var(--espresso);
+}
+
+.cart-button__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.cart-button__icon.is-bouncing {
+  animation: cart-bounce 0.6s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@keyframes cart-bounce {
+  30% {
+    transform: translateY(-7px) scale(1.15);
+  }
+  60% {
+    transform: translateY(1px) scale(0.95);
+  }
+}
+
+/* the count bubble */
+.cart-button__count {
+  position: absolute;
+  top: -12px;
+  right: -14px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--rose);
+  color: var(--espresso);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
+  box-shadow: 0 0 0 2px var(--night);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-button__icon.is-bouncing {
+    animation: none;
+  }
+}

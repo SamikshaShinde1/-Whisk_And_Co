@@ -1,0 +1,133 @@
+.checkout {
+  padding-top: 56px;
+}
+
+.checkout__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.checkout__narrow {
+  max-width: 560px;
+}
+
+.checkout__heading {
+  margin: 0 0 18px;
+  font-size: 1.6rem;
+}
+
+/* the summary stays in view while the form scrolls */
+.checkout__summary {
+  position: sticky;
+  top: calc(var(--nav-h) + 20px);
+}
+
+.checkout__summary-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.checkout__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.checkout__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checkout__items li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(var(--line-rgb), 0.08);
+}
+
+.checkout__items li.has-problem {
+  color: var(--text-muted);
+}
+
+.checkout__qty {
+  font-weight: 800;
+  color: var(--gold-deep);
+}
+
+.checkout__name small {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.checkout__name .checkout__problem {
+  color: var(--danger-text);
+  font-weight: 700;
+}
+
+.checkout__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 16px;
+}
+
+.checkout__total span {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.checkout__total strong {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+/* ---------- Empty cart ---------- */
+.checkout__empty {
+  text-align: center;
+}
+
+.checkout__empty-icon {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 14px;
+  padding: 19px;
+  border-radius: 50%;
+  background: var(--blush-bg);
+  color: var(--gold-deep);
+}
+
+.checkout__empty p {
+  color: var(--text-muted);
+}
+
+/* the "Back to the menu" link looks like the other text links */
+.order__success .order__again {
+  display: inline-block;
+}
+
+/* On tablets and phones the summary goes on top, so customers see what they're ordering first */
+@media (max-width: 900px) {
+  .checkout__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout__summary {
+    position: static;
+    order: -1;
+  }
+}

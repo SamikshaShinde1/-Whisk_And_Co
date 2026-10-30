@@ -196,7 +196,10 @@ export default function AdminOrders() {
                       </td>
                       <td data-label="Items">
                         {order.items.map((item, i) => (
-                          <div key={i}>{item.qty} × {item.name}</div>
+                          <div key={i}>
+                            {item.qty} × {item.name}
+                            {item.note && <small className="admin__note">“{item.note}”</small>}
+                          </div>
                         ))}
                         {order.note && <small className="admin__note">“{order.note}”</small>}
                       </td>
