@@ -2,9 +2,43 @@
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '')
 
+// ---------- "Waking up the oven…" ----------
+// The free server on Render sleeps after 15 minutes with no visitors, and the first request
+// can then take up to a minute. Any request slower than SLOW_AFTER counts as "slow",
+// and components/WakeUpNotice.jsx shows a friendly message while one is running.
+const SLOW_AFTER = 4000 // milliseconds
+let slowRequests = 0
+const listeners = new Set()
+
+function setSlowRequests(change) {
+  slowRequests += change
+  listeners.forEach((listener) => listener())
+}
+
+// For useSyncExternalStore: is the server slow right now? And tell me when that changes.
+export const isServerSlow = () => slowRequests > 0
+export function subscribeToServerSlow(listener) {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
+}
+
 // Small helper around fetch: sends JSON, reads JSON, and throws a friendly error if something fails.
 // A file upload (FormData) is sent as it is; the browser sets its own Content-Type for it.
-async function request(path, { method = 'GET', body, token } = {}) {
+async function request(path, options = {}) {
+  let isSlow = false
+  const timer = setTimeout(() => {
+    isSlow = true
+    setSlowRequests(+1)
+  }, SLOW_AFTER)
+  try {
+    return await send(path, options)
+  } finally {
+    clearTimeout(timer)
+    if (isSlow) setSlowRequests(-1)
+  }
+}
+
+async function send(path, { method = 'GET', body, token } = {}) {
   const isFile = body instanceof FormData
   let response
   try {

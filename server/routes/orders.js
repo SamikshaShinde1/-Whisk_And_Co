@@ -87,6 +87,12 @@ router.post('/', orderLimiter, async (req, res) => {
 
   // Send back only what the customer needs to see
   res.status(201).json({ _id: order._id, orderNumber: order.orderNumber, total: order.total, status: order.status })
+
+  // Email the owner AFTER the order is saved and the customer has their answer.
+  // If the email fails, the order is still safe: we only write the problem in the server log.
+  Promise.resolve()
+    .then(() => req.app.locals.notifyOrder(order))
+    .catch((err) => console.error(`Order email for ${order.orderNumber} failed:`, err.message))
 })
 
 // POST /api/orders/track – a customer checks their order (public), body: { number, phone }

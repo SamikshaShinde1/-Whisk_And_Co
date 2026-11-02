@@ -11,6 +11,7 @@ import { formatPrice } from '../data/menu'
 import { whatsappLink } from '../config/site'
 import { earliestOrderDate, orderDateProblem } from '../indiaTime'
 import { SundayNote } from '../components/SundayNotice'
+import PrivacyNote from '../components/PrivacyNote'
 import usePageTitle from '../hooks/usePageTitle'
 import useCart, { useCartDetails } from '../hooks/useCart'
 import '../components/OrderPanel.css' // shared form, toggle and thank-you styles
@@ -232,6 +233,7 @@ export default function Checkout() {
               </a>
             </div>
             <p className="order__hint">We confirm every order personally. Payment on confirmation.</p>
+            <PrivacyNote />
           </form>
 
           {/* ---------- Summary ---------- */}

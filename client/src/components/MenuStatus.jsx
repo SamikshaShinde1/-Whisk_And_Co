@@ -16,13 +16,11 @@ export function LoadingCards({ count = 3 }) {
   ))
 }
 
-// The message under the shimmer. The second line only fades in after a few seconds:
-// a free server "sleeps" when nobody visits, and the first visit can take up to a minute.
+// The message under the shimmer. If the server is asleep, WakeUpNotice adds "Waking up the oven…".
 export function LoadingNote() {
   return (
     <p className="menu-status" role="status">
       Loading the menu…
-      <span className="menu-status__slow">Warming up the oven, the first visit can take up to a minute.</span>
     </p>
   )
 }

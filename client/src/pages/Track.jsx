@@ -5,6 +5,7 @@ import { FiSearch, FiClock } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
 import PageHeader from '../components/PageHeader'
 import OrderProgress from '../components/OrderProgress'
+import PrivacyNote from '../components/PrivacyNote'
 import { trackOrder } from '../api'
 import { forgetRecentOrders, getRecentOrders, noteOrderStatus } from '../recentOrders'
 import { formatPrice } from '../data/menu'
@@ -133,6 +134,7 @@ export default function Track() {
               <FiSearch /> {loading ? 'Searching…' : 'Track'}
             </button>
           </form>
+          <PrivacyNote />
 
           <p className="track__forgot">
             Forgot your order number?{' '}

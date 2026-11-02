@@ -95,6 +95,11 @@
   color: var(--text);
 }
 
+/* the privacy note sits close under the form */
+.track__inner > .privacy-note {
+  margin-top: -16px;
+}
+
 .track__forgot {
   margin: -8px 0 0;
   text-align: center;

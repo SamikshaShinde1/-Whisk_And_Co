@@ -9,15 +9,29 @@ import '../config/db.js' // same safety setting (sanitizeFilter) as the real ser
 import { createApp } from '../app.js'
 import { todayInIndia } from '../utils/indiaTime.js'
 
+// Starts a temporary MongoDB. It normally starts in about a second, but on Windows it now and then
+// never reports "ready", so we wait at most 30 seconds and try again (up to 3 times).
+// (The first run also downloads MongoDB once; that download is not counted in the 30 seconds.)
+async function startMemoryMongo(tries = 3) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await MongoMemoryServer.create({ instance: { launchTimeout: 30000 } })
+    } catch (err) {
+      if (attempt >= tries) throw err
+      console.warn(`Test database did not start (try ${attempt} of ${tries}), trying again…`)
+    }
+  }
+}
+
 // options.now: a fake clock, e.g. () => new Date('2026-11-01T04:30:00Z')
-export async function startTestServer(options = {}) {
+// options.notifyOrder: a pretend "email the owner" (by default it does nothing, so tests never send real email)
+export async function startTestServer({ notifyOrder = async () => {}, ...options } = {}) {
   process.env.JWT_SECRET = 'test-secret-only-for-tests'
 
-  // The first run downloads MongoDB once, so allow plenty of time
-  const mongo = await MongoMemoryServer.create({ instance: { launchTimeout: 180000 } })
+  const mongo = await startMemoryMongo()
   await mongoose.connect(mongo.getUri())
 
-  const app = createApp(options)
+  const app = createApp({ notifyOrder, ...options })
   const adminToken = jwt.sign({ id: new mongoose.Types.ObjectId().toString() }, process.env.JWT_SECRET, {
     algorithm: 'HS256',
     expiresIn: '1h',

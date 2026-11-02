@@ -415,6 +415,23 @@ p {
 }
 
 /* Hidden on screen, but read out by screen readers */
+/* "We only use your details…" under the checkout and track forms (components/PrivacyNote.jsx) */
+.privacy-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.privacy-note svg {
+  flex-shrink: 0;
+  color: var(--gold-deep);
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

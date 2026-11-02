@@ -7,12 +7,15 @@ import orderRoutes from './routes/orders.js'
 import authRoutes from './routes/auth.js'
 import productRoutes from './routes/products.js'
 import { notFound, errorHandler } from './middleware/errors.js'
+import { sendOrderEmail } from './utils/orderEmail.js'
 
 // A function (not a ready-made app), so it reads CLIENT_URL only after server/.env is loaded.
 // "now" gives the current time; tests pass a fake clock to check the Sunday rules on any day.
-export function createApp({ now = () => new Date() } = {}) {
+// "notifyOrder" tells the owner about a new order (an email); tests pass a pretend one.
+export function createApp({ now = () => new Date(), notifyOrder = sendOrderEmail } = {}) {
   const app = express()
   app.locals.now = now
+  app.locals.notifyOrder = notifyOrder
 
   // Which websites may call this API (comma-separated list in CLIENT_URL)
   const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')

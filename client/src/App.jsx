@@ -9,6 +9,7 @@ import CartDrawer from './components/cart/CartDrawer'
 import SundayNotice from './components/SundayNotice'
 import Footer from './components/Footer'
 import FloatingButtons from './components/FloatingButtons'
+import WakeUpNotice from './components/WakeUpNotice'
 import ScrollManager from './components/ScrollManager'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
@@ -70,6 +71,7 @@ export default function App() {
       {!isAdmin && <FloatingButtons />}
       {!isAdmin && <CartDrawer />}
       {!isAdmin && <SundayNotice ready={!showIntro} />}
+      <WakeUpNotice />
     </CartProvider>
   )
 }

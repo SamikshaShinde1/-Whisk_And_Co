@@ -31,6 +31,10 @@ The owner is a beginner learning React. Use simple English and work in big steps
   - The client has an exact copy in `src/indiaTime.js` (plus `isSundayInIndia` and `formatDay`). Keep the two the same.
   - **Date rules ("Sunday: pre-orders only"):** no past dates; no same-day orders on a Sunday (the earliest is Monday); and a Sunday date only if the order is placed by Saturday `SUNDAY_DEADLINE` (20:00) in India.
 - `createApp({ now })` stores the clock in `app.locals.now`. The orders route checks `orderDateProblem(order.date, req.app.locals.now())` after `validate()` and before taking an order number, and returns a 400 with the message. Tests pass a fake clock.
+- **New-order email** (`utils/orderEmail.js`): `createApp({ notifyOrder })` stores it in `app.locals.notifyOrder` (default `sendOrderEmail`). The orders route calls it only AFTER the order is saved and the 201 is sent, and only logs a failure (`console.error`), so a failed email never loses an order.
+  - It uses **Resend** over HTTPS with the built-in `fetch` (no package). Gmail/SMTP is not an option: Render's free plan blocks the SMTP ports.
+  - The settings in `.env` are `RESEND_API_KEY` and `ORDER_EMAIL_TO` (comma-separated). Without them the email is skipped. `ORDER_EMAIL_FROM` is optional and defaults to `onboarding@resend.dev`, which only delivers to the Resend account's own email until a domain is verified.
+  - `buildOrderEmail(order)` returns `{subject, text, html}` and HTML-escapes everything the customer typed.
 - CORS only allows the origins listed in `CLIENT_URL` (comma-separated).
 - `trust proxy` is set so the rate limiter sees real visitor IPs on Render.
 - `config/db.js` sets `mongoose.set('sanitizeFilter', true)` to block NoSQL injection.
@@ -81,7 +85,8 @@ npm run dev       # dev server at http://localhost:5173
 npm run build     # production build into client/dist
 npm run lint      # oxlint (config: client/.oxlintrc.json)
 npm run preview   # serve the production build (port 4173)
-npm run favicon   # reads ../logo.png and writes public/logo.png, favicon.png and apple-touch-icon.png (uses sharp)
+npm run favicon   # reads ../logo.png and writes public/logo.png, favicon.png and apple-touch-icon.png (uses sharp), then runs share-image
+npm run share-image  # writes public/og-image.png (1200x630 link preview; adds ../logo.png when it exists)
 ```
 
 Run these from `server/`:
@@ -94,7 +99,7 @@ npm run seed-products  # one time: copy the starting menu into MongoDB (safe to 
 npm test               # backend tests (node:test + supertest + mongodb-memory-server, in server/tests/)
 ```
 
-Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`startTestServer()` starts an in-memory MongoDB and signs an admin JWT; `daysFromToday(n)` and `orderFor(items)` help build data; `startTestServer({ now })` sets a fake clock). Each file runs in its own process, but the order rate limit (10 per 15 minutes) still applies within a file, so keep each file at 10 orders or fewer. The first run downloads MongoDB, so it is slow once. The client has no tests.
+Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`startTestServer()` starts an in-memory MongoDB and signs an admin JWT; `daysFromToday(n)` and `orderFor(items)` help build data; `startTestServer({ now })` sets a fake clock; `notifyOrder` defaults to a no-op so tests never send email). Each file runs in its own process, but the order rate limit (10 per 15 minutes) still applies within a file, so keep each file at 10 orders or fewer. The first run downloads MongoDB, so it is slow once. On Windows the in-memory MongoDB sometimes never reports "ready", so the helper waits 30 seconds and retries up to 3 times. The client has no tests.
 
 ## Frontend architecture
 
@@ -119,7 +124,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - `ProductCard`, the Home sections and `ProductDetail` all do this.
   - `ProductDetail` shows a "Sold out for now" box with a WhatsApp "Ask when it's back" button instead of `OrderPanel`.
   - "You may also like" only suggests available items.
-- `components/MenuStatus.jsx`: `LoadingCards` (shimmer cards, placed inside the real grid), `LoadingNote` (adds a "warming up" line after 4 seconds, because Render's free tier sleeps) and `LoadError` (with a Try again button).
+- `components/MenuStatus.jsx`: `LoadingCards` (shimmer cards, placed inside the real grid), `LoadingNote` ("Loading the menu…") and `LoadError` (with a Try again button).
 - `src/data/menu.js`: `CATEGORIES`, `CRAFT_IMAGE`, `getCategory` (with a fallback), `formatPrice(amount, from)`, `hasOffer(item)`, `priceNow(item)` and `unsplash(id, width)`.
 - **Special offers on the site** (all driven by `item.specialActive`):
   - `components/PriceTag.jsx` shows every menu price, with the old price struck through during an offer. Use it, not `formatPrice`, for item prices.
@@ -134,6 +139,9 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - Several of the Unsplash photos show the wrong food. The owner plans to replace them with their own photos, through the photo upload on `/admin/menu`.
 - `src/data/reviews.js`: **placeholder reviews, not real ones**. They must be replaced with real customer reviews before launch.
 - `src/api.js`: every backend call goes through `request()`, which reads `VITE_API_URL` (default `http://localhost:5000`), adds a Bearer token when one is given, and throws errors with a friendly `.message`. Admin calls should be added here.
+  - A request still running after 4 seconds counts as "slow" (`isServerSlow` / `subscribeToServerSlow`). `components/WakeUpNotice.jsx` (in `App`, on every page including admin) reads it with `useSyncExternalStore` and shows "Waking up the oven…" bottom-left, because Render's free plan sleeps after 15 minutes.
+- `components/PrivacyNote.jsx` ("We only use your details to prepare and deliver your order.") sits under the Checkout and Track forms. Add it to any new form that asks for a name or phone.
+- **Link previews:** `index.html` has Open Graph and Twitter tags using `%SITE_URL%`, which `vite.config.js` replaces with `VITE_SITE_URL` (it warns on a build without it). Crawlers don't run JavaScript, so every page shares these tags. The image is `public/og-image.png`.
 
 **Images:**
 - `SmartImage` shows a tinted emoji placeholder when a photo is missing or fails to load. It remembers which `src` failed, so a photo that arrives later still gets shown.

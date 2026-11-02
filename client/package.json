@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "favicon": "node scripts/make-favicon.mjs"
+    "favicon": "node scripts/make-favicon.mjs && node scripts/make-share-image.mjs",
+    "share-image": "node scripts/make-share-image.mjs"
   },
   "dependencies": {
     "motion": "^14.6.0",
