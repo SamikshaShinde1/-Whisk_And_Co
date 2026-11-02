@@ -105,7 +105,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
 
 **Libraries:**
 - React 19
-- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:slug`, `/checkout`, `/track`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders`, `/admin/menu` and `*` (the 404 page). Admin pages skip the intro, the floating buttons, the special banner and the cart (button and drawer). `/admin/orders` and `/admin/menu` also skip the `Navbar` and use `pages/admin/AdminBar.jsx` instead: a slim 60px sticky bar with a small logo, the title (plus a small subtitle) and round icon buttons (label as tooltip), given as an `actions` list (`{label, Icon, onClick | to, className, active, disabled}`). Under 640px the buttons fold into a "⋯" menu.
+- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:slug`, `/checkout`, `/track`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders`, `/admin/menu` and `*` (the 404 page). Admin pages skip the intro, the floating buttons, the special banner and the cart (button and drawer). `AdminOrders` and `AdminMenu` use `<PageHeader compact>` (the owner wanted the full banner back, just shorter): script "admin", the title, a small text line and the `.admin__toolbar` of labelled pill buttons (`.admin__tool`).
 - Motion: import from `motion/react`.
 - React Icons: `react-icons/fi` and `react-icons/fa`.
 - Plain CSS, with one CSS file per component.
@@ -146,7 +146,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
 **Images:**
 - `SmartImage` shows a tinted emoji placeholder when a photo is missing or fails to load. It remembers which `src` failed, so a photo that arrives later still gets shown.
 - **Logo** ("dipped W" round sticker: whisk wires dipping into a chocolate "W" with drips, on a blush circle). Change the design only in `scripts/make-logo.mjs` and run `npm run logo`; `src/components/logo/logoShapes.js` is generated from it.
-  - `LogoMark` draws it inline (not an `<img>`), coloured by the `--logo-*` tokens in `index.css`: blush circle + dark chocolate on light backgrounds; in dark mode and in the cocoa areas (navbar, footer, hero, page headers, intro, admin bar) the circle is cocoa and the chocolate turns strawberry-rose. With `animate` it builds itself step by step (used by the intro).
+  - `LogoMark` draws it inline (not an `<img>`), coloured by the `--logo-*` tokens in `index.css`: blush circle + dark chocolate on light backgrounds; in dark mode and in the cocoa areas (navbar, footer, hero, page headers, intro) the circle is cocoa and the chocolate turns strawberry-rose. With `animate` it builds itself step by step (used by the intro).
   - `Logo` = `LogoMark` + the wordmark "Whisk" + script `.logo__amp` "&" + "Co.". The navbar hides the wordmark under 420px.
 
 **App shell (`App.jsx`):**
@@ -163,7 +163,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - an "Archived" filter pill, where archived items have Restore and "Delete forever" buttons,
   - `ProductForm` (add or edit, photo upload with a local preview, or a pasted link), in `components/Modal.jsx` (the native `<dialog>`),
   - a "Remove?" dialog (also in `Modal`) with two choices: Archive or "Delete forever". For an item that is already archived, it only offers "Delete forever".
-- `AdminOrders` and `AdminMenu` link to each other from their `AdminBar`.
+- `AdminOrders` and `AdminMenu` link to each other from their toolbars.
 - `AdminOrders` redirects to the login page when there is no token. A 401 from the API clears the token and returns to the login page with a message (passed in navigation state).
 - Status changes are shown on screen straight away and undone if the API call fails.
 - Statuses come from `src/orderStatus.js`. Past statuses are disabled in the dropdown; delivered and cancelled orders show a 🔒 "Completed" / "Cancelled" label instead; choosing delivered or cancelled first opens an "Are you sure?" `Modal`. The filter pills include "cancelled".

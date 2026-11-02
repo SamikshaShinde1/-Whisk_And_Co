@@ -34,10 +34,7 @@ function shouldShowIntro() {
 export default function App() {
   const [showIntro, setShowIntro] = useState(shouldShowIntro)
   // Admin pages skip the intro and the floating buttons
-  const { pathname } = useLocation()
-  const isAdmin = pathname.startsWith('/admin')
-  // The orders and menu pages have their own slim bar (AdminBar) instead of the navbar
-  const showNavbar = !isAdmin || pathname === '/admin/login'
+  const isAdmin = useLocation().pathname.startsWith('/admin')
 
   const finishIntro = useCallback(() => {
     try {
@@ -54,7 +51,7 @@ export default function App() {
       <AnimatePresence>{showIntro && !isAdmin && <Intro onDone={finishIntro} />}</AnimatePresence>
 
       <ScrollManager />
-      {showNavbar && <Navbar />}
+      <Navbar />
       {!isAdmin && <SpecialBanner />}
       <main>
         <Routes>

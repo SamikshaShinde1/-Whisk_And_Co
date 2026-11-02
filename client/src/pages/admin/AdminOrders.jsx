@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { AnimatePresence } from 'motion/react'
 import { FiBookOpen, FiKey, FiLogOut, FiRefreshCw, FiPhone, FiSearch, FiX } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
-import AdminBar from './AdminBar'
+import PageHeader from '../../components/PageHeader'
 import Modal from '../../components/Modal'
 import ChangePassword from './ChangePassword'
 import { getOrders, updateOrderStatus } from '../../api'
@@ -124,28 +124,26 @@ export default function AdminOrders() {
 
   return (
     <>
-      <AdminBar
-        title="Orders"
-        subtitle={`Logged in as ${admin.email}`}
-        actions={[
-          {
-            label: loading ? 'Loading…' : 'Refresh',
-            Icon: FiRefreshCw,
-            onClick: refresh,
-            disabled: loading,
-            className: `admin-bar__tool--refresh ${loading ? 'is-loading' : ''}`,
-          },
-          { label: 'Manage menu', Icon: FiBookOpen, to: '/admin/menu', className: 'admin-bar__tool--menu' },
-          {
-            label: 'Change password',
-            Icon: FiKey,
-            onClick: () => setShowPassword(!showPassword),
-            active: showPassword,
-            className: 'admin-bar__tool--key',
-          },
-          { label: 'Log out', Icon: FiLogOut, onClick: () => logout(), className: 'admin-bar__tool--logout' },
-        ]}
-      />
+      <PageHeader compact script="admin" title="Orders" text={`Logged in as ${admin.email}`}>
+        <div className="admin__toolbar">
+          <button className={`admin__tool admin__tool--refresh ${loading ? 'is-loading' : ''}`} onClick={refresh} disabled={loading}>
+            <FiRefreshCw /> {loading ? 'Loading…' : 'Refresh'}
+          </button>
+          <Link to="/admin/menu" className="admin__tool admin__tool--menu">
+            <FiBookOpen /> Manage menu
+          </Link>
+          <button
+            className={`admin__tool admin__tool--key ${showPassword ? 'is-active' : ''}`}
+            onClick={() => setShowPassword(!showPassword)}
+            aria-expanded={showPassword}
+          >
+            <FiKey /> Change password
+          </button>
+          <button className="admin__tool admin__tool--logout" onClick={() => logout()}>
+            <FiLogOut /> Log out
+          </button>
+        </div>
+      </PageHeader>
 
       <section className="section admin">
         <div className="container">

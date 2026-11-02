@@ -34,3 +34,30 @@
     padding: 52px 0 60px;
   }
 }
+
+/* Compact: the same banner with less height (admin pages) */
+.page-header--compact {
+  padding: 26px 0 28px;
+}
+
+.page-header--compact .script {
+  margin-bottom: 0;
+}
+
+.page-header--compact h1 {
+  margin-bottom: 4px;
+}
+
+.page-header--compact p {
+  font-size: var(--fs-small);
+}
+
+.page-header--compact .admin__toolbar {
+  margin-top: 14px;
+}
+
+@media (max-width: 640px) {
+  .page-header--compact {
+    padding: 20px 0 22px;
+  }
+}

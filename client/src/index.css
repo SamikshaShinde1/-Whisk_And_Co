@@ -301,8 +301,7 @@ p {
 .footer,
 .hero,
 .page-header,
-.intro,
-.admin-bar {
+.intro {
   --accent: var(--rose);
 }
 
@@ -313,8 +312,7 @@ p {
 .footer,
 .hero,
 .page-header,
-.intro,
-.admin-bar {
+.intro {
   --logo-disc: #4a2f2b;
   --logo-choc-top: #e3a3a3;
   --logo-choc-bottom: var(--rose);
