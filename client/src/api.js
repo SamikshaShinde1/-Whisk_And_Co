@@ -45,7 +45,9 @@ async function send(path, { method = 'GET', body, token } = {}) {
     response = await fetch(`${API_URL}${path}`, {
       method,
       headers: {
-        ...(!isFile && { 'Content-Type': 'application/json' }),
+        // Only say "this is JSON" when JSON is sent: on a plain GET the label would make the
+        // browser ask the server for permission first (an extra request, which can fail while it wakes up)
+        ...(body && !isFile && { 'Content-Type': 'application/json' }),
         ...(token && { Authorization: `Bearer ${token}` }),
       },
       body: isFile ? body : body ? JSON.stringify(body) : undefined,

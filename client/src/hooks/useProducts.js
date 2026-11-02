@@ -8,9 +8,27 @@ let pending = null // the request while it is on its way
 
 const categoryOrder = (item) => CATEGORIES.findIndex((c) => c.id === item.category)
 
+// The free server sleeps when nobody visits, and while it wakes up a request can fail.
+// So a failed request is tried again a few times (after 3, 6 and 9 seconds) before giving up.
+// Real answers like "not found" (status below 500) are not retried.
+const RETRY_DELAYS = [3000, 6000, 9000]
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+async function getProductsPatiently() {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await getProducts()
+    } catch (error) {
+      const canRetry = !error.status || error.status >= 500
+      if (!canRetry || attempt >= RETRY_DELAYS.length) throw error
+      await wait(RETRY_DELAYS[attempt])
+    }
+  }
+}
+
 function loadMenu() {
   if (!pending) {
-    pending = getProducts()
+    pending = getProductsPatiently()
       .then((list) => {
         // Group by category, in the same order as the menu filter pills
         cached = [...list].sort((a, b) => categoryOrder(a) - categoryOrder(b))

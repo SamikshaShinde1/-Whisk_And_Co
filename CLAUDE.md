@@ -116,7 +116,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - `whatsappLink(message)` builds every WhatsApp link from `VITE_WHATSAPP_NUMBER`.
 - **The live menu is in MongoDB** and is edited at `/admin/menu`. Items are identified by `slug` everywhere in the client (links, keys, `findProduct`), not `id`.
 - `src/hooks/useProducts.js`: `useProducts()` returns `{products, loading, error, retry}`.
-  - It loads the menu once per visit, shares the same request between every section, and sorts it by `CATEGORIES` order.
+  - It loads the menu once per visit, shares the same request between every section, and sorts it by `CATEGORIES` order. A failed load (network error or 5xx, e.g. while Render wakes up) is retried after 3, 6 and 9 seconds before the error is shown.
   - `clearMenuCache()` is called after every admin change. `findProduct(products, slug)` finds one item.
   - Home sections refer to items by slug (`HeroSlider` `SLIDES`, `SIGNATURE_SLUG`, `PREORDER_SLUGS`) and must cope with a deleted item.
 - **Sold out:** items with `available: false` stay on the menu.
@@ -138,7 +138,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - `MENU` is now only seed data for `npm run seed-products`. Editing it does not change the website.
   - Several of the Unsplash photos show the wrong food. The owner plans to replace them with their own photos, through the photo upload on `/admin/menu`.
 - `src/data/reviews.js`: **placeholder reviews, not real ones**. They must be replaced with real customer reviews before launch.
-- `src/api.js`: every backend call goes through `request()`, which reads `VITE_API_URL` (default `http://localhost:5000`), adds a Bearer token when one is given, and throws errors with a friendly `.message`. Admin calls should be added here.
+- `src/api.js`: every backend call goes through `request()`, which reads `VITE_API_URL` (default `http://localhost:5000`), adds a Bearer token when one is given, and throws errors with a friendly `.message`. It only sends `Content-Type: application/json` when there is a body, so plain GETs need no CORS preflight. Admin calls should be added here.
   - A request still running after 4 seconds counts as "slow" (`isServerSlow` / `subscribeToServerSlow`). `components/WakeUpNotice.jsx` (in `App`, on every page including admin) reads it with `useSyncExternalStore` and shows "Waking up the oven…" bottom-left, because Render's free plan sleeps after 15 minutes.
 - `components/PrivacyNote.jsx` ("We only use your details to prepare and deliver your order.") sits under the Checkout and Track forms. Add it to any new form that asks for a name or phone.
 - **Link previews:** `index.html` has Open Graph and Twitter tags using `%SITE_URL%`, which `vite.config.js` replaces with `VITE_SITE_URL` (it warns on a build without it). Crawlers don't run JavaScript, so every page shares these tags. The image is `public/og-image.png`.
