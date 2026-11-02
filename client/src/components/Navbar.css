@@ -110,7 +110,7 @@
 }
 
 /* Phones: logo, cart and the menu button only */
-@media (max-width: 640px) {
+@media (max-width: 860px) {
   .navbar__links,
   .navbar__cta {
     display: none;
@@ -146,7 +146,7 @@
 }
 
 /* if the phone menu was left open and the window gets wider, hide it */
-@media (min-width: 641px) {
+@media (min-width: 861px) {
   .navbar__mobile {
     display: none;
   }

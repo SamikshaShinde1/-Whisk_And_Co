@@ -6,8 +6,8 @@ import Logo from './Logo'
 import CartButton from './cart/CartButton'
 import './Navbar.css'
 
-// The navbar is kept short on purpose: Logo · Home · Menu · Order now · Cart.
-// Everything else (Our story, Track order, Contact, light/dark mode) is in the footer.
+// The navbar is kept short on purpose: Logo · Home · Menu · Track order · Order now · Cart.
+// Everything else (Our story, Contact, light/dark mode) is in the footer.
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -30,6 +30,7 @@ export default function Navbar() {
         <nav className="navbar__links" aria-label="Main">
           <NavLink to="/" end>Home</NavLink>
           <NavLink to="/menu">Menu</NavLink>
+          <NavLink to="/track">Track order</NavLink>
         </nav>
 
         <Link to="/menu" className="btn btn-rose navbar__cta">Order now</Link>
@@ -61,6 +62,7 @@ export default function Navbar() {
             <div className="container navbar__mobile-inner">
               <NavLink to="/" end onClick={close}>Home</NavLink>
               <NavLink to="/menu" onClick={close}>Menu</NavLink>
+              <NavLink to="/track" onClick={close}>Track order</NavLink>
               <Link to="/menu" className="btn btn-rose" onClick={close}>Order now</Link>
             </div>
           </motion.nav>
