@@ -28,7 +28,7 @@ export function createApp({ now = () => new Date(), notifyOrder = sendOrderEmail
 
   // Health check – handy for testing and for Render
   app.get('/', (req, res) => {
-    res.json({ status: 'ok', message: 'Pastel n Postery API is running 🧁' })
+    res.json({ status: 'ok', message: 'Whisk & Co. API is running 🧁' })
   })
 
   app.use('/api/orders', orderRoutes)

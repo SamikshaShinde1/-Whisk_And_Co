@@ -5,10 +5,10 @@
 const whatsappNumber = (import.meta.env.VITE_WHATSAPP_NUMBER || '').replace(/\D/g, '')
 
 export const SITE = {
-  name: 'Pastel n Postery',
+  name: 'Whisk & Co.',
   tagline: 'Home bakery · Baked fresh with love',
-  instagramHandle: '@pastel_n_postery',
-  instagramUrl: 'https://www.instagram.com/pastel_n_postery/',
+  instagramHandle: '@wiskco01',
+  instagramUrl: 'https://www.instagram.com/wiskco01/',
   whatsappNumber,
   hours: [
     { days: 'Mon – Sat', time: '9 AM – 8 PM' },

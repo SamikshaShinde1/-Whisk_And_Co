@@ -31,7 +31,7 @@ const waitFor = async (check) => {
 }
 
 const SAMPLE = {
-  orderNumber: 'PNP-1042',
+  orderNumber: 'WC-1042',
   customerName: 'Riya <b>Shah</b>',
   phone: '9876543210',
   items: [
@@ -48,8 +48,8 @@ const SAMPLE = {
 describe('the email itself', () => {
   test('has the order number, name, phone, items, total, pickup/delivery and date', () => {
     const { subject, text } = buildOrderEmail(SAMPLE)
-    assert.match(subject, /PNP-1042/)
-    for (const part of ['PNP-1042', 'Riya', '9876543210', '2 × Red Velvet Cake', 'Happy Birthday!', '1 × Cookie Box', '₹1,650', 'Delivery on Mon, 2 Nov, 2026', 'Flat 4, Rose Lane', 'Call when you arrive']) {
+    assert.match(subject, /WC-1042/)
+    for (const part of ['WC-1042', 'Riya', '9876543210', '2 × Red Velvet Cake', 'Happy Birthday!', '1 × Cookie Box', '₹1,650', 'Delivery on Mon, 2 Nov, 2026', 'Flat 4, Rose Lane', 'Call when you arrive']) {
       assert.ok(text.includes(part), `missing "${part}"`)
     }
   })
@@ -121,7 +121,7 @@ describe('sending with Resend', () => {
     assert.equal(options.headers.Authorization, 'Bearer re_test_key')
     const body = JSON.parse(options.body)
     assert.deepEqual(body.to, ['owner@example.com'])
-    assert.match(body.subject, /PNP-1042/)
+    assert.match(body.subject, /WC-1042/)
 
     fetch.mock.mockImplementation(async () => new Response('{"message":"API key is invalid"}', { status: 401 }))
     await assert.rejects(sendOrderEmail(SAMPLE), /401: API key is invalid/)

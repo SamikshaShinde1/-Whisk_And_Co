@@ -18,7 +18,7 @@ function save(list) {
   }
 }
 
-// [{ orderNumber: 'PNP-1042', item: 'Red Velvet Cake', date: '2026-11-02', savedAt: 1793000000000 }, ...] newest first
+// [{ orderNumber: 'WC-1042', item: 'Red Velvet Cake', date: '2026-11-02', savedAt: 1793000000000 }, ...] newest first
 // Orders older than 7 days (or saved before "savedAt" existed) are removed here.
 export function getRecentOrders() {
   let list

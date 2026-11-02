@@ -10,14 +10,17 @@ const counterSchema = new mongoose.Schema({
 
 const Counter = mongoose.model('Counter', counterSchema)
 
-// Order numbers start at PNP-1001
+// Order numbers start at WC-1001.
+// The bakery used to be called Pastel n Postery: older orders keep their PNP- numbers (they had
+// their own counter, 'order'), so new orders use a fresh counter and the two can never clash.
+export const ORDER_PREFIX = 'WC'
 const FIRST_ORDER_NUMBER = 1001
 
 export async function nextOrderNumber() {
   const counter = await Counter.findOneAndUpdate(
-    { _id: 'order' },
+    { _id: 'order-wc' },
     { $inc: { seq: 1 } },
     { upsert: true, returnDocument: 'after' },
   )
-  return `PNP-${FIRST_ORDER_NUMBER - 1 + counter.seq}`
+  return `${ORDER_PREFIX}-${FIRST_ORDER_NUMBER - 1 + counter.seq}`
 }

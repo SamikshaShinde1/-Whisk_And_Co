@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "favicon": "node scripts/make-favicon.mjs && node scripts/make-share-image.mjs",
+    "logo": "node scripts/make-logo.mjs && node scripts/make-share-image.mjs",
     "share-image": "node scripts/make-share-image.mjs"
   },
   "dependencies": {
@@ -22,6 +22,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "opentype.js": "^2.0.0",
     "oxlint": "^1.89.0",
     "sharp": "^0.35.5",
     "vite": "^8.3.5"

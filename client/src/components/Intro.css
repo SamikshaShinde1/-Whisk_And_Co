@@ -18,22 +18,22 @@
 }
 
 .intro__logo {
+  position: relative;
+  margin-bottom: 26px;
   border-radius: 50%;
-  box-shadow:
-    0 0 0 3px var(--accent),
-    0 0 60px rgba(201, 123, 123, 0.55),
-    0 0 140px rgba(201, 123, 123, 0.35);
-  margin-bottom: 28px;
+  box-shadow: 0 0 60px rgba(201, 123, 123, 0.45), 0 0 140px rgba(201, 123, 123, 0.25);
 }
 
-.intro__name {
+.intro__sparkle {
+  position: absolute;
+  fill: var(--rose);
+  translate: -50% -50%;
+}
+
+.intro .intro__name {
   margin: 0;
-  font-size: clamp(2rem, 8vw, 4.6rem);
-  white-space: nowrap;
-}
-
-.intro__name span {
-  display: inline-block;
+  font-size: clamp(2.4rem, 9vw, 4.6rem);
+  color: var(--cream);
 }
 
 .intro__tagline {

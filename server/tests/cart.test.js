@@ -42,7 +42,7 @@ describe('One order with several items', () => {
     ])
     assert.equal(res.status, 201, res.body.message)
     assert.equal(res.body.total, 700 + 2 * 250)
-    assert.match(res.body.orderNumber, /^PNP-\d+$/)
+    assert.match(res.body.orderNumber, /^WC-\d+$/)
   })
 
   test('each item keeps its own note, and the same item can be added twice with different notes', async () => {

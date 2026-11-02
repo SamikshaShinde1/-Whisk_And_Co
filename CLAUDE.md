@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Website for "Pastel n Postery", a home bakery (Instagram: @pastel_n_postery). It's a portfolio project for an internship resume, so the code should be clean, well organised and commented in plain English. The developer (the owner of this repo) is building it for a client, the bakery owner, who is not technical. The admin side must be simple and safe for that client: a "Staff login" link in the footer, and "Change password" on the orders page so the handover password can be replaced.
+Website for "Whisk & Co.", a home bakery (Instagram: @wiskco01, spelled without the "h"). It used to be called "Pastel n Postery": the internal `pnp-` localStorage keys, the Cloudinary folder `pastel-n-postery` and the database name keep the old name on purpose (changing them would lose visitors' carts or the uploaded photos). It's a portfolio project for an internship resume, so the code should be clean, well organised and commented in plain English. The developer (the owner of this repo) is building it for a client, the bakery owner, who is not technical. The admin side must be simple and safe for that client: a "Staff login" link in the footer, and "Change password" on the orders page so the handover password can be replaced.
 
 The owner is a beginner learning React. Use simple English and work in big steps. Stop to ask only when you need something from the owner, such as an account, a password or their WhatsApp number. After each big step, say how to test it and remind the owner to commit with git. Leave commits to the owner unless they ask you to commit.
 
@@ -17,7 +17,7 @@ The owner is a beginner learning React. Use simple English and work in big steps
 2. Full frontend ✅
 3. Backend ✅ (connected to MongoDB Atlas; the first real order and the admin account are saved)
 4. Admin login and orders page ✅ (built; the owner is testing it)
-5. GitHub repo "pastel-n-postery"
+5. GitHub repo (the folder is still called "pastel-n-postery")
 6. Deploy: Render for the server, Vercel for the client
 7. README and a resume line
 
@@ -40,7 +40,7 @@ The owner is a beginner learning React. Use simple English and work in big steps
 - `config/db.js` sets `mongoose.set('sanitizeFilter', true)` to block NoSQL injection.
 
 **Routes:**
-- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. The client sends items as `{slug, qty, note}` only, one line per cart line (the same slug may appear twice with different notes). The server looks up each product (using `mongoose.trusted` for its own `$in`, because `sanitizeFilter` would block it), takes the name and the price from the database (`priceNow(product)`, which is the offer price while a special is active), and rejects unknown or sold-out items with a 400. It ignores any client total, and `address` is cleared for pickup. The order is validated first, and only then gets an `orderNumber` (`PNP-1001`, `PNP-1002`, …) from `models/Counter.js`, which uses an atomic `$inc`. This way, rejected orders don't use up numbers. The response is only `{_id, orderNumber, total, status}`.
+- `POST /api/orders` (public): rate-limited to 10 per 15 minutes. The client sends items as `{slug, qty, note}` only, one line per cart line (the same slug may appear twice with different notes). The server looks up each product (using `mongoose.trusted` for its own `$in`, because `sanitizeFilter` would block it), takes the name and the price from the database (`priceNow(product)`, which is the offer price while a special is active), and rejects unknown or sold-out items with a 400. It ignores any client total, and `address` is cleared for pickup. The order is validated first, and only then gets an `orderNumber` (`WC-1001`, `WC-1002`, …) from `models/Counter.js`, which uses an atomic `$inc` on the counter `order-wc`. Orders from before the rename have `PNP-` numbers (old counter `order`); the track route accepts both prefixes. This way, rejected orders don't use up numbers. The response is only `{_id, orderNumber, total, status}`.
 - `POST /api/orders/track` (public): body `{number, phone}`. It is a POST so the phone never appears in URLs, browser history or server logs. Rate-limited to 30 per 15 minutes.
   - Returns the order only when **both** the order number and the phone match.
   - It `.select()`s only the safe fields (`orderNumber`, `items.name`, `items.price`, `items.qty`, `total`, `date`, `deliveryType`, `status`, `createdAt`), so no name, phone, address, order note or item note is returned.
@@ -85,8 +85,8 @@ npm run dev       # dev server at http://localhost:5173
 npm run build     # production build into client/dist
 npm run lint      # oxlint (config: client/.oxlintrc.json)
 npm run preview   # serve the production build (port 4173)
-npm run favicon   # reads ../logo.png and writes public/logo.png, favicon.png and apple-touch-icon.png (uses sharp), then runs share-image
-npm run share-image  # writes public/og-image.png (1200x630 link preview; adds ../logo.png when it exists)
+npm run logo      # scripts/make-logo.mjs: downloads Fraunces + Pinyon Script, turns the letters into paths and writes public/logo-full.svg, logo-light.svg, logo-mark.svg, logo-mark-light.svg, favicon.svg/.png, apple-touch-icon.png, instagram-1080.png and src/components/logo/logoShapes.js; then runs share-image
+npm run share-image  # writes public/og-image.png (1200x630 link preview, with public/logo-light.svg)
 ```
 
 Run these from `server/`:
@@ -145,10 +145,12 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
 
 **Images:**
 - `SmartImage` shows a tinted emoji placeholder when a photo is missing or fails to load. It remembers which `src` failed, so a photo that arrives later still gets shown.
-- `LogoMark` shows a "P" badge when `public/logo.png` is missing. The owner hasn't added `logo.png` yet.
+- **Logo** ("dipped W" round sticker: whisk wires dipping into a chocolate "W" with drips, on a blush circle). Change the design only in `scripts/make-logo.mjs` and run `npm run logo`; `src/components/logo/logoShapes.js` is generated from it.
+  - `LogoMark` draws it inline (not an `<img>`), coloured by the `--logo-*` tokens in `index.css`: blush circle + dark chocolate on light backgrounds; in dark mode and in the cocoa areas (navbar, footer, hero, page headers, intro, admin bar) the circle is cocoa and the chocolate turns strawberry-rose. With `animate` it builds itself step by step (used by the intro).
+  - `Logo` = `LogoMark` + the wordmark "Whisk" + script `.logo__amp` "&" + "Co.". The navbar hides the wordmark under 420px.
 
 **App shell (`App.jsx`):**
-- The `Intro` overlay plays once per tab session, tracked by `sessionStorage.introSeen`. It is skipped when the user prefers reduced motion.
+- The `Intro` overlay plays once per tab session, tracked by `sessionStorage.introSeen`. It is skipped when the user prefers reduced motion. The logo builds itself (circle, W, the wires draw line by line, a little whisk wiggle, drips), sparkles pop, then the name and "baked with love" fade in (3.8 s).
 - Then come `ScrollManager`, `Navbar`, the routes, `Footer` (which has `id="contact"`) and `FloatingButtons` (Instagram + WhatsApp, bottom-right).
 - `ScrollManager` scrolls to `#hash` sections, otherwise back to the top. It does nothing when the navigation state has `keepScroll: true`; the Menu filter pills set this.
 

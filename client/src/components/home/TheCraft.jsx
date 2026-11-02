@@ -32,7 +32,7 @@ export default function TheCraft({ chapter }) {
           <span className="script">the craft</span>
           <h2 className="section-title">Slow baking, made by hand</h2>
           <p className="section-text">
-            Pastel n Postery began in a home kitchen with a simple belief: good things take time.
+            Whisk &amp; Co. began in a home kitchen with a simple belief: good things take time.
             We knead, proof and bake in small batches, so every bite tastes the way homemade
             should.
           </p>

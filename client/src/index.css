@@ -75,6 +75,13 @@
   --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.3);
   --max: 1200px;
   --nav-h: 76px;
+
+  /* the logo (LogoMark) on light backgrounds: blush circle, dark chocolate W */
+  --logo-disc: var(--blush);
+  --logo-choc-top: #6b4038;
+  --logo-choc-bottom: var(--cocoa);
+  --logo-wire: #9b8580;
+  --logo-shine: rgba(251, 244, 239, 0.55);
 }
 
 /* Dark mode: cocoa backgrounds, cream text, blush and rose accents.
@@ -206,13 +213,30 @@ p {
   outline-offset: 3px;
 }
 
-/* The "Pastel n Postery" wordmark (navbar and footer): heavy, soft, slightly tight */
+/* The round logo + name, side by side */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* The "Whisk & Co." wordmark (navbar and footer): heavy, soft, slightly tight, with a script "&" */
 .logo__name {
   font-family: var(--font-head);
   font-weight: 900;
   font-variation-settings: var(--head-soft);
   letter-spacing: -0.02em;
   line-height: 1;
+  white-space: nowrap;
+}
+
+.logo__amp {
+  margin: 0 0.12em;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-variation-settings: normal;
+  font-size: 1.25em;
+  color: var(--accent);
 }
 
 /* =========================================================
@@ -277,8 +301,25 @@ p {
 .footer,
 .hero,
 .page-header,
-.intro {
+.intro,
+.admin-bar {
   --accent: var(--rose);
+}
+
+/* The logo on dark backgrounds (cocoa areas and dark mode): the chocolate turns strawberry-rose */
+:root[data-theme='dark'],
+.section--dark,
+.navbar,
+.footer,
+.hero,
+.page-header,
+.intro,
+.admin-bar {
+  --logo-disc: #4a2f2b;
+  --logo-choc-top: #e3a3a3;
+  --logo-choc-bottom: var(--rose);
+  --logo-wire: #cdb8b1;
+  --logo-shine: rgba(251, 244, 239, 0.6);
 }
 
 /* =========================================================

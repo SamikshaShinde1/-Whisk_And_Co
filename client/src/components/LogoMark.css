@@ -1,17 +1,18 @@
 .logo-mark {
   flex-shrink: 0;
-  border-radius: 50%;
-  object-fit: cover;
-  background: var(--cream);
+  display: block;
+  border-radius: 50%; /* so a shadow around it is round too */
 }
 
-.logo-mark--fallback {
-  display: grid;
-  place-items: center;
-  background: var(--blush);
-  color: var(--cocoa);
-  font-family: var(--font-head);
-  font-weight: var(--head-weight);
-  font-variation-settings: var(--head-soft);
-  border: 2px solid var(--accent);
+/* The colours come from the --logo-* tokens in index.css, so they follow light and dark mode */
+.logo-mark__disc {
+  fill: var(--logo-disc);
+}
+
+.logo-mark__wire {
+  stroke: var(--logo-wire);
+}
+
+.logo-mark__shine {
+  stroke: var(--logo-shine);
 }

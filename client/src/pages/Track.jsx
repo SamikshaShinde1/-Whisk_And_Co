@@ -20,7 +20,7 @@ const formatDate = (day) =>
 export default function Track() {
   usePageTitle('Track your order')
 
-  // The success message links here as /track?number=PNP-1042, so the number is filled in for you
+  // The success message links here as /track?number=WC-1042, so the number is filled in for you
   const [searchParams] = useSearchParams()
   const [number, setNumber] = useState(searchParams.get('number') || '')
   const [phone, setPhone] = useState('')
@@ -108,7 +108,7 @@ export default function Track() {
               <input
                 value={number}
                 onChange={(e) => setNumber(e.target.value.toUpperCase())}
-                placeholder="PNP-1042"
+                placeholder="WC-1042"
                 required
                 maxLength={12}
                 autoCapitalize="characters"

@@ -7,7 +7,8 @@
 
 const RESEND_URL = 'https://api.resend.com/emails'
 // Resend's test sender: works without your own domain, but only sends to the email you signed up with
-const DEFAULT_FROM = 'Pastel n Postery <onboarding@resend.dev>'
+// The name is in quotes because email rules don't allow a bare '.' (as in 'Co.') in a sender name
+const DEFAULT_FROM = '"Whisk & Co." <onboarding@resend.dev>'
 
 // Customers type their name, notes and address, so make them safe to put inside HTML
 const escapeHtml = (text) =>

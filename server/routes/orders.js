@@ -103,9 +103,10 @@ router.post('/track', trackLimiter, async (req, res) => {
   const number = String(req.body?.number || '').trim().toUpperCase()
   const phone = String(req.body?.phone || '').replace(/\D/g, '')
 
-  if (!/^PNP-\d{4,}$/.test(number) || !/^\d{10}$/.test(phone)) {
+  // New orders are WC-…; orders from before the rename are PNP-… and can still be tracked
+  if (!/^(WC|PNP)-\d{4,}$/.test(number) || !/^\d{10}$/.test(phone)) {
     return res.status(400).json({
-      message: 'Please enter your order number (like PNP-1042) and your 10-digit phone number.',
+      message: 'Please enter your order number (like WC-1042) and your 10-digit phone number.',
     })
   }
 

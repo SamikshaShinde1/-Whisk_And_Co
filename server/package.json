@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Backend API for the Pastel n Postery bakery website",
+  "description": "Backend API for the Whisk & Co. bakery website",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

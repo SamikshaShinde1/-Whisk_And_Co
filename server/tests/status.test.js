@@ -104,6 +104,7 @@ describe('other safety checks', () => {
     assert.equal((await Order.findById(id)).status, 'new')
   })
 
+  // (an old PNP- number: orders from before the rename to Whisk & Co. must stay trackable)
   test('a customer tracking a cancelled order sees "cancelled"', async () => {
     const order = await Order.create({
       orderNumber: 'PNP-5001',

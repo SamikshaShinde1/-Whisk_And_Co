@@ -131,10 +131,10 @@
   }
 }
 
-/* Small phones: logo name + two round buttons must fit in one row */
+/* Small phones: just the round logo (no name), so everything fits in one row */
 @media (max-width: 420px) {
   .navbar .logo__name {
-    font-size: 1rem;
+    display: none;
   }
 
   .navbar__toggle,
