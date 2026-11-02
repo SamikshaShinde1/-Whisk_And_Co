@@ -1,4 +1,4 @@
-/* Big screens: title on the left stays put (sticky) while the cards scroll past on the right */
+/* Big screens: title on the left, the two cards on the right */
 .fresh__layout {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
@@ -34,9 +34,10 @@
   padding-bottom: 56px; /* room for the lower column */
 }
 
+/* the huge "FRESH" along the bottom of the section, behind the cards (same as "BROWNIE") */
 .fresh__word {
   top: auto;
-  bottom: 20px;
+  bottom: -0.12em;
 }
 
 /* Tablets and phones: title on top, cards below */

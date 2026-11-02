@@ -1,32 +1,40 @@
 .footer {
   background: var(--night);
   color: var(--cream);
-  padding-top: 90px;
+  padding-top: 36px;
   scroll-margin-top: var(--nav-h);
+  font-size: var(--fs-small);
+  line-height: 1.5;
 }
 
+/* brand on the left, then hours, menu links and contact as 3 small columns */
 .footer__grid {
   display: grid;
-  grid-template-columns: 1.5fr 1.1fr 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 24px;
+}
+
+.footer .logo__name {
+  font-size: 1.05rem;
 }
 
 .footer__script {
-  margin: 18px 0 6px;
+  margin: 8px 0 2px;
   font-family: var(--font-script);
-  font-size: 2.3rem;
+  font-size: 1.5rem;
   line-height: 1.1;
   color: var(--accent);
 }
 
 .footer__text {
-  max-width: 300px;
+  max-width: 260px;
+  margin: 0 0 12px;
   color: var(--text-light-muted);
 }
 
 .footer h4 {
-  font-size: 1.15rem;
-  margin-bottom: 18px;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
   color: var(--rose);
 }
 
@@ -35,7 +43,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 10px;
+  gap: 3px;
 }
 
 .footer ul a {
@@ -50,8 +58,8 @@
 .footer__hours li {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 10px;
+  gap: 12px;
+  padding-bottom: 5px;
   border-bottom: 1px dashed rgba(251, 244, 239, 0.18);
 }
 
@@ -66,17 +74,17 @@
 
 .footer__social {
   display: flex;
-  gap: 12px;
+  gap: 8px;
 }
 
 .footer__social a {
-  width: 46px;
-  height: 46px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  border: 1.5px solid rgba(251, 244, 239, 0.3);
-  font-size: 1.25rem;
+  border: 1px solid rgba(251, 244, 239, 0.3);
+  font-size: 0.95rem;
   transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
 }
 
@@ -84,17 +92,22 @@
   background: var(--rose);
   border-color: var(--rose);
   color: var(--cocoa);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
+/* one thin line: copyright · Staff login · light/dark button */
 .footer__bottom {
-  margin-top: 70px;
-  padding-top: 24px;
-  padding-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 22px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   border-top: 1px solid rgba(251, 244, 239, 0.12);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: var(--text-light-muted);
-  text-align: center;
 }
 
 /* slim one-line footer for admin pages */
@@ -104,14 +117,11 @@
 
 .footer--compact .footer__bottom {
   margin-top: 0;
-  padding-top: 18px;
-  padding-bottom: 18px;
   border-top: 0;
 }
 
 /* small, quiet link for the bakery owner */
 .footer__staff {
-  margin-left: 14px;
   padding-left: 14px;
   border-left: 1px solid rgba(251, 244, 239, 0.25);
   color: var(--text-light-muted);
@@ -123,9 +133,22 @@
   color: var(--cream);
 }
 
+/* the light/dark button is smaller here, and its menu opens upwards */
+.footer .theme__button {
+  width: 30px;
+  height: 30px;
+  font-size: 0.85rem;
+  border-width: 1px;
+}
+
+.footer .theme__menu {
+  top: auto;
+  bottom: calc(100% + 8px);
+}
+
 @media (max-width: 900px) {
   .footer__grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
   .footer__brand {
@@ -133,14 +156,46 @@
   }
 }
 
+/* phones: stacked, but still compact */
 @media (max-width: 560px) {
   .footer {
-    padding-top: 64px;
+    padding-top: 24px;
   }
 
   .footer__grid {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 16px;
+  }
+
+  /* logo and the two round icons in one row; the longer brand text is left out on phones */
+  .footer__brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer__script,
+  .footer__text {
+    display: none;
+  }
+
+  .footer h4 {
+    margin-bottom: 4px;
+  }
+
+  /* menu and contact links flow along a line instead of one per row */
+  .footer__grid > div:nth-child(n + 3) ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 16px;
+  }
+
+  .footer__hours li {
+    padding-bottom: 3px;
+  }
+
+  .footer__bottom {
+    margin-top: 16px;
   }
 }
 

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa'
 import Logo from './Logo'
 import BigWord from './BigWord'
+import ThemeToggle from './ThemeToggle'
 import { CATEGORIES } from '../data/menu'
 import { SITE, whatsappLink } from '../config/site'
 import './Footer.css'
@@ -14,8 +15,9 @@ export default function Footer({ compact = false }) {
     return (
       <footer className="footer footer--compact">
         <div className="container footer__bottom">
-          © {YEAR} {SITE.name}
+          <span>© {YEAR} {SITE.name}</span>
           <Link to="/" className="footer__staff">Back to website</Link>
+          <ThemeToggle />
         </div>
       </footer>
     )
@@ -27,7 +29,7 @@ export default function Footer({ compact = false }) {
       <BigWord word={SITE.name} className="footer__word" speed={30} />
       <div className="container footer__grid">
         <div className="footer__brand">
-          <Logo size={52} />
+          <Logo size={32} />
           <p className="footer__script">See you in the morning</p>
           <p className="footer__text">Small-batch cakes, breads and treats, baked fresh at home.</p>
           <div className="footer__social">
@@ -78,9 +80,11 @@ export default function Footer({ compact = false }) {
         </div>
       </div>
 
+      {/* one thin line at the bottom: copyright, Staff login and light/dark mode */}
       <div className="container footer__bottom">
-        © {YEAR} {SITE.name}. Baked with love.
+        <span>© {YEAR} {SITE.name}. Baked with love.</span>
         <Link to="/admin/login" className="footer__staff">Staff login</Link>
+        <ThemeToggle />
       </div>
     </footer>
   )

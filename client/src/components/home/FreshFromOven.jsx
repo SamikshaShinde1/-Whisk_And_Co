@@ -9,10 +9,11 @@ import ChapterNo from './ChapterNo'
 import './FreshFromOven.css'
 
 // "Fresh from the oven": our best sellers (items marked "Best seller" on the Manage menu page).
-// On big screens the title stays in place (sticky) while the numbered cards scroll past.
+// Only the first 2 are shown, with a huge "FRESH" behind them (like the hero word):
+// its top half shows above the cards and the rest hides behind them.
 export default function FreshFromOven({ chapter }) {
   const { products, loading, error, retry } = useProducts()
-  const bestSellers = products.filter((item) => item.bestSeller)
+  const bestSellers = products.filter((item) => item.bestSeller).slice(0, 2)
 
   return (
     <section className="section fresh has-big-word">
@@ -34,7 +35,7 @@ export default function FreshFromOven({ chapter }) {
         <div className="fresh__cards">
           {error && <LoadError message={error} onRetry={retry} />}
           <div className="fresh__grid">
-            {loading && <LoadingCards count={4} />}
+            {loading && <LoadingCards count={2} />}
             {bestSellers.map((item, i) => (
               // the wrapper holds the "lower" offset, because Reveal moves the card itself
               <div key={item.slug} className={i % 2 ? 'fresh__card--low' : ''}>

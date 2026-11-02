@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { FiArchive, FiClipboard, FiEdit2, FiLogOut, FiPlus, FiRotateCcw, FiTrash2 } from 'react-icons/fi'
-import PageHeader from '../../components/PageHeader'
+import AdminBar from './AdminBar'
 import SmartImage from '../../components/SmartImage'
 import Modal from '../../components/Modal'
 import ProductForm from './ProductForm'
@@ -148,19 +148,15 @@ export default function AdminMenu() {
 
   return (
     <>
-      <PageHeader script="admin" title="Manage menu" text="Add, edit, mark items as sold out, or run festive specials.">
-        <div className="admin__toolbar">
-          <button className="admin__tool admin__tool--add" onClick={() => setEditing('new')}>
-            <FiPlus /> Add item
-          </button>
-          <Link to="/admin/orders" className="admin__tool admin__tool--menu">
-            <FiClipboard /> Orders
-          </Link>
-          <button className="admin__tool admin__tool--logout" onClick={() => logout()}>
-            <FiLogOut /> Log out
-          </button>
-        </div>
-      </PageHeader>
+      <AdminBar
+        title="Manage menu"
+        subtitle="Add, edit, mark items as sold out, or run festive specials."
+        actions={[
+          { label: 'Add item', Icon: FiPlus, onClick: () => setEditing('new'), className: 'admin-bar__tool--add' },
+          { label: 'Orders', Icon: FiClipboard, to: '/admin/orders', className: 'admin-bar__tool--menu' },
+          { label: 'Log out', Icon: FiLogOut, onClick: () => logout(), className: 'admin-bar__tool--logout' },
+        ]}
+      />
 
       <section className="section admin">
         <div className="container">

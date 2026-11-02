@@ -105,7 +105,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
 
 **Libraries:**
 - React 19
-- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:slug`, `/checkout`, `/track`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders`, `/admin/menu` and `*` (the 404 page). Admin pages skip the intro, the floating buttons, the special banner and the cart (button and drawer).
+- React Router 7: `BrowserRouter` is in `main.jsx`, and the routes are in `App.jsx`. The routes are `/`, `/menu`, `/menu/:slug`, `/checkout`, `/track`, `/admin` (redirects to `/admin/orders`), `/admin/login`, `/admin/orders`, `/admin/menu` and `*` (the 404 page). Admin pages skip the intro, the floating buttons, the special banner and the cart (button and drawer). `/admin/orders` and `/admin/menu` also skip the `Navbar` and use `pages/admin/AdminBar.jsx` instead: a slim 60px sticky bar with a small logo, the title (plus a small subtitle) and round icon buttons (label as tooltip), given as an `actions` list (`{label, Icon, onClick | to, className, active, disabled}`). Under 640px the buttons fold into a "⋯" menu.
 - Motion: import from `motion/react`.
 - React Icons: `react-icons/fi` and `react-icons/fa`.
 - Plain CSS, with one CSS file per component.
@@ -161,7 +161,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - an "Archived" filter pill, where archived items have Restore and "Delete forever" buttons,
   - `ProductForm` (add or edit, photo upload with a local preview, or a pasted link), in `components/Modal.jsx` (the native `<dialog>`),
   - a "Remove?" dialog (also in `Modal`) with two choices: Archive or "Delete forever". For an item that is already archived, it only offers "Delete forever".
-- `AdminOrders` and `AdminMenu` link to each other from their toolbars.
+- `AdminOrders` and `AdminMenu` link to each other from their `AdminBar`.
 - `AdminOrders` redirects to the login page when there is no token. A 401 from the API clears the token and returns to the login page with a message (passed in navigation state).
 - Status changes are shown on screen straight away and undone if the API call fails.
 - Statuses come from `src/orderStatus.js`. Past statuses are disabled in the dropdown; delivered and cancelled orders show a 🔒 "Completed" / "Cancelled" label instead; choosing delivered or cancelled first opens an "Are you sure?" `Modal`. The filter pills include "cancelled".
@@ -192,7 +192,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - Only slugs are stored, never prices.
   - Adding the same slug with the same note raises the quantity; a different note makes a new line.
   - `addItem` returns false when the cart is full.
-- `CartButton` (navbar, next to `ThemeToggle` in `.navbar__icons`) shows the count; `bump` is its `key`, which replays the bounce.
+- `CartButton` (navbar, right of "Order now") shows the count; `bump` is its `key`, which replays the bounce.
 - `CartDrawer` is a native `<dialog>` sliding in from the right, with photo, price each, qty +/-, remove, a note input and the total. Sold-out lines must be removed before "Checkout".
 - `ProductCard` is an `<article>` holding a `Link` plus a round + button (a button can't go inside a link). There is no + on sold-out items.
 - `pages/Checkout.jsx`:
@@ -222,16 +222,16 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - Text on `--rose` stays `var(--espresso)` in both modes.
   - `hooks/useTheme.js` keeps the choice (`light`, `dark` or `system`, the default) in localStorage under `pnp-theme` and follows the device for `system`. It adds `html.theme-fade` for 450 ms to fade colours, and updates the `theme-color` meta.
   - An inline script in `client/index.html` repeats the same rules before React loads, so the page never flashes. Keep the two in sync.
-  - `components/ThemeToggle.jsx` is the sun/moon button in the navbar, with a Light, Dark and System menu.
+  - `components/ThemeToggle.jsx` is the sun/moon button in the footer's bottom line (both footers), with a Light, Dark and System menu that opens upwards there.
 - Sections alternate between `.section--dark` and cream (or `.section--blush`).
 - Shared classes:
   - Buttons: `.btn-dark`, `.btn-rose`, `.btn-outline`, `.btn-outline-light` and `.btn-whatsapp`.
   - `.zoom-img` adds the hover zoom on photos.
   - `Reveal` adds the fade-in when scrolling.
   - `PageHeader` is the dark banner at the top of inner pages.
-- Breakpoints: 900px, 640/560px and 420px. The navbar switches to the hamburger menu at 1000px, because it has 5 links.
+- Breakpoints: 900px, 640/560px and 420px. The navbar is kept short on purpose: Logo · Home · Menu · "Order now" · Cart (on the far right). Everything else (About, Track order, Contact, the theme) is in the footer. Under 640px it shows logo, cart and a menu button (the menu holds Home, Menu and Order now). The footer is compact (about 280px on a laptop): small brand column plus hours, menu links and contact, then one thin line with the copyright, Staff login and the theme button. On phones (560px) it stacks, the brand row is just logo + icons, and the menu and contact links flow along a line.
 
-**Home chapters (`pages/Home.jsx`):** builds the list of chapters, leaving out hidden ones (specials when none run, `SignatureBake` when `SIGNATURE_SLUG` is deleted) so the numbers have no gaps. Each section gets `chapter={n}` and shows `<ChapterNo n>`; each is wrapped in `<div id="chapter-…" className="chapter">`. `home/ChapterNav` is the progress indicator: numbered dots down the left at 1300px and wider (with the chapter's heading on hover, an IntersectionObserver for the active one), and a thin rose line under the navbar on smaller screens. `FreshFromOven` has a sticky title column with numbered cards in two staggered columns (the offset is on a wrapper, because `Reveal` moves the card itself).
+**Home chapters (`pages/Home.jsx`):** builds the list of chapters, leaving out hidden ones (specials when none run, `SignatureBake` when `SIGNATURE_SLUG` is deleted) so the numbers have no gaps. Each section gets `chapter={n}` and shows `<ChapterNo n>`; each is wrapped in `<div id="chapter-…" className="chapter">`. `home/ChapterNav` is the progress indicator: numbered dots down the left at 1300px and wider (with the chapter's heading on hover, an IntersectionObserver for the active one), and a thin rose line under the navbar on smaller screens. `FreshFromOven` has a sticky title column and only the first 2 best sellers, as numbered cards in two staggered columns (the offset is on a wrapper, because `Reveal` moves the card itself), with a huge "FRESH" along the bottom of the section, like "BROWNIE" in `SignatureBake`.
 
 **Hero slider:**
 - All the slides share one grid cell, and inactive slides are `inert`.

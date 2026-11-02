@@ -3,26 +3,11 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { FiMenu, FiX } from 'react-icons/fi'
 import Logo from './Logo'
-import ThemeToggle from './ThemeToggle'
 import CartButton from './cart/CartButton'
 import './Navbar.css'
 
-const LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/menu', label: 'Menu' },
-  { to: '/#about', label: 'About' },
-  { to: '#contact', label: 'Contact' }, // the footer, which is on every page
-  { to: '/track', label: 'Track order' },
-]
-
-// Links with "#" jump to a section; the others are full pages (NavLink marks the current one).
-function NavItem({ link, onClick }) {
-  if (link.to.includes('#')) {
-    return <Link to={link.to} onClick={onClick}>{link.label}</Link>
-  }
-  return <NavLink to={link.to} end={link.to === '/'} onClick={onClick}>{link.label}</NavLink>
-}
-
+// The navbar is kept short on purpose: Logo · Home · Menu · Order now · Cart.
+// Everything else (Our story, Track order, Contact, light/dark mode) is in the footer.
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -43,18 +28,15 @@ export default function Navbar() {
         <Logo onClick={close} />
 
         <nav className="navbar__links" aria-label="Main">
-          {LINKS.map((link) => (
-            <NavItem key={link.label} link={link} />
-          ))}
+          <NavLink to="/" end>Home</NavLink>
+          <NavLink to="/menu">Menu</NavLink>
         </nav>
 
         <Link to="/menu" className="btn btn-rose navbar__cta">Order now</Link>
 
-        <div className="navbar__icons">
-          <ThemeToggle />
-          {!isAdmin && <CartButton />}
-        </div>
+        {!isAdmin && <CartButton />}
 
+        {/* Phones: a menu button instead of the links */}
         <button
           className="navbar__toggle"
           onClick={() => setOpen(!open)}
@@ -77,9 +59,8 @@ export default function Navbar() {
             transition={{ duration: 0.35, ease: 'easeInOut' }}
           >
             <div className="container navbar__mobile-inner">
-              {LINKS.map((link) => (
-                <NavItem key={link.label} link={link} onClick={close} />
-              ))}
+              <NavLink to="/" end onClick={close}>Home</NavLink>
+              <NavLink to="/menu" onClick={close}>Menu</NavLink>
               <Link to="/menu" className="btn btn-rose" onClick={close}>Order now</Link>
             </div>
           </motion.nav>

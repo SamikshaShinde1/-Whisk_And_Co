@@ -19,13 +19,14 @@
   height: var(--nav-h);
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 20px;
 }
 
 .navbar__links {
   display: flex;
   gap: 34px;
   margin-left: auto;
+  margin-right: 8px;
 }
 
 .navbar__links a {
@@ -63,13 +64,6 @@
 
 .navbar__cta {
   padding: 11px 24px;
-}
-
-/* the theme and cart buttons, side by side */
-.navbar__icons {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .navbar__toggle {
@@ -115,7 +109,8 @@
   margin-top: 22px;
 }
 
-@media (max-width: 1000px) {
+/* Phones: logo, cart and the menu button only */
+@media (max-width: 640px) {
   .navbar__links,
   .navbar__cta {
     display: none;
@@ -126,35 +121,33 @@
     margin-left: 0;
   }
 
-  /* on phones the theme and cart buttons sit on the right, next to the menu button */
-  .navbar__icons {
-    margin-left: auto;
+  /* the logo pushes the cart and the menu button to the right */
+  .navbar__inner > :first-child {
+    margin-right: auto;
   }
 
   .navbar__inner {
-    gap: 12px;
+    gap: 10px;
   }
 }
 
-/* Small phones: logo name + three round buttons must fit in one row */
+/* Small phones: logo name + two round buttons must fit in one row */
 @media (max-width: 420px) {
-  .navbar__inner {
-    gap: 8px;
-  }
-
-  .navbar__icons {
-    gap: 6px;
-  }
-
   .navbar .logo__name {
     font-size: 1rem;
   }
 
   .navbar__toggle,
-  .navbar .theme__button,
   .navbar .cart-button {
     width: 38px;
     height: 38px;
     font-size: 1.05rem;
+  }
+}
+
+/* if the phone menu was left open and the window gets wider, hide it */
+@media (min-width: 641px) {
+  .navbar__mobile {
+    display: none;
   }
 }
