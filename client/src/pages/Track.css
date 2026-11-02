@@ -32,10 +32,14 @@
   gap: 12px;
 }
 
+/* a real heading (for screen readers), but it looks like the small labels */
 .track__recent .track__small {
   display: flex;
   align-items: center;
   gap: 6px;
+  margin: 0;
+  font-family: var(--font-body);
+  line-height: 1.4;
 }
 
 .track__recent-list {

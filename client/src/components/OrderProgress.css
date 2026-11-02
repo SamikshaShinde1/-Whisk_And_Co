@@ -93,6 +93,28 @@
   }
 }
 
+/* ---------- Cancelled order ---------- */
+.progress__cancelled {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  margin: -16px auto 28px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--danger-bg);
+  color: var(--danger-ink);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* the steps stay visible but faded, so it's clear the order stopped */
+.progress--cancelled .progress__bar {
+  opacity: 0.45;
+}
+
 @media (max-width: 480px) {
   .progress__track {
     top: 21px;

@@ -188,15 +188,6 @@
   cursor: wait;
 }
 
-.btn-danger {
-  background: #c0392b;
-  color: #fff;
-}
-
-.btn-danger:hover {
-  background: #a93226;
-}
-
 /* ---------- "Remove?" pop-up: Archive or Delete forever ---------- */
 .admin-menu__confirm {
   margin: 0 0 24px;

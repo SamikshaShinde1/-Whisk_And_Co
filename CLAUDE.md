@@ -27,7 +27,10 @@ The owner is a beginner learning React. Use simple English and work in big steps
 
 - Uses ES modules and Express 5, so errors in async route handlers reach `middleware/errors.js` automatically. That file turns Mongoose `ValidationError`s into a 400 response carrying the first validator's friendly message, which the client shows to the user.
 - `app.js` exports `createApp()` (middleware, routes, error handling). It is a function so `CLIENT_URL` is read after `.env` loads. `server.js` loads `.env`, exits at startup if `MONGO_URI` or `JWT_SECRET` is missing, connects and listens. Tests use `createApp()` directly.
-- `utils/indiaTime.js`: `todayInIndia()` returns today as `YYYY-MM-DD` in Asia/Kolkata. Use it for every "today" check (Render runs in UTC). The client has the same helper in `src/indiaTime.js`, plus `formatDay`.
+- `utils/indiaTime.js` uses Asia/Kolkata for every "today" check (Render runs in UTC). It has `nowInIndia()`, `todayInIndia()`, `addDays`, `isSunday`, `earliestOrderDate()` and `orderDateProblem(date, now)`, which returns "" or a friendly message.
+  - The client has an exact copy in `src/indiaTime.js` (plus `isSundayInIndia` and `formatDay`). Keep the two the same.
+  - **Date rules ("Sunday: pre-orders only"):** no past dates; no same-day orders on a Sunday (the earliest is Monday); and a Sunday date only if the order is placed by Saturday `SUNDAY_DEADLINE` (20:00) in India.
+- `createApp({ now })` stores the clock in `app.locals.now`. The orders route checks `orderDateProblem(order.date, req.app.locals.now())` after `validate()` and before taking an order number, and returns a 400 with the message. Tests pass a fake clock.
 - CORS only allows the origins listed in `CLIENT_URL` (comma-separated).
 - `trust proxy` is set so the rate limiter sees real visitor IPs on Render.
 - `config/db.js` sets `mongoose.set('sanitizeFilter', true)` to block NoSQL injection.
@@ -39,7 +42,12 @@ The owner is a beginner learning React. Use simple English and work in big steps
   - It `.select()`s only the safe fields (`orderNumber`, `items.name`, `items.price`, `items.qty`, `total`, `date`, `deliveryType`, `status`, `createdAt`), so no name, phone, address, order note or item note is returned.
   - A wrong number and a wrong phone give the same 404 message.
 - `GET /api/orders` (admin): all orders, newest first.
-- `PATCH /api/orders/:id` (admin): body `{status}`, which must be one of `ORDER_STATUSES` (exported from `models/Order.js`).
+- `PATCH /api/orders/:id` (admin): body `{status}`, which must be one of `ORDER_STATUSES`. **One-way status** (`utils/orderStatus.js`, `statusChangeProblem(from, to)` returns "" or a friendly message, sent as a 400):
+  - `STATUS_FLOW` new → baking → ready → delivered only moves forward (skipping forward is fine; the same status again is a harmless no-op).
+  - `cancelled` is allowed only from `CANCELLABLE` (new, baking).
+  - `FINAL_STATUSES` (delivered, cancelled) can never change.
+  - The save is conditional on the status not having changed meanwhile (409 otherwise).
+  - The client has an exact copy in `src/orderStatus.js` (only the second comment line differs). Keep the two the same.
 - `GET /api/products` (public): every item that is not archived, including sold-out ones (`available: false`), oldest `_id` first (the original menu order).
   - Sold-out items stay visible on the site in grey; the orders route refuses them.
   - The filter is `archived: mongoose.trusted({ $ne: true })`, so items saved before the `archived` field existed still count as not archived.
@@ -86,7 +94,7 @@ npm run seed-products  # one time: copy the starting menu into MongoDB (safe to 
 npm test               # backend tests (node:test + supertest + mongodb-memory-server, in server/tests/)
 ```
 
-Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`startTestServer()` starts an in-memory MongoDB and signs an admin JWT; `daysFromToday(n)` and `orderFor(items)` help build data). The first run downloads MongoDB, so it is slow once. The client has no tests.
+Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`startTestServer()` starts an in-memory MongoDB and signs an admin JWT; `daysFromToday(n)` and `orderFor(items)` help build data; `startTestServer({ now })` sets a fake clock). Each file runs in its own process, but the order rate limit (10 per 15 minutes) still applies within a file, so keep each file at 10 orders or fewer. The first run downloads MongoDB, so it is slow once. The client has no tests.
 
 ## Frontend architecture
 
@@ -148,21 +156,26 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
 - `AdminOrders` and `AdminMenu` link to each other from their toolbars.
 - `AdminOrders` redirects to the login page when there is no token. A 401 from the API clears the token and returns to the login page with a message (passed in navigation state).
 - Status changes are shown on screen straight away and undone if the API call fails.
-- `STATUSES` must match `ORDER_STATUSES` on the server.
+- Statuses come from `src/orderStatus.js`. Past statuses are disabled in the dropdown; delivered and cancelled orders show a 🔒 "Completed" / "Cancelled" label instead; choosing delivered or cancelled first opens an "Are you sure?" `Modal`. The filter pills include "cancelled".
+- `.btn-danger` (shared, in `index.css`) is for actions that can't be undone.
 - On screens up to 760px wide, the table turns into cards using `td[data-label]`.
 - The admin pages reuse the `.menu__pill` and `.field` styles from `Menu.css` and `OrderPanel.css`.
 
 **Track order:**
 - `pages/Track.jsx` reads `?number=` to pre-fill the order number; the thank-you screen in `Checkout` links there.
-- `src/recentOrders.js` keeps the last 5 orders placed from this browser in localStorage (key `pnp-recent-orders`). It stores only `{orderNumber, item, date}`, never the phone, name or address. `Checkout` saves to it (item = first name + "+ N more"), and the Track page shows them as tap-to-fill buttons with a "Forget these" link.
+- `src/recentOrders.js` keeps the last 5 orders placed from this browser in localStorage (key `pnp-recent-orders`). It stores only `{orderNumber, item, date, savedAt}`, never the phone, name or address. `Checkout` saves to it (item = first name + "+ N more"), and the Track page shows them as tap-to-fill buttons under the heading "Your recent orders on this device", with a "Forget these" link (nothing at all when the list is empty).
+  - `getRecentOrders()` drops (and deletes from storage) orders older than 7 days, and old entries without `savedAt`.
+  - The browser has no phone, so it can't look up statuses by itself. After a successful track, `noteOrderStatus(number, status)` removes the order if it is delivered or cancelled (`FINAL_STATUSES`).
 - If customers forget their number, the Track page has an "Ask us on WhatsApp" link, and the admin finds the order with the search box on `AdminOrders` (order number, name or phone). Never add tracking by phone alone.
-- `components/OrderProgress.jsx` maps the statuses new, baking, ready and delivered to the steps Received, Baking, Ready and Delivered. Its `STEPS` must match `ORDER_STATUSES`.
+- `components/OrderProgress.jsx` maps the statuses new, baking, ready and delivered to the steps Received, Baking, Ready and Delivered. Its `STEPS` must match `STATUS_FLOW`. A cancelled order shows a red "Cancelled" pill with the steps faded.
 - `src/orderMessage.js` builds every WhatsApp order message (`OrderPanel` for one item, `Checkout` for the cart). It includes the order number once the order has been placed.
 
 **Menu page:** the selected filter is stored in the URL as `?category=<id>`, and the search as `?q=<text>` (written 300 ms after typing stops, with `replace`). The search matches every typed word against name, category name and description, and works together with the category. The footer's category links use `?category=` to open a filtered menu.
 
 **Product detail (`pages/ProductDetail.jsx`):**
 - `OrderPanel` has `key={item.slug}`, so it resets when you open another item. It holds the quantity and the note ("Message on cake" for cakes), with "Add to cart" (adds and opens the drawer), "Buy now" (adds and goes to `/checkout`) and "Order on WhatsApp". It no longer has a details form; details are asked once, at checkout.
+
+**Sunday rule on the site:** `components/SundayNotice.jsx` shows a pop-up once per visit on Sundays in India (`sessionStorage.pnp-sunday-seen`, only after the intro, not on admin pages), with "OK, pre-order" leading to `/menu`. It also exports `SundayNote` ("Today is Sunday: pre-orders only."), used in `OrderPanel`, `CartDrawer` and `Checkout`. On `Checkout` the date input has `min={earliestOrderDate()}`, and `orderDateProblem` shows its reason under the field and blocks submit. `SITE.hours` and `SITE.preorderNote` describe the same rule.
 
 **Shopping cart:**
 - `hooks/useCart.js` holds the `CartContext`, `useCart()` (`{lines, count, addItem, updateLine, removeLine, clearCart, isOpen, openCart, closeCart, bump}`), `useCartDetails()` (joins lines with the live menu: `{items, total, hasProblems, loading}`, where each item has `product`, `unitPrice` from `priceNow`, `lineTotal` and `problem` "Sold out" or "No longer on the menu"), and the limits `MAX_QTY` 50, `MAX_LINES` 20 and `MAX_NOTE` 200, which match the server.

@@ -8,9 +8,11 @@ import authRoutes from './routes/auth.js'
 import productRoutes from './routes/products.js'
 import { notFound, errorHandler } from './middleware/errors.js'
 
-// A function (not a ready-made app), so it reads CLIENT_URL only after server/.env is loaded
-export function createApp() {
+// A function (not a ready-made app), so it reads CLIENT_URL only after server/.env is loaded.
+// "now" gives the current time; tests pass a fake clock to check the Sunday rules on any day.
+export function createApp({ now = () => new Date() } = {}) {
   const app = express()
+  app.locals.now = now
 
   // Which websites may call this API (comma-separated list in CLIENT_URL)
   const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')

@@ -1,0 +1,46 @@
+.sunday-notice {
+  text-align: center;
+}
+
+.sunday-notice__moon {
+  display: block;
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 12px;
+  animation: moon-rock 3s ease-in-out infinite;
+}
+
+@keyframes moon-rock {
+  50% {
+    transform: rotate(-12deg);
+  }
+}
+
+.sunday-notice p {
+  margin: 0 0 22px;
+  font-size: 1.02rem;
+}
+
+.sunday-notice .btn {
+  width: 100%;
+}
+
+/* "Today is Sunday: pre-orders only." */
+.sunday-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--baking-bg);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sunday-notice__moon {
+    animation: none;
+  }
+}

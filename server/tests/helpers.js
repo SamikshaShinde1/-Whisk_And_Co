@@ -9,14 +9,15 @@ import '../config/db.js' // same safety setting (sanitizeFilter) as the real ser
 import { createApp } from '../app.js'
 import { todayInIndia } from '../utils/indiaTime.js'
 
-export async function startTestServer() {
+// options.now: a fake clock, e.g. () => new Date('2026-11-01T04:30:00Z')
+export async function startTestServer(options = {}) {
   process.env.JWT_SECRET = 'test-secret-only-for-tests'
 
   // The first run downloads MongoDB once, so allow plenty of time
   const mongo = await MongoMemoryServer.create({ instance: { launchTimeout: 180000 } })
   await mongoose.connect(mongo.getUri())
 
-  const app = createApp()
+  const app = createApp(options)
   const adminToken = jwt.sign({ id: new mongoose.Types.ObjectId().toString() }, process.env.JWT_SECRET, {
     algorithm: 'HS256',
     expiresIn: '1h',

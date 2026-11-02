@@ -4,6 +4,7 @@ import { FiMinus, FiPlus, FiShoppingBag, FiTrash2, FiX } from 'react-icons/fi'
 import SmartImage from '../SmartImage'
 import { formatPrice, getCategory, hasOffer } from '../../data/menu'
 import useCart, { MAX_NOTE, MAX_QTY, useCartDetails } from '../../hooks/useCart'
+import { SundayNote } from '../SundayNotice'
 import '../Modal.css' // the round ✕ button
 import '../OrderPanel.css' // the quantity buttons
 import './CartDrawer.css'
@@ -109,6 +110,7 @@ export default function CartDrawer() {
               </ul>
 
               <footer className="cart-drawer__foot">
+                <SundayNote />
                 <div className="cart-drawer__total">
                   <span>Total</span>
                   <strong>{formatPrice(total)}</strong>

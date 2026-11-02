@@ -296,6 +296,16 @@ p {
   background: #3ee07c;
 }
 
+/* for actions that can't be undone (admin pages) */
+.btn-danger {
+  background: #c0392b;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #a93226;
+}
+
 /* =========================================================
    Photos
    ========================================================= */

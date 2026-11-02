@@ -9,7 +9,8 @@ import { rememberOrder } from '../recentOrders'
 import { orderMessage } from '../orderMessage'
 import { formatPrice } from '../data/menu'
 import { whatsappLink } from '../config/site'
-import { todayInIndia } from '../indiaTime'
+import { earliestOrderDate, orderDateProblem } from '../indiaTime'
+import { SundayNote } from '../components/SundayNotice'
 import usePageTitle from '../hooks/usePageTitle'
 import useCart, { useCartDetails } from '../hooks/useCart'
 import '../components/OrderPanel.css' // shared form, toggle and thank-you styles
@@ -34,10 +35,14 @@ export default function Checkout() {
   const [copied, setCopied] = useState(false)
 
   const updateField = (event) => setForm({ ...form, [event.target.name]: event.target.value })
+
+  // Same date rules as the server (Indian time): explained under the date box straight away
+  const dateProblem = form.date ? orderDateProblem(form.date) : ''
   const details = { ...form, address: form.deliveryType === 'delivery' ? form.address : '' }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+    if (dateProblem) return
     setStatus('sending')
     setError('')
     try {
@@ -140,6 +145,7 @@ export default function Checkout() {
         <div className="container checkout__grid">
           <form className="order checkout__form" onSubmit={handleSubmit}>
             <h2 className="checkout__heading">Your details</h2>
+            <SundayNote />
             <div className="order__grid">
               <label className="field">
                 <span>Your name</span>
@@ -183,7 +189,21 @@ export default function Checkout() {
 
             <label className="field">
               <span>{form.deliveryType === 'delivery' ? 'Delivery date' : 'Pickup date'}</span>
-              <input name="date" type="date" min={todayInIndia()} value={form.date} onChange={updateField} required />
+              <input
+                name="date"
+                type="date"
+                min={earliestOrderDate()}
+                value={form.date}
+                onChange={updateField}
+                required
+                aria-invalid={Boolean(dateProblem)}
+                aria-describedby="date-help"
+              />
+              {dateProblem ? (
+                <small id="date-help" className="field__problem" role="alert">{dateProblem}</small>
+              ) : (
+                <small id="date-help" className="field__help">Sunday orders must be placed by Saturday 8 PM.</small>
+              )}
             </label>
 
             <label className="field">
@@ -199,7 +219,7 @@ export default function Checkout() {
             )}
 
             <div className="order__actions">
-              <button type="submit" className="btn btn-dark" disabled={status === 'sending' || hasProblems || loading}>
+              <button type="submit" className="btn btn-dark" disabled={status === 'sending' || hasProblems || loading || Boolean(dateProblem)}>
                 {status === 'sending' ? 'Placing order…' : `Place order · ${formatPrice(total)}`}
               </button>
               <a

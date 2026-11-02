@@ -7,6 +7,7 @@ import { formatPrice, priceNow } from '../data/menu'
 import { orderMessage } from '../orderMessage'
 import { whatsappLink } from '../config/site'
 import useCart, { MAX_LINES, MAX_NOTE, MAX_QTY } from '../hooks/useCart'
+import { SundayNote } from './SundayNotice'
 import './OrderPanel.css'
 
 // On the product page: choose how many and a note, then "Add to cart", "Buy now" or order on WhatsApp.
@@ -44,6 +45,7 @@ export default function OrderPanel({ item }) {
 
   return (
     <div className="order">
+      <SundayNote />
       <div className="order__row">
         <div>
           <span className="order__label" id="qty-label">Quantity</span>

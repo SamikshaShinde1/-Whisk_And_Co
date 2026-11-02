@@ -1,8 +1,9 @@
 import { motion } from 'motion/react'
-import { FaClipboardList, FaFire, FaGift, FaCheck } from 'react-icons/fa'
+import { FaClipboardList, FaFire, FaGift, FaCheck, FaTimes } from 'react-icons/fa'
 import './OrderProgress.css'
 
-// The 4 steps, in order. "status" must match ORDER_STATUSES in server/models/Order.js
+// The 4 steps, in order. "status" must match STATUS_FLOW in src/orderStatus.js
+// (a "cancelled" order shows every step greyed out, with a Cancelled label)
 const STEPS = [
   { status: 'new', label: 'Received', icon: <FaClipboardList /> },
   { status: 'baking', label: 'Baking', icon: <FaFire /> },
@@ -20,6 +21,8 @@ function statusMessage(status, deliveryType) {
       return pickup ? 'Your order is ready for pickup! 🎁' : 'Your order is ready and will be on its way soon! 🎁'
     case 'delivered':
       return pickup ? 'Picked up – enjoy every bite! 💛' : 'Delivered – enjoy every bite! 💛'
+    case 'cancelled':
+      return 'This order was cancelled. Message us on WhatsApp if you have any questions.'
     default:
       return 'We have received your order and will start baking soon.'
   }
@@ -27,11 +30,19 @@ function statusMessage(status, deliveryType) {
 
 // Progress bar: Received → Baking → Ready → Delivered
 export default function OrderProgress({ status, deliveryType }) {
-  const current = Math.max(0, STEPS.findIndex((step) => step.status === status))
+  const cancelled = status === 'cancelled'
+  // a cancelled order has no current step (-1), so every step is greyed out
+  const current = cancelled ? -1 : Math.max(0, STEPS.findIndex((step) => step.status === status))
 
   return (
-    <div className="progress">
+    <div className={`progress ${cancelled ? 'progress--cancelled' : ''}`}>
       <p className="progress__message" role="status">{statusMessage(status, deliveryType)}</p>
+
+      {cancelled && (
+        <p className="progress__cancelled">
+          <FaTimes aria-hidden="true" /> Cancelled
+        </p>
+      )}
 
       <div className="progress__bar">
         {/* grey line behind the steps, and the coloured part that grows */}
@@ -39,7 +50,7 @@ export default function OrderProgress({ status, deliveryType }) {
           <motion.div
             className="progress__fill"
             initial={{ scaleX: 0 }}
-            animate={{ scaleX: current / (STEPS.length - 1) }}
+            animate={{ scaleX: Math.max(0, current) / (STEPS.length - 1) }}
             transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
           />
         </div>

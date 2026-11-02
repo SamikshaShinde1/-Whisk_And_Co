@@ -4,6 +4,8 @@ import mongoose from 'mongoose'
 import Order, { MAX_ORDER_LINES, ORDER_STATUSES } from '../models/Order.js'
 import Product, { priceNow } from '../models/Product.js'
 import { nextOrderNumber } from '../models/Counter.js'
+import { orderDateProblem } from '../utils/indiaTime.js'
+import { statusChangeProblem } from '../utils/orderStatus.js'
 import requireAdmin from '../middleware/requireAdmin.js'
 
 const router = Router()
@@ -75,6 +77,11 @@ router.post('/', orderLimiter, async (req, res) => {
 
   // Check the details first, so a rejected order doesn't use up an order number
   await order.validate()
+
+  // The date rules (Indian time): no past dates, no same-day orders on Sundays,
+  // and Sunday orders only until Saturday 8 PM. Checked here even though the website checks too.
+  const dateProblem = orderDateProblem(order.date, req.app.locals.now())
+  if (dateProblem) return res.status(400).json({ message: dateProblem })
   order.orderNumber = await nextOrderNumber()
   await order.save()
 
@@ -117,18 +124,29 @@ router.get('/', requireAdmin, async (req, res) => {
   res.json(orders)
 })
 
-// PATCH /api/orders/:id – change an order's status (admin only)
+// PATCH /api/orders/:id – change an order's status (admin only), body: { status }
+// The status only moves forward, and "delivered" and "cancelled" are final.
+// The admin page has the same rules, but we check again here: never trust the browser.
 router.patch('/:id', requireAdmin, async (req, res) => {
-  const { status } = req.body
+  const status = req.body?.status
   if (!ORDER_STATUSES.includes(status)) {
-    return res.status(400).json({ message: `Status must be one of: ${ORDER_STATUSES.join(', ')}` })
+    return res.status(400).json({ message: `Status must be one of: ${ORDER_STATUSES.join(', ')}.` })
   }
 
-  const order = await Order.findByIdAndUpdate(req.params.id, { status }, { returnDocument: 'after' })
+  const order = await Order.findById(req.params.id)
   if (!order) {
     return res.status(404).json({ message: 'Order not found.' })
   }
-  res.json(order)
+
+  const problem = statusChangeProblem(order.status, status)
+  if (problem) return res.status(400).json({ message: problem })
+
+  // Save only if nobody changed the status in the meantime (e.g. the admin on two phones at once)
+  const updated = await Order.findOneAndUpdate({ _id: order._id, status: order.status }, { status }, { returnDocument: 'after' })
+  if (!updated) {
+    return res.status(409).json({ message: 'This order was just changed somewhere else. Please refresh and try again.' })
+  }
+  res.json(updated)
 })
 
 export default router

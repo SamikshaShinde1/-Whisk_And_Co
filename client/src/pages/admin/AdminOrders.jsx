@@ -4,15 +4,31 @@ import { AnimatePresence } from 'motion/react'
 import { FiBookOpen, FiKey, FiLogOut, FiRefreshCw, FiPhone, FiSearch, FiX } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
 import PageHeader from '../../components/PageHeader'
+import Modal from '../../components/Modal'
 import ChangePassword from './ChangePassword'
 import { getOrders, updateOrderStatus } from '../../api'
 import { formatPrice } from '../../data/menu'
+import { FINAL_STATUSES, ORDER_STATUSES, statusChangeProblem } from '../../orderStatus'
 import usePageTitle from '../../hooks/usePageTitle'
 import useAdminSession from '../../hooks/useAdminSession'
 import './Admin.css'
 
-// Must match ORDER_STATUSES in server/models/Order.js
-const STATUSES = ['new', 'baking', 'ready', 'delivered']
+// What a finished order shows instead of the dropdown
+const LOCKED_LABEL = { delivered: 'Completed', cancelled: 'Cancelled' }
+
+// The "Are you sure?" text for the two final statuses
+const CONFIRM = {
+  delivered: {
+    title: 'Mark as delivered?',
+    text: "The order will be completed and locked. You can't change its status after this.",
+    button: 'Yes, delivered',
+  },
+  cancelled: {
+    title: 'Cancel this order?',
+    text: "The order will be cancelled and locked. You can't change its status after this.",
+    button: 'Yes, cancel order',
+  },
+}
 
 // "2026-10-29T06:21:00Z" -> "29 Oct, 11:51 am"
 const formatPlaced = (iso) =>
@@ -33,6 +49,7 @@ export default function AdminOrders() {
   const [savingId, setSavingId] = useState(null)
   const [showPassword, setShowPassword] = useState(false)
   const [search, setSearch] = useState('')
+  const [confirming, setConfirming] = useState(null) // { order, status } while "Are you sure?" is open
 
   // Logged-out errors go back to the login page; other errors are shown on this page
   const handleError = useCallback(
@@ -80,6 +97,17 @@ export default function AdminOrders() {
     } finally {
       setSavingId(null)
     }
+  }
+
+  // "delivered" and "cancelled" can't be undone, so ask first
+  const chooseStatus = (order, status) => {
+    if (FINAL_STATUSES.includes(status)) setConfirming({ order, status })
+    else changeStatus(order, status)
+  }
+
+  const confirmChange = () => {
+    changeStatus(confirming.order, confirming.status)
+    setConfirming(null)
   }
 
   // Search by order number, customer name or phone (e.g. when a customer forgot their order number)
@@ -143,7 +171,7 @@ export default function AdminOrders() {
 
           {/* Filter by status, with a count on each pill */}
           <div className="menu__filters admin__filters" role="group" aria-label="Filter by status">
-            {['all', ...STATUSES].map((status) => (
+            {['all', ...ORDER_STATUSES].map((status) => (
               <button
                 key={status}
                 className={`menu__pill ${filter === status ? 'is-active' : ''}`}
@@ -212,17 +240,26 @@ export default function AdminOrders() {
                         <strong>{formatPrice(order.total)}</strong>
                       </td>
                       <td data-label="Status">
-                        <select
-                          className={`admin__status admin__status--${order.status}`}
-                          value={order.status}
-                          onChange={(e) => changeStatus(order, e.target.value)}
-                          disabled={savingId === order._id}
-                          aria-label={`Status of order from ${order.customerName}`}
-                        >
-                          {STATUSES.map((status) => (
-                            <option key={status} value={status}>{status}</option>
-                          ))}
-                        </select>
+                        {FINAL_STATUSES.includes(order.status) ? (
+                          <span className={`admin__status admin__status--${order.status} admin__status--locked`}>
+                            <span aria-hidden="true">🔒</span> {LOCKED_LABEL[order.status]}
+                          </span>
+                        ) : (
+                          <select
+                            className={`admin__status admin__status--${order.status}`}
+                            value={order.status}
+                            onChange={(e) => chooseStatus(order, e.target.value)}
+                            disabled={savingId === order._id}
+                            aria-label={`Status of order from ${order.customerName}`}
+                          >
+                            {/* Past statuses (and "cancelled" once it's ready) are greyed out: an order only moves forward */}
+                            {ORDER_STATUSES.map((status) => (
+                              <option key={status} value={status} disabled={Boolean(statusChangeProblem(order.status, status))}>
+                                {status}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -232,6 +269,27 @@ export default function AdminOrders() {
           )}
         </div>
       </section>
+
+      {/* "Are you sure?" before a final status */}
+      <Modal open={confirming !== null} onClose={() => setConfirming(null)} title={CONFIRM[confirming?.status]?.title || ''}>
+        {confirming && (
+          <>
+            <p className="admin__confirm">
+              <strong>{confirming.order.orderNumber || confirming.order.customerName}</strong>: {CONFIRM[confirming.status].text}
+            </p>
+            <div className="admin__confirm-actions">
+              <button type="button" className="btn btn-outline" onClick={() => setConfirming(null)}>Not now</button>
+              <button
+                type="button"
+                className={`btn ${confirming.status === 'cancelled' ? 'btn-danger' : 'btn-dark'}`}
+                onClick={confirmChange}
+              >
+                {CONFIRM[confirming.status].button}
+              </button>
+            </div>
+          </>
+        )}
+      </Modal>
     </>
   )
 }

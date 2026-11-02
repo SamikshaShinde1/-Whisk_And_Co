@@ -6,6 +6,7 @@ import Navbar from './components/Navbar'
 import SpecialBanner from './components/SpecialBanner'
 import CartProvider from './components/cart/CartProvider'
 import CartDrawer from './components/cart/CartDrawer'
+import SundayNotice from './components/SundayNotice'
 import Footer from './components/Footer'
 import FloatingButtons from './components/FloatingButtons'
 import ScrollManager from './components/ScrollManager'
@@ -68,6 +69,7 @@ export default function App() {
       <Footer compact={isAdmin} />
       {!isAdmin && <FloatingButtons />}
       {!isAdmin && <CartDrawer />}
+      {!isAdmin && <SundayNotice ready={!showIntro} />}
     </CartProvider>
   )
 }

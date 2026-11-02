@@ -6,7 +6,7 @@ import { FaWhatsapp } from 'react-icons/fa'
 import PageHeader from '../components/PageHeader'
 import OrderProgress from '../components/OrderProgress'
 import { trackOrder } from '../api'
-import { forgetRecentOrders, getRecentOrders } from '../recentOrders'
+import { forgetRecentOrders, getRecentOrders, noteOrderStatus } from '../recentOrders'
 import { formatPrice } from '../data/menu'
 import { SITE, whatsappLink } from '../config/site'
 import usePageTitle from '../hooks/usePageTitle'
@@ -27,7 +27,7 @@ export default function Track() {
   const [order, setOrder] = useState(null)
   const [error, setError] = useState('')
 
-  // Orders placed earlier from this browser (saved by OrderPanel)
+  // Orders placed from this browser in the last 7 days (saved by Checkout), not yet finished
   const [recent, setRecent] = useState(getRecentOrders)
   const phoneInput = useRef(null)
 
@@ -53,7 +53,11 @@ export default function Track() {
     setLoading(true)
     setError('')
     try {
-      setOrder(await trackOrder(number.trim(), phone.trim()))
+      const found = await trackOrder(number.trim(), phone.trim())
+      setOrder(found)
+      // Finished (delivered or cancelled)? Take it off the "recent orders" list on this device.
+      noteOrderStatus(found.orderNumber, found.status)
+      setRecent(getRecentOrders())
     } catch (err) {
       setOrder(null)
       setError(err.message)
@@ -72,11 +76,12 @@ export default function Track() {
 
       <section className="section track">
         <div className="container track__inner">
+          {/* Nothing at all for a new visitor */}
           {recent.length > 0 && (
-            <div className="track__recent">
-              <p className="track__small">
-                <FiClock /> Your recent orders on this device
-              </p>
+            <section className="track__recent" aria-labelledby="recent-heading">
+              <h2 id="recent-heading" className="track__small">
+                <FiClock aria-hidden="true" /> Your recent orders on this device
+              </h2>
               <div className="track__recent-list">
                 {recent.map((o) => (
                   <button
@@ -93,7 +98,7 @@ export default function Track() {
               <button type="button" className="track__link" onClick={forgetRecent}>
                 Not your device? Forget these
               </button>
-            </div>
+            </section>
           )}
 
           <form className="track__form" onSubmit={handleSubmit}>

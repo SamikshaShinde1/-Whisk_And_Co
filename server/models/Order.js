@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
+import { ORDER_STATUSES } from '../utils/orderStatus.js'
 
-export const ORDER_STATUSES = ['new', 'baking', 'ready', 'delivered']
+// new → baking → ready → delivered, or cancelled (the rules are in utils/orderStatus.js)
+export { ORDER_STATUSES }
 
 // The most different lines one order (one cart) can have
 export const MAX_ORDER_LINES = 20

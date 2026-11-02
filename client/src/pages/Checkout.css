@@ -131,3 +131,24 @@
     order: -1;
   }
 }
+
+/* Under the date box: a hint, or the reason a date can't be chosen */
+.field__help,
+.field__problem {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.82rem;
+}
+
+.field__help {
+  color: var(--text-muted);
+}
+
+.field__problem {
+  color: var(--danger-text);
+  font-weight: 700;
+}
+
+.field input[aria-invalid='true'] {
+  border-color: var(--danger-text);
+}

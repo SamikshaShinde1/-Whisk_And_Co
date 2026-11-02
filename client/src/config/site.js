@@ -12,10 +12,10 @@ export const SITE = {
   whatsappNumber,
   hours: [
     { days: 'Mon – Sat', time: '9 AM – 8 PM' },
-    { days: 'Sunday', time: 'Pre-orders only' },
+    { days: 'Sunday', time: 'Pre-orders only' }, // the rules are in src/indiaTime.js (orderDateProblem)
   ],
   preorderNote:
-    'Order at least a day ahead so we can bake it fresh for you. Custom cakes need 2–3 days. On Sundays we take pre-orders only.',
+    'Order at least a day ahead so we can bake it fresh for you. Custom cakes need 2–3 days. On Sundays we take pre-orders only: order by Saturday 8 PM for Sunday, or any time for Monday onwards.',
 }
 
 // Builds a WhatsApp chat link with a ready-made message.

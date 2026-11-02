@@ -352,6 +352,43 @@
   color: var(--text-muted);
 }
 
+.admin__status--cancelled {
+  background: var(--danger-bg);
+  color: var(--danger-ink);
+}
+
+/* past statuses in the dropdown: an order only moves forward */
+.admin__status option:disabled {
+  color: var(--text-muted);
+}
+
+/* delivered / cancelled: a locked label instead of the dropdown */
+.admin__status--locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* "Are you sure?" pop-up */
+.admin__confirm {
+  margin: 0 0 24px;
+}
+
+.admin__confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 420px) {
+  .admin__confirm-actions .btn {
+    flex: 1;
+  }
+}
+
 /* On phones each order becomes a card instead of a table row */
 @media (max-width: 760px) {
   .admin__table-wrap {
