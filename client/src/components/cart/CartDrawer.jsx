@@ -13,7 +13,7 @@ import './CartDrawer.css'
 // Built on the browser's <dialog>, like Modal: Esc closes it and keyboard focus stays inside.
 export default function CartDrawer() {
   const { isOpen, closeCart, updateLine, removeLine, count } = useCart()
-  const { items, total, hasProblems } = useCartDetails()
+  const { items, total, hasProblems, loading } = useCartDetails()
   const dialogRef = useRef(null)
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function CartDrawer() {
                   return (
                     <li key={item.id} className={`cart-line ${item.problem ? 'has-problem' : ''}`}>
                       <Link to={`/menu/${item.slug}`} className={`cart-line__photo ${item.problem ? 'is-soldout' : ''}`} onClick={closeCart} tabIndex={-1}>
-                        <SmartImage src={product?.image} alt="" emoji={category.emoji} tone={category.tone} />
+                        <SmartImage src={product?.image} alt="" emoji={category.emoji} tone={category.tone} pending={loading} />
                       </Link>
 
                       <div className="cart-line__info">

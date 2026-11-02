@@ -45,7 +45,7 @@ export default function SignatureBake({ chapter }) {
         <Reveal className="signature__media" delay={0.15} x={70}>
           <div className="signature__circle" aria-hidden="true" />
           <div className={`signature__photo zoom-img ${soldOut ? 'is-soldout' : ''}`}>
-            <SmartImage src={item?.image} alt={item?.name || 'Fudge brownie'} emoji="🍫" />
+            <SmartImage src={item?.image} alt={item?.name || 'Fudge brownie'} emoji="🍫" pending={loading} />
           </div>
         </Reveal>
       </div>

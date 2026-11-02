@@ -81,7 +81,7 @@ function LogoStamp() {
 
 export default function HeroSlider({ chapter = 1 }) {
   const [index, setIndex] = useState(0)
-  const { products } = useProducts()
+  const { products, loading } = useProducts()
   const { specials } = useSpecials()
   const slides = [...specials.slice(0, 3).map(specialSlide), ...SLIDES.map((slide) => ({ ...slide, key: slide.slug }))]
   const count = slides.length
@@ -204,7 +204,7 @@ export default function HeroSlider({ chapter = 1 }) {
                   >
                     <motion.div className="hero__tilt" style={calm ? undefined : { rotateX, rotateY }}>
                       <div className={`hero__photo ${item && !item.available ? 'is-soldout' : ''} ${slide.special ? 'hero__photo--special' : ''}`}>
-                        <SmartImage src={item?.image} alt={item?.name || ''} emoji="🎂" eager={i === 0} />
+                        <SmartImage src={item?.image} alt={item?.name || ''} emoji="🎂" eager={i === 0} pending={loading} />
                       </div>
                       {item && (
                         <div className="sticker hero__tag">

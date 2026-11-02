@@ -144,7 +144,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
 - **Link previews:** `index.html` has Open Graph and Twitter tags using `%SITE_URL%`, which `vite.config.js` replaces with `VITE_SITE_URL` (it warns on a build without it). Crawlers don't run JavaScript, so every page shares these tags. The image is `public/og-image.png`.
 
 **Images:**
-- `SmartImage` shows a tinted emoji placeholder when a photo is missing or fails to load. It remembers which `src` failed, so a photo that arrives later still gets shown.
+- `SmartImage` shows a tinted emoji placeholder when a photo is missing or fails to load. It remembers which `src` failed, so a photo that arrives later still gets shown. Pass `pending={loading}` where the photo comes from the menu (hero, signature bake, cart): while the menu loads (the free Render server can take a minute to wake) it shows a shimmer instead of the emoji.
 - **Logo** ("dipped W" round sticker: whisk wires dipping into a chocolate "W" with drips, on a blush circle). Change the design only in `scripts/make-logo.mjs` and run `npm run logo`; `src/components/logo/logoShapes.js` is generated from it.
   - `LogoMark` draws it inline (not an `<img>`), coloured by the `--logo-*` tokens in `index.css`: blush circle + dark chocolate on light backgrounds; in dark mode and in the cocoa areas (navbar, footer, hero, page headers, intro) the circle is cocoa and the chocolate turns strawberry-rose. With `animate` it builds itself step by step (used by the intro).
   - `Logo` = `LogoMark` + the wordmark "Whisk" + script `.logo__amp` "&" + "Co.". The navbar hides the wordmark under 420px.
