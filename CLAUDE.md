@@ -18,7 +18,7 @@ The owner is a beginner learning React. Use simple English and work in big steps
 3. Backend ✅ (connected to MongoDB Atlas; the first real order and the admin account are saved)
 4. Admin login and orders page ✅ (built; the owner is testing it)
 5. GitHub repo ✅ https://github.com/SamikshaShinde1/-Whisk_And_Co (public; the local folder is still called "pastel-n-postery")
-6. Deploy: Render for the server, Vercel for the client
+6. Deploy ✅ server https://whisk-and-co-api.onrender.com (Render free, Singapore), site https://whisk-and-co.vercel.app (Vercel). Atlas allows 0.0.0.0/0. Render env: MONGO_URI, JWT_SECRET, CLOUDINARY_*, CLIENT_URL (Resend keys not added yet).
 7. README and a resume line
 
 **Secrets:** the WhatsApp number, admin password, `MONGO_URI` and JWT secret stay in `.env` files only. Keep `.env.example` files up to date. The root `.gitignore` excludes `.env*` except `.env.example`.
