@@ -64,7 +64,7 @@
 
 .checkout__qty {
   font-weight: 800;
-  color: var(--gold-deep);
+  color: var(--accent);
 }
 
 .checkout__name small {
@@ -92,8 +92,9 @@
 
 .checkout__total strong {
   font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
   font-size: 2rem;
-  font-weight: 400;
 }
 
 /* ---------- Empty cart ---------- */
@@ -108,7 +109,7 @@
   padding: 19px;
   border-radius: 50%;
   background: var(--blush-bg);
-  color: var(--gold-deep);
+  color: var(--accent);
 }
 
 .checkout__empty p {

@@ -150,7 +150,7 @@
 }
 
 .switch:focus-visible .switch__track {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -172,7 +172,7 @@
 
 .icon-btn:hover:not(:disabled) {
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
   border-color: var(--rose);
   transform: translateY(-2px);
 }
@@ -317,7 +317,7 @@
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: var(--radius-sm);
-  border: 1.5px dashed var(--gold);
+  border: 1.5px dashed var(--accent);
   background: var(--bg);
 }
 
@@ -366,7 +366,7 @@
 }
 
 .product-form__upload:focus-within {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
@@ -405,8 +405,8 @@
 
 .product-form .field select:focus {
   outline: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(196, 154, 92, 0.25);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 123, 123, 0.25);
 }
 
 .product-form__checks {
@@ -503,7 +503,7 @@
 /* ---------- Special offers ---------- */
 .admin-item__badge--special.is-live {
   background: linear-gradient(135deg, #e9c98f, var(--gold));
-  color: var(--espresso);
+  color: var(--cocoa);
 }
 
 .admin-item__badge--special.is-later {

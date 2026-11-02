@@ -3,7 +3,7 @@
   overflow: hidden;
   background:
     radial-gradient(circle at 15% 20%, rgba(196, 154, 92, 0.28), transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(238, 181, 176, 0.45), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(201, 123, 123, 0.45), transparent 45%),
     var(--blush-bg);
 }
 

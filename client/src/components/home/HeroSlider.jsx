@@ -1,12 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react'
+import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
 import { FiArrowRight } from 'react-icons/fi'
 import SmartImage from '../SmartImage'
 import PriceTag from '../PriceTag'
+import LogoMark from '../LogoMark'
 import useProducts, { findProduct } from '../../hooks/useProducts'
 import useSpecials from '../../hooks/useSpecials'
+import { getCategory } from '../../data/menu'
+import { SITE } from '../../config/site'
 import { formatDay } from '../../indiaTime'
+import ChapterNo from './ChapterNo'
+import { twoDigits } from '../../numbers'
 import './HeroSlider.css'
 
 // Each slide shows one product from the menu (its photo + price come from the database).
@@ -47,12 +52,34 @@ function specialSlide(item) {
   }
 }
 
+// The huge word behind the photo: the item's category, e.g. "COOKIES" ("Pastries & Cupcakes" -> "PASTRIES")
+const bigWord = (item) => (item ? getCategory(item.category).name.split(' & ')[0] : '')
+
 const fadeUp = {
   hide: { opacity: 0, y: 30 },
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.2, 0.7, 0.2, 1] } },
 }
 
-export default function HeroSlider() {
+// The round brand stamp: the bakery's name running around the logo
+function LogoStamp() {
+  const pathId = useId() // each slide has its own stamp, so each needs its own id
+  const ring = `${SITE.name} · ${SITE.tagline.split(' · ')[0]} · `
+  return (
+    <div className="hero__stamp" aria-hidden="true">
+      <svg viewBox="0 0 120 120" className="hero__stamp-ring">
+        <defs>
+          <path id={pathId} d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0" />
+        </defs>
+        <text>
+          <textPath href={`#${pathId}`} textLength="292">{ring.toUpperCase()}</textPath>
+        </text>
+      </svg>
+      <LogoMark size={50} className="hero__stamp-logo" />
+    </div>
+  )
+}
+
+export default function HeroSlider({ chapter = 1 }) {
   const [index, setIndex] = useState(0)
   const { products } = useProducts()
   const { specials } = useSpecials()
@@ -60,6 +87,7 @@ export default function HeroSlider() {
   const count = slides.length
   const current = index % count // stays valid if the number of slides changes
   const next = () => setIndex((current + 1) % count)
+  const calm = useReducedMotion() // the device asks for less motion: no tilt, no parallax
 
   // Auto-play: move on every 6 seconds (the timer restarts when the slide changes).
   useEffect(() => {
@@ -72,10 +100,19 @@ export default function HeroSlider() {
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
   const spring = { stiffness: 120, damping: 14 }
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-16, 16]), spring)
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [12, -12]), spring)
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-14, 14]), spring)
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), spring)
+  // The big word drifts the other way, so it feels further back
+  const wordX = useSpring(useTransform(mouseX, [-0.5, 0.5], [30, -30]), spring)
+
+  // Parallax while scrolling: the back word moves slower than the page, the outline copy faster
+  const heroRef = useRef(null)
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const backY = useTransform(scrollYProgress, [0, 1], [0, 140])
+  const frontY = useTransform(scrollYProgress, [0, 1], [0, -90])
 
   const onMouseMove = (event) => {
+    if (calm) return
     const box = event.currentTarget.getBoundingClientRect()
     mouseX.set((event.clientX - box.left) / box.width - 0.5)
     mouseY.set((event.clientY - box.top) / box.height - 0.5)
@@ -93,6 +130,7 @@ export default function HeroSlider() {
 
   return (
     <section
+      ref={heroRef}
       className="hero"
       aria-roledescription="carousel"
       aria-label="Featured bakes"
@@ -100,6 +138,8 @@ export default function HeroSlider() {
       onMouseLeave={onMouseLeave}
     >
       <div className="container">
+        <ChapterNo n={chapter} />
+
         {/* All slides sit on top of each other, so the height never jumps. */}
         <motion.div
           className="hero__stage"
@@ -111,6 +151,7 @@ export default function HeroSlider() {
           {slides.map((slide, i) => {
             const item = findProduct(products, slide.slug)
             const active = i === current
+            const word = bigWord(item)
             return (
               <motion.div
                 key={slide.key}
@@ -134,32 +175,71 @@ export default function HeroSlider() {
                   </motion.div>
                 </div>
 
-                <motion.div
-                  className="hero__visual"
-                  variants={{
-                    hide: { opacity: 0, scale: 0.85, rotate: -6 },
-                    show: { opacity: 1, scale: 1, rotate: 0, transition: { type: 'spring', stiffness: 90, damping: 16 } },
-                  }}
-                >
-                  <motion.div className="hero__tilt" style={{ rotateX, rotateY }}>
-                    <div className={`hero__photo ${item && !item.available ? 'is-soldout' : ''} ${slide.special ? 'hero__photo--special' : ''}`}>
-                      <SmartImage src={item?.image} alt={item?.name || ''} emoji="🎂" eager={i === 0} />
-                    </div>
-                    {item && (
-                      <div className="hero__tag">
-                        {slide.special && <span className="special-badge hero__special">✨ {item.specialTag}</span>}
-                        <span>{item.name}</span>
-                        <strong>{item.available ? <PriceTag item={item} /> : 'Sold out'}</strong>
+                <div className="hero__visual" style={{ '--len': Math.max(word.length, 5) }}>
+                  {/* The huge category word: a solid copy BEHIND the photo…
+                      (each word runs its own animation, because it can appear after its slide: when the menu arrives) */}
+                  {word && (
+                    <motion.div className="hero__word-wrap" style={calm ? undefined : { x: wordX, y: backY }} aria-hidden="true">
+                      <motion.p
+                        className="bg-word hero__word"
+                        initial="hide"
+                        animate={active ? 'show' : 'hide'}
+                        variants={{
+                          hide: { opacity: 0, scale: 1.12 },
+                          show: { opacity: 1, scale: 1, transition: { duration: 0.9, ease: [0.2, 0.7, 0.2, 1] } },
+                        }}
+                      >
+                        {word}
+                      </motion.p>
+                    </motion.div>
+                  )}
+
+                  {/* …the photo slides in on top… */}
+                  <motion.div
+                    className="hero__card"
+                    variants={{
+                      hide: { opacity: 0, x: 90, rotate: 8 },
+                      show: { opacity: 1, x: 0, rotate: 0, transition: { type: 'spring', stiffness: 80, damping: 16 } },
+                    }}
+                  >
+                    <motion.div className="hero__tilt" style={calm ? undefined : { rotateX, rotateY }}>
+                      <div className={`hero__photo ${item && !item.available ? 'is-soldout' : ''} ${slide.special ? 'hero__photo--special' : ''}`}>
+                        <SmartImage src={item?.image} alt={item?.name || ''} emoji="🎂" eager={i === 0} />
                       </div>
-                    )}
+                      {item && (
+                        <div className="sticker hero__tag">
+                          {slide.special && <span className="special-badge hero__special">✨ {item.specialTag}</span>}
+                          <span>{item.name}</span>
+                          <strong>{item.available ? <PriceTag item={item} /> : 'Sold out'}</strong>
+                        </div>
+                      )}
+                      <LogoStamp />
+                    </motion.div>
                   </motion.div>
-                </motion.div>
+
+                  {/* …and an outline copy IN FRONT of it, so the photo looks wrapped in the word */}
+                  {word && (
+                    <motion.div className="hero__word-wrap hero__word-wrap--front" style={calm ? undefined : { x: wordX, y: frontY }} aria-hidden="true">
+                      <motion.p
+                        className="bg-word hero__word hero__word--outline"
+                        initial="hide"
+                        animate={active ? 'show' : 'hide'}
+                        variants={{ hide: { opacity: 0 }, show: { opacity: 1, transition: { duration: 1, delay: 0.3 } } }}
+                      >
+                        {word}
+                      </motion.p>
+                    </motion.div>
+                  )}
+                </div>
               </motion.div>
             )
           })}
         </motion.div>
 
         <div className="hero__controls">
+          <span className="hero__count" aria-hidden="true">
+            <strong>{twoDigits(current + 1)}</strong> / {twoDigits(count)}
+          </span>
           <div className="hero__dots">
             {slides.map((slide, i) => (
               <button

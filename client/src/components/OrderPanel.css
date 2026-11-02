@@ -1,8 +1,11 @@
+/* Order forms and summaries: a card with a dashed line inside, like a printed label or receipt */
 .order {
   padding: 28px;
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow);
+  outline: 1.5px dashed rgba(var(--line-rgb), 0.14);
+  outline-offset: -10px;
 }
 
 .order__row {
@@ -49,7 +52,7 @@
 
 .qty button:hover:not(:disabled) {
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
 }
 
 .qty button:disabled {
@@ -71,7 +74,8 @@
 .order__total strong {
   display: block;
   font-family: var(--font-head);
-  font-weight: 400;
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
   font-size: 2.2rem;
   line-height: 1;
 }
@@ -123,8 +127,8 @@
 .field input:focus,
 .field textarea:focus {
   outline: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(196, 154, 92, 0.25);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 123, 123, 0.25);
 }
 
 /* pickup / delivery switch */
@@ -150,7 +154,7 @@
 }
 
 .toggle label:has(input:focus-visible) {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -219,7 +223,7 @@
   margin: 20px 0 24px;
   padding: 18px;
   border-radius: var(--radius-sm);
-  border: 1.5px dashed var(--gold);
+  border: 1.5px dashed var(--accent);
   background: var(--bg);
 }
 
@@ -242,7 +246,8 @@
 
 .order__number strong {
   font-family: var(--font-head);
-  font-weight: 400;
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
   font-size: 2.2rem;
   letter-spacing: 0.04em;
 }
@@ -261,7 +266,7 @@
 
 .order__number button:hover {
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
 }
 
 .order__number small {

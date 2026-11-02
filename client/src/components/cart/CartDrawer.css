@@ -48,7 +48,7 @@ body:has(.cart-drawer[open]) {
 
 .cart-drawer__head h2 {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: var(--fs-h3);
 }
 
 .cart-drawer__head h2 span {
@@ -74,7 +74,7 @@ body:has(.cart-drawer[open]) {
   padding: 18px;
   border-radius: 50%;
   background: var(--blush-bg);
-  color: var(--gold-deep);
+  color: var(--accent);
 }
 
 .cart-drawer__empty h3 {
@@ -102,11 +102,15 @@ body:has(.cart-drawer[open]) {
   border-bottom: 1px solid rgba(var(--line-rgb), 0.08);
 }
 
+/* each photo is a tiny tilted print */
 .cart-line__photo {
   width: 72px;
   height: 72px;
   overflow: hidden;
   border-radius: 14px;
+  border: 3px solid var(--surface);
+  box-shadow: 0 6px 14px rgba(var(--shadow-rgb), 0.18);
+  transform: rotate(-3deg);
 }
 
 .cart-line__photo img,
@@ -210,7 +214,7 @@ body:has(.cart-drawer[open]) {
 
 .cart-line__note:focus {
   outline: none;
-  border-color: var(--gold);
+  border-color: var(--accent);
 }
 
 /* ---------- Total and checkout ---------- */
@@ -235,8 +239,9 @@ body:has(.cart-drawer[open]) {
 
 .cart-drawer__total strong {
   font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
   font-size: 1.8rem;
-  font-weight: 400;
 }
 
 .cart-drawer__checkout {

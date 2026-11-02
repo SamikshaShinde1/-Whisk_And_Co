@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa'
 import Logo from './Logo'
+import BigWord from './BigWord'
 import { CATEGORIES } from '../data/menu'
 import { SITE, whatsappLink } from '../config/site'
 import './Footer.css'
@@ -21,7 +22,9 @@ export default function Footer({ compact = false }) {
   }
 
   return (
-    <footer className="footer" id="contact">
+    <footer className="footer has-big-word" id="contact">
+      {/* the bakery's name, huge and faint behind the footer, like a signature */}
+      <BigWord word={SITE.name} className="footer__word" speed={30} />
       <div className="container footer__grid">
         <div className="footer__brand">
           <Logo size={52} />

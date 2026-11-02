@@ -11,13 +11,13 @@
   padding: 36px 32px 32px;
   border-radius: var(--radius);
   background: var(--night-2);
-  border: 1px solid rgba(246, 239, 229, 0.08);
+  border: 1px solid rgba(251, 244, 239, 0.08);
   transition: transform 0.35s, border-color 0.35s;
 }
 
 .review-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(196, 154, 92, 0.5);
+  border-color: rgba(201, 123, 123, 0.5);
 }
 
 .review-card__quote {
@@ -25,19 +25,37 @@
   top: 28px;
   right: 30px;
   font-size: 2.2rem;
-  color: rgba(238, 181, 176, 0.25);
+  color: rgba(201, 123, 123, 0.35);
+}
+
+/* the panel number, like "01" on a numbered Instagram post */
+.review-card__no {
+  position: absolute;
+  top: -16px;
+  left: 28px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: var(--rose);
+  color: var(--cocoa);
+  font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: var(--fs-small);
+  transform: rotate(-4deg);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
 }
 
 .review-card__stars {
   display: flex;
   gap: 4px;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 18px;
 }
 
 .review-card p {
   flex: 1;
-  font-size: 1.05rem;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-body);
   color: var(--text-light-muted);
   margin-bottom: 28px;
 }
@@ -54,8 +72,8 @@
 }
 
 .review-card__author span:not(.review-card__avatar) {
-  font-size: 0.85rem;
-  color: var(--gold);
+  font-size: var(--fs-small);
+  color: var(--accent);
 }
 
 .review-card__avatar {
@@ -65,8 +83,10 @@
   display: grid;
   place-items: center;
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
   font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
   font-size: 1.3rem;
 }
 
@@ -80,6 +100,6 @@
     grid-template-columns: 1fr;
     max-width: 520px;
     margin: 0 auto;
-    gap: 18px;
+    gap: 30px;
   }
 }

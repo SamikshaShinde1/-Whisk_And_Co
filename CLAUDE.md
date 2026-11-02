@@ -201,15 +201,22 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - On success it keeps a snapshot for the thank-you screen (order number, copy, Track, "Send on WhatsApp"), then clears the cart.
   - It shows "Your cart is empty" with "Browse menu" when there are no lines.
 
-**Design ("FOLD"-style artisan bakery):**
+**Design (storytelling "Instagram poster" style; UI only: never change content, photos or features for a design change):**
 - Colours and fonts are set as tokens in `src/index.css`:
-  - Espresso `#2b1a14`, cream `#f6efe5`, blush `#f6d6cf`, rose `#eeb5b0` and gold `#c49a5c`.
-  - `--gold-deep` is for gold text on cream backgrounds.
-  - Fonts: DM Serif Display for uppercase headings, Pinyon Script for the `.script` accent words, Manrope for body text.
+  - "Blush & Cocoa" palette (chosen by the owner): cocoa `#3b2420` (`--cocoa`, `-2`, `-3`) for text, dark sections and primary buttons, cream `#fbf4ef` background, blush `#f6d6cf` soft sections and cards, rose `#c97b7b` accent. Gold `#c49a5c` is ONLY for festive specials.
+  - Rose `#c97b7b` is only 2.9:1 on cream, so it is used as-is only on cocoa, as badge/button backgrounds (with cocoa text) and for big decoration. Rose TEXT/icons on cream or blush use `--rose-deep` `#8f4545`.
+  - `--accent` is for script words, icons, numbers and dashed borders: `--rose-deep` on cream, `#e3a3a3` in dark mode, and `--rose` inside the cocoa areas (`.section--dark`, `.navbar`, `.footer`, `.hero`, `.page-header`, `.intro` redefine it). Every text pair passes WCAG AA in both modes.
+  - Fonts: Fraunces (heavy, `--head-weight` 800, with `--head-soft` = `'SOFT' 100` for rounded retro shapes) for headings, prices, the big words and the `.logo__name` wordmark (900). Every rule using `--font-head` must also set `font-weight: var(--head-weight)` and `font-variation-settings: var(--head-soft)`. Pinyon Script for the `.script` accents. Manrope for body text. Headings are not uppercase (the big `.bg-word` is).
+  - Type scale tokens: `--fs-display` (Home hero), `--fs-h1`, `--fs-h2` (`.section-title`), `--fs-h3`, `--fs-h4`, `--fs-lead` (`.section-text`), `--fs-body`, `--fs-small`, `--fs-label`, `--fs-script`, with `--lh-heading`, `--lh-sub` and `--lh-body`. Use these instead of new sizes.
+  - Storytelling classes in `index.css`: `.chapter-no` ("01 ——"), `.bg-word` (huge decorative word, `aria-hidden`) and `.sticker` (turned label with a dashed inner line).
+  - `components/BigWord.jsx`: a huge faint word behind a section with scroll parallax (a `<span>`, so section `p` styles can't resize it). Only use words already on the page (a heading, script word, category or item name). The parent needs `.has-big-word` (`overflow: clip`, NOT hidden, so sticky children still stick); its `.container` sits above. Each place moves it with its own class (`top`/`bottom`). Used by every Home chapter, `PageHeader` (its title), the Menu (chosen category), `ProductDetail` (category) and the `Footer` (`SITE.name`).
+  - Cards look like printed posts: `ProductCard` has a framed photo, a sticker "Best seller" and an optional `number` ("01"). Order boxes (`.order`, `.track__result`, `.mini-card`) have a dashed inner outline like a printed label. Photos on Home/product are cream-framed prints on a turned rose card.
+  - `Reveal` takes `x` to slide in from the side (photos). `src/numbers.js` has `twoDigits`.
+  - `main.jsx` wraps the app in `<MotionConfig reducedMotion="user">`. Scroll/mouse-driven styles (parallax, tilt) also check `useReducedMotion()`.
 - **Dark and light mode:** `<html data-theme="light|dark">` switches a set of theme tokens in `index.css`. New CSS must use these tokens, not the brand colours, for anything that should change:
   - `--bg`, `--bg-2`, `--surface` (cards), `--blush-bg`, `--text`, `--text-muted`.
   - `--night` / `--night-2` for the always-dark navbar, footer, hero, page headers and `.section--dark`. Brand `--cream` text stays fixed on those.
-  - `--ink` / `--on-ink` / `--ink-hover` for filled buttons, badges and active pills (espresso in light mode, cream in dark).
+  - `--ink` / `--on-ink` / `--ink-hover` for filled buttons, badges and active pills (cocoa in light mode, cream in dark).
   - `rgba(var(--line-rgb), x)` for lines and `rgba(var(--shadow-rgb), x)` for shadows.
   - `--danger-*`, `--success-*`, `--baking-bg` and `--switch-off` for status colours.
   - Text on `--rose` stays `var(--espresso)` in both modes.
@@ -224,7 +231,11 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
   - `PageHeader` is the dark banner at the top of inner pages.
 - Breakpoints: 900px, 640/560px and 420px. The navbar switches to the hamburger menu at 1000px, because it has 5 links.
 
+**Home chapters (`pages/Home.jsx`):** builds the list of chapters, leaving out hidden ones (specials when none run, `SignatureBake` when `SIGNATURE_SLUG` is deleted) so the numbers have no gaps. Each section gets `chapter={n}` and shows `<ChapterNo n>`; each is wrapped in `<div id="chapter-…" className="chapter">`. `home/ChapterNav` is the progress indicator: numbered dots down the left at 1300px and wider (with the chapter's heading on hover, an IntersectionObserver for the active one), and a thin rose line under the navbar on smaller screens. `FreshFromOven` has a sticky title column with numbered cards in two staggered columns (the offset is on a wrapper, because `Reveal` moves the card itself).
+
 **Hero slider:**
 - All the slides share one grid cell, and inactive slides are `inert`.
-- The 3D tilt comes from the section's mouse position, turned into `rotateX`/`rotateY` springs. The price tag uses `translateZ` to float in front of the photo.
+- It is chapter `01`. Behind each photo is the item's category name as a huge `.bg-word` (`bigWord()`; "Pastries & Cupcakes" becomes "PASTRIES"), sized from its length (`--len`): a solid copy behind the photo and an outline copy in front. Both have parallax (scroll and mouse) at different speeds. Each word has its own `initial`/`animate`, because it can mount after its slide (when the menu arrives).
+- The photo is a cream-framed print on a rose card, with a `.sticker` price tag and a spinning `LogoStamp` (`SITE.name` + the first part of `SITE.tagline` on an SVG `textPath`, each with its own `useId`).
+- The 3D tilt comes from the section's mouse position, turned into `rotateX`/`rotateY` springs. The price sticker uses `translateZ` to float in front of the photo.
 - It auto-plays every 6 seconds.

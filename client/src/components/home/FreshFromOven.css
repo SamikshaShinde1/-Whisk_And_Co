@@ -1,23 +1,84 @@
-.fresh__grid {
+/* Big screens: title on the left stays put (sticky) while the cards scroll past on the right */
+.fresh__layout {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+  gap: 64px;
+  align-items: start;
+}
+
+.fresh__intro {
+  position: sticky;
+  top: calc(var(--nav-h) + 48px);
+}
+
+.fresh__intro .section-text {
+  max-width: 380px;
 }
 
 .fresh__more {
-  margin-top: 56px;
-  text-align: center;
+  margin-top: 18px;
 }
 
+/* the cards in two columns; the right column sits a little lower, like a scattered stack of posts */
+.fresh__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.fresh__card--low {
+  transform: translateY(56px);
+}
+
+.fresh__cards {
+  padding-bottom: 56px; /* room for the lower column */
+}
+
+.fresh__word {
+  top: auto;
+  bottom: 20px;
+}
+
+/* Tablets and phones: title on top, cards below */
 @media (max-width: 900px) {
+  .fresh__layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .fresh__intro {
+    position: static;
+    text-align: center;
+  }
+
+  .fresh__intro .section-text {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .fresh__grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+    gap: 16px;
+  }
+
+  .fresh__card--low {
+    transform: translateY(28px);
+  }
+
+  .fresh__cards {
+    padding-bottom: 28px;
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 380px) {
   .fresh__grid {
     grid-template-columns: 1fr;
+  }
+
+  .fresh__card--low {
+    transform: none;
+  }
+
+  .fresh__cards {
+    padding-bottom: 0;
   }
 }

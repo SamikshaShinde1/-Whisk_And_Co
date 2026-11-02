@@ -16,7 +16,7 @@
   font-family: var(--font-script);
   font-size: 2.3rem;
   line-height: 1.1;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .footer__text {
@@ -52,7 +52,7 @@
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 10px;
-  border-bottom: 1px dashed rgba(246, 239, 229, 0.18);
+  border-bottom: 1px dashed rgba(251, 244, 239, 0.18);
 }
 
 .footer__hours li span:first-child {
@@ -75,7 +75,7 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  border: 1.5px solid rgba(246, 239, 229, 0.3);
+  border: 1.5px solid rgba(251, 244, 239, 0.3);
   font-size: 1.25rem;
   transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
 }
@@ -83,7 +83,7 @@
 .footer__social a:hover {
   background: var(--rose);
   border-color: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
   transform: translateY(-3px);
 }
 
@@ -91,7 +91,7 @@
   margin-top: 70px;
   padding-top: 24px;
   padding-bottom: 32px;
-  border-top: 1px solid rgba(246, 239, 229, 0.12);
+  border-top: 1px solid rgba(251, 244, 239, 0.12);
   font-size: 0.85rem;
   color: var(--text-light-muted);
   text-align: center;
@@ -113,7 +113,7 @@
 .footer__staff {
   margin-left: 14px;
   padding-left: 14px;
-  border-left: 1px solid rgba(246, 239, 229, 0.25);
+  border-left: 1px solid rgba(251, 244, 239, 0.25);
   color: var(--text-light-muted);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -142,4 +142,11 @@
     grid-template-columns: 1fr;
     gap: 36px;
   }
+}
+
+/* the big faint "Pastel n Postery" behind the footer, near the bottom */
+.footer .footer__word {
+  top: auto;
+  bottom: 30px;
+  text-transform: none;
 }

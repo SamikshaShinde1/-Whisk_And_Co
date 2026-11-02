@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../Reveal'
+import BigWord from '../BigWord'
+import ChapterNo from './ChapterNo'
 import SmartImage from '../SmartImage'
 import { CRAFT_IMAGE } from '../../data/menu'
 import './TheCraft.css'
@@ -12,11 +14,13 @@ const POINTS = [
 ]
 
 // "The craft" – the About section (the navbar's About link scrolls here)
-export default function TheCraft() {
+export default function TheCraft({ chapter }) {
   return (
-    <section className="section section--dark craft" id="about">
+    <section className="section section--dark craft has-big-word" id="about">
+      <BigWord word="Craft" className="craft__word" />
       <div className="container craft__grid">
-        <Reveal className="craft__media">
+        {/* the photo slides in from the left */}
+        <Reveal className="craft__media" x={-70}>
           <div className="craft__photo zoom-img">
             <SmartImage src={CRAFT_IMAGE} alt="Hands kneading bread dough" emoji="🥖" />
           </div>
@@ -24,6 +28,7 @@ export default function TheCraft() {
         </Reveal>
 
         <Reveal className="craft__text" delay={0.15}>
+          <ChapterNo n={chapter} />
           <span className="script">the craft</span>
           <h2 className="section-title">Slow baking, made by hand</h2>
           <p className="section-text">

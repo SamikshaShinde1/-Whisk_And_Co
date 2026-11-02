@@ -4,7 +4,7 @@
   overflow: hidden;
   background: linear-gradient(90deg, #e7c48a, var(--rose) 50%, #e7c48a);
   background-size: 200% 100%;
-  color: var(--espresso);
+  color: var(--cocoa);
   animation: banner-flow 8s linear infinite;
 }
 
@@ -37,7 +37,7 @@
   flex-shrink: 0;
   padding: 6px 14px;
   border-radius: 999px;
-  background: var(--espresso);
+  background: var(--cocoa);
   color: var(--cream);
   font-size: 0.72rem;
   font-weight: 800;
@@ -58,13 +58,13 @@
   height: 30px;
   border: 0;
   border-radius: 50%;
-  background: rgba(43, 26, 20, 0.12);
-  color: var(--espresso);
+  background: rgba(59, 36, 32, 0.12);
+  color: var(--cocoa);
   cursor: pointer;
 }
 
 .special-banner__close:hover {
-  background: rgba(43, 26, 20, 0.25);
+  background: rgba(59, 36, 32, 0.25);
 }
 
 @media (max-width: 640px) {

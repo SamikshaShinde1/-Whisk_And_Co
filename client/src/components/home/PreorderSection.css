@@ -18,14 +18,22 @@
 }
 
 /* small horizontal product card */
+.preorder__word {
+  top: auto;
+  bottom: 10px;
+}
+
 .mini-card {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 18px;
   padding: 12px 20px 12px 12px;
   border-radius: var(--radius-sm);
-  background: var(--bg);
+  background: var(--surface);
   box-shadow: var(--shadow);
+  outline: 1.5px dashed rgba(var(--line-rgb), 0.16); /* a printed-label line inside */
+  outline-offset: -6px;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
@@ -41,6 +49,25 @@
   border-radius: 14px;
 }
 
+/* the card's number, like a numbered post */
+.mini-card__no {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: 0.78rem;
+}
+
 .mini-card__photo .img-fallback {
   font-size: 2.2rem;
 }
@@ -51,12 +78,12 @@
 }
 
 .mini-card h3 {
-  font-size: 1.15rem;
+  font-size: var(--fs-h4);
   margin-bottom: 4px;
 }
 
 .mini-card__body > span {
-  font-size: 0.9rem;
+  font-size: var(--fs-small);
   color: var(--text-muted);
 }
 

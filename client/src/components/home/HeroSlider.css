@@ -1,12 +1,15 @@
+/* =========================================================
+   Chapter 01 – the hero: a wine "poster" with a huge category word behind the photo
+   ========================================================= */
 .hero {
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* the big word is wider than the photo */
   background:
-    radial-gradient(circle at 78% 45%, rgba(238, 181, 176, 0.22), transparent 42%),
-    radial-gradient(circle at 10% 90%, rgba(196, 154, 92, 0.15), transparent 40%),
+    radial-gradient(circle at 76% 42%, rgba(201, 123, 123, 0.2), transparent 45%),
+    radial-gradient(circle at 8% 95%, rgba(201, 123, 123, 0.12), transparent 40%),
     var(--night);
   color: var(--cream);
-  padding: 56px 0 64px;
+  padding: 40px 0 60px;
 }
 
 .hero__stage {
@@ -17,19 +20,24 @@
 .hero__slide {
   grid-area: 1 / 1; /* every slide in the same spot */
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   align-items: center;
   gap: 60px;
-  min-height: min(620px, calc(100svh - var(--nav-h) - 140px));
+  min-height: min(620px, calc(100svh - var(--nav-h) - 170px));
 }
 
 .hero__slide[aria-hidden='true'] {
   pointer-events: none;
 }
 
+.hero__text {
+  position: relative;
+  z-index: 4; /* always above the big word */
+}
+
 .hero__text h1 {
-  font-size: clamp(2.6rem, 6.4vw, 5.6rem);
-  line-height: 0.98;
+  font-size: var(--fs-display);
+  line-height: 1.02;
   margin-bottom: 24px;
 }
 
@@ -46,12 +54,49 @@
   gap: 14px;
 }
 
-/* ---------- 3D tilting photo ---------- */
+/* ---------- The visual: big word + photo card + sticker + stamp ---------- */
 .hero__visual {
+  position: relative;
   justify-self: center;
   width: 100%;
-  max-width: 470px;
+  max-width: 430px;
+  padding: 96px 0 24px; /* room above the photo for the top of the big word */
   perspective: 1000px;
+}
+
+/* The word sits in the upper part of the photo, centred, and may run past its edges */
+.hero__word-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  justify-content: center;
+  align-content: start;
+  pointer-events: none;
+}
+
+.hero__word-wrap--front {
+  z-index: 3; /* the outline copy runs across the photo */
+}
+
+/* Font size from the word's length (--len), so every word is about 1.6 times as wide as the photo.
+   It starts at the very top, so its upper half shows above the photo and the rest hides behind it. */
+.hero .hero__word {
+  position: static;
+  font-size: calc(min(700px, 100vw) / (var(--len) * 0.74)); /* Fraunces capitals are about 0.74em wide */
+  color: var(--blush);
+  text-shadow: 0 24px 50px rgba(0, 0, 0, 0.3);
+}
+
+.hero .hero__word--outline {
+  color: transparent;
+  text-shadow: none;
+  -webkit-text-stroke: 1.5px rgba(246, 214, 207, 0.75);
+}
+
+.hero__card {
+  position: relative;
+  z-index: 2;
 }
 
 .hero__tilt {
@@ -59,13 +104,25 @@
   transform-style: preserve-3d;
 }
 
+/* a rose card peeking out behind the photo, like a stack of prints */
+.hero__tilt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 34px;
+  background: var(--rose);
+  opacity: 0.85;
+  transform: translateZ(-40px) rotate(-7deg);
+}
+
 .hero__photo {
+  position: relative;
   aspect-ratio: 4 / 5;
-  border-radius: 999px 999px 36px 36px; /* arch shape */
+  border-radius: 34px;
+  border: 10px solid var(--cream); /* a cream frame, like a printed photo */
   overflow: hidden;
+  background: var(--cream);
   box-shadow: var(--shadow-lg);
-  outline: 1.5px solid rgba(196, 154, 92, 0.6);
-  outline-offset: 12px;
 }
 
 .hero__photo img,
@@ -73,45 +130,97 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 24px;
   font-size: 7rem;
   pointer-events: none;
 }
 
-/* price tag floats "in front" of the photo for a 3D feel */
+/* Price sticker: floats "in front" of the photo for a 3D feel */
 .hero__tag {
   position: absolute;
-  left: -28px;
-  bottom: 48px;
-  display: grid;
-  padding: 14px 22px;
-  border-radius: 20px;
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-  transform: translateZ(70px);
+  left: -36px;
+  bottom: 44px;
+  z-index: 4;
+  padding: 14px 22px 12px;
+  transform: translateZ(70px) rotate(-6deg);
 }
 
 .hero__tag > span {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--cocoa);
 }
 
 .hero__tag strong {
   font-family: var(--font-head);
-  font-weight: 400;
-  font-size: 1.7rem;
-  line-height: 1.2;
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: 1.9rem;
+  line-height: 1.15;
 }
 
-/* ---------- dots + next arrow ---------- */
+/* Round brand stamp in the top corner: the name runs around the logo */
+.hero__stamp {
+  position: absolute;
+  top: -40px;
+  right: -34px;
+  z-index: 4;
+  width: 112px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--rose);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3);
+  transform: translateZ(50px);
+}
+
+.hero__stamp-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: hero-stamp-spin 18s linear infinite;
+}
+
+.hero__stamp-ring text {
+  fill: var(--cocoa);
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 800;
+}
+
+.hero__stamp-logo {
+  box-shadow: 0 0 0 3px var(--cocoa);
+}
+
+@keyframes hero-stamp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- counter, dots and next arrow ---------- */
 .hero__controls {
-  margin-top: 40px;
+  margin-top: 32px;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 22px;
+}
+
+.hero__count {
+  font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  letter-spacing: 0.04em;
+  color: var(--text-light-muted);
+}
+
+.hero__count strong {
+  font-weight: 400;
+  color: var(--rose);
 }
 
 .hero__dots {
@@ -125,7 +234,7 @@
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: rgba(246, 239, 229, 0.3);
+  background: rgba(251, 244, 239, 0.3);
   cursor: pointer;
   transition: width 0.35s, background 0.35s;
 }
@@ -139,7 +248,7 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  border: 1.5px solid rgba(246, 239, 229, 0.4);
+  border: 1.5px solid rgba(251, 244, 239, 0.4);
   background: transparent;
   color: var(--cream);
   display: grid;
@@ -152,35 +261,49 @@
 .hero__next:hover {
   background: var(--rose);
   border-color: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
   transform: translateX(3px);
 }
 
+/* ---------- Tablets and phones: photo on top, text below ---------- */
 @media (max-width: 900px) {
   .hero {
-    padding: 32px 0 48px;
+    padding: 28px 0 48px;
+    text-align: center;
   }
 
   .hero__slide {
     grid-template-columns: 1fr;
-    gap: 36px;
-    text-align: center;
+    gap: 28px;
     min-height: 0;
   }
 
   .hero__visual {
     order: -1;
     max-width: 280px;
+    padding: 60px 0 18px;
   }
 
   .hero__tag {
-    left: -14px;
+    left: -20px;
     bottom: 26px;
-    padding: 10px 16px;
+    padding: 10px 16px 9px;
   }
 
   .hero__tag strong {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+  }
+
+  .hero__stamp {
+    top: -18px;
+    right: -26px;
+    width: 86px;
+    height: 86px;
+  }
+
+  .hero__stamp .hero__stamp-logo {
+    width: 38px;
+    height: 38px;
   }
 
   .hero__text p {
@@ -199,6 +322,15 @@
     max-width: 230px;
   }
 
+  .hero__photo {
+    border-width: 7px;
+    border-radius: 26px;
+  }
+
+  .hero__tilt::before {
+    border-radius: 26px;
+  }
+
   .hero__actions .btn {
     flex: 1 1 100%;
   }
@@ -206,7 +338,7 @@
 
 /* Special offer slides: a glowing gold frame around the photo */
 .hero__photo--special {
-  outline: 2px solid var(--gold);
+  border-color: var(--gold);
   animation: hero-glow 2.8s ease-in-out infinite;
 }
 
@@ -215,20 +347,20 @@
     box-shadow:
       var(--shadow-lg),
       0 0 50px rgba(196, 154, 92, 0.75),
-      0 0 110px rgba(238, 181, 176, 0.45);
+      0 0 110px rgba(201, 123, 123, 0.45);
   }
 }
 
-/* the "✨ Diwali Special" label sits on top of the price tag */
+/* the "✨ Diwali Special" label sits on top of the price sticker */
 .hero__tag .hero__special {
-  justify-self: start;
   margin: -30px 0 8px;
-  color: var(--espresso);
+  color: var(--cocoa);
   font-size: 0.62rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__photo--special {
+  .hero__photo--special,
+  .hero__stamp-ring {
     animation: none;
   }
 }

@@ -1,8 +1,10 @@
+/* A menu card, like a printed post: the photo sits in a frame inside the card */
 .product-card {
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: 10px;
   background: var(--surface);
   border-radius: var(--radius);
   overflow: hidden;
@@ -27,20 +29,45 @@
 .product-card__media {
   position: relative;
   aspect-ratio: 1;
+  border-radius: calc(var(--radius) - 8px);
 }
 
+/* "Best seller" as a little sticker, slightly turned */
 .product-card__badge {
   position: absolute;
   top: 14px;
   left: 14px;
   padding: 6px 14px;
   border-radius: 999px;
-  background: var(--ink);
-  color: var(--on-ink);
-  font-size: 0.68rem;
+  background: var(--blush);
+  color: var(--cocoa);
+  outline: 1px dashed rgba(59, 36, 32, 0.4);
+  outline-offset: -4px;
+  font-size: 0.66rem;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  transform: rotate(-5deg);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+/* "01", "02"… in the photo's top-right corner (numbered posts on the Home page) */
+.product-card__no {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--cocoa);
+  color: var(--cream);
+  font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: 0.82rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
 /* "Sold out" label in the photo's corner */
@@ -65,20 +92,21 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 20px 22px 22px;
+  padding: 16px 12px 12px;
 }
 
 .product-card__category {
-  font-size: 0.7rem;
+  font-size: var(--fs-label);
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--gold-deep);
+  color: var(--accent);
 }
 
 .product-card h3 {
-  margin: 8px 0 16px;
-  font-size: 1.35rem;
+  margin: 6px 0 14px;
+  font-size: var(--fs-h3);
+  line-height: 1.2;
 }
 
 .product-card__footer {
@@ -90,11 +118,14 @@
 }
 
 .product-card__price {
-  font-weight: 800;
-  font-size: 1.05rem;
+  font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: 1.2rem;
 }
 
 .product-card__price small {
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -103,7 +134,7 @@
 /* Round "Add to cart" button in the bottom-right corner */
 .product-card__add {
   position: absolute;
-  right: 20px;
+  right: 22px;
   bottom: 22px;
   z-index: 2;
   width: 42px;
@@ -139,13 +170,25 @@
 }
 
 @media (max-width: 560px) {
+  .product-card {
+    padding: 6px;
+  }
+
   .product-card__body {
-    padding: 14px 14px 16px;
+    padding: 10px 8px 10px;
   }
 
   .product-card h3 {
-    font-size: 1.05rem;
-    margin-bottom: 12px;
+    font-size: 1.02rem;
+    margin-bottom: 10px;
+  }
+
+  .product-card__no {
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    font-size: 0.7rem;
   }
 
   .product-card__category {
@@ -153,7 +196,7 @@
   }
 
   .product-card__price {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 
   .product-card__price small {
@@ -162,7 +205,7 @@
 
   .product-card__add {
     right: 12px;
-    bottom: 14px;
+    bottom: 12px;
     width: 34px;
     height: 34px;
     font-size: 1rem;

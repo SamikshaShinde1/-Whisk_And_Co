@@ -1,5 +1,7 @@
-.signature {
-  overflow: hidden;
+/* the big word sits along the bottom, under the price and button, so it never covers the text */
+.signature__word {
+  top: auto;
+  bottom: -0.12em;
 }
 
 .signature__grid {
@@ -19,8 +21,9 @@
 
 .signature__price strong {
   font-family: var(--font-head);
-  font-weight: 400;
-  font-size: 2.6rem;
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: var(--fs-h2);
 }
 
 .signature__price > span {
@@ -47,6 +50,16 @@
   border-radius: 50%;
   box-shadow: 0 30px 60px rgba(var(--shadow-rgb), 0.25);
   border: 10px solid var(--bg);
+}
+
+/* a dashed ring around the round photo, like a printed label */
+.signature__photo::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(251, 244, 239, 0.7);
+  pointer-events: none;
 }
 
 .signature__photo .img-fallback {

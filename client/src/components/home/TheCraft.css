@@ -9,9 +9,33 @@
   position: relative;
 }
 
+/* the photo as a cream-framed print, on a rose card turned behind it */
+.craft__media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: var(--rose);
+  opacity: 0.85;
+  transform: rotate(5deg);
+}
+
 .craft__photo {
+  position: relative;
   aspect-ratio: 4 / 5;
   border-radius: var(--radius);
+  border: 10px solid var(--cream);
+  background: var(--cream);
+  box-shadow: var(--shadow-lg);
+}
+
+.craft__photo img {
+  border-radius: calc(var(--radius) - 10px);
+}
+
+.craft__word {
+  top: auto;
+  bottom: -10px;
 }
 
 .craft__photo .img-fallback {
@@ -31,7 +55,7 @@
   padding: 16px;
   text-align: center;
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
   font-family: var(--font-script);
   font-size: 1.9rem;
   line-height: 1;
@@ -51,18 +75,20 @@
   display: flex;
   gap: 20px;
   padding-bottom: 22px;
-  border-bottom: 1px solid rgba(246, 239, 229, 0.12);
+  border-bottom: 1px solid rgba(251, 244, 239, 0.12);
 }
 
 .craft__num {
   font-family: var(--font-head);
-  font-size: 1.6rem;
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: var(--fs-h3);
   line-height: 1;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .craft__points h3 {
-  font-size: 1.25rem;
+  font-size: var(--fs-h4);
   margin-bottom: 4px;
 }
 

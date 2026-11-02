@@ -12,7 +12,7 @@ export default function Logo({ onClick, size = 44 }) {
       style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}
     >
       <LogoMark size={size} />
-      <span className="logo__name" style={{ fontFamily: 'var(--font-head)', lineHeight: 1 }}>{SITE.name}</span>
+      <span className="logo__name">{SITE.name}</span>
     </Link>
   )
 }

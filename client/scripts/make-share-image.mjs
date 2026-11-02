@@ -18,22 +18,22 @@ const hasLogo = await access(logoPath).then(
 )
 
 // The brand colours from src/index.css
-const espresso = '#2b1a14'
-const cream = '#f6efe5'
-const rose = '#eeb5b0'
-const gold = '#c49a5c'
+const cocoa = '#3b2420'
+const cream = '#fbf4ef'
+const blush = '#f6d6cf'
+const rose = '#c97b7b'
 
 // With a logo, the text moves down to make room for it
 const top = hasLogo ? 360 : 250
 
 const background = `
 <svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100%" height="100%" fill="${espresso}"/>
-  <circle cx="1080" cy="80" r="220" fill="${rose}" opacity="0.12"/>
-  <circle cx="110" cy="590" r="180" fill="${gold}" opacity="0.12"/>
-  <rect x="40" y="40" width="${WIDTH - 80}" height="${HEIGHT - 80}" rx="28" fill="none" stroke="${gold}" stroke-opacity="0.45" stroke-width="2"/>
-  <text x="50%" y="${top}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="84" letter-spacing="6" fill="${cream}">PASTEL N POSTERY</text>
-  <text x="50%" y="${top + 70}" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="44" fill="${rose}">home bakery</text>
+  <rect width="100%" height="100%" fill="${cocoa}"/>
+  <circle cx="1080" cy="80" r="220" fill="${blush}" opacity="0.1"/>
+  <circle cx="110" cy="590" r="180" fill="${rose}" opacity="0.12"/>
+  <rect x="40" y="40" width="${WIDTH - 80}" height="${HEIGHT - 80}" rx="28" fill="none" stroke="${rose}" stroke-opacity="0.45" stroke-width="2"/>
+  <text x="50%" y="${top}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="80" letter-spacing="3" fill="${cream}">PASTEL N POSTERY</text>
+  <text x="50%" y="${top + 70}" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="44" fill="${blush}">home bakery</text>
   <text x="50%" y="${top + 150}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="${cream}" fill-opacity="0.85">Fresh cakes, cupcakes, breads &amp; cookies · Preorder online</text>
 </svg>`
 

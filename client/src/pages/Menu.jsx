@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { FiSearch, FiX } from 'react-icons/fi'
 import PageHeader from '../components/PageHeader'
 import ProductCard from '../components/ProductCard'
+import BigWord from '../components/BigWord'
 import { LoadError, LoadingCards, LoadingNote } from '../components/MenuStatus'
 import { CATEGORIES, getCategory } from '../data/menu'
 import usePageTitle from '../hooks/usePageTitle'
@@ -91,7 +92,13 @@ export default function Menu() {
         text="Everything is baked to order in small batches. Tap any item to see details and order."
       />
 
-      <section className="section menu">
+      <section className="section menu has-big-word">
+        {/* the chosen category, huge behind the menu ("CAKES"…); key replays the fade when it changes */}
+        {active !== 'all' && (
+          <motion.div key={active} className="menu__word-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+            <BigWord word={getCategory(active).name.split(' & ')[0]} className="menu__word" speed={50} />
+          </motion.div>
+        )}
         <div className="container">
           <form className="menu__search" role="search" onSubmit={(e) => e.preventDefault()}>
             <FiSearch className="menu__search-icon" aria-hidden="true" />

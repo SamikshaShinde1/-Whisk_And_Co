@@ -1,6 +1,8 @@
 .progress__message {
   text-align: center;
   font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
   font-size: clamp(1.3rem, 3vw, 1.7rem);
   line-height: 1.25;
   margin-bottom: 32px;
@@ -33,7 +35,7 @@
 .progress__fill {
   height: 100%;
   border-radius: 4px;
-  background: linear-gradient(90deg, var(--rose), var(--gold));
+  background: linear-gradient(90deg, var(--rose), var(--accent));
   transform-origin: left;
 }
 
@@ -68,14 +70,14 @@
 /* finished steps */
 .progress__step.is-done .progress__dot {
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
 }
 
 /* the step the order is on right now */
 .progress__step.is-current .progress__dot {
   background: var(--ink);
   color: var(--on-ink);
-  box-shadow: 0 0 0 0 rgba(196, 154, 92, 0.6);
+  box-shadow: 0 0 0 0 rgba(201, 123, 123, 0.6);
   animation: progress-pulse 2s ease-out infinite;
 }
 
@@ -86,10 +88,10 @@
 
 @keyframes progress-pulse {
   70% {
-    box-shadow: 0 0 0 14px rgba(196, 154, 92, 0);
+    box-shadow: 0 0 0 14px rgba(201, 123, 123, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(196, 154, 92, 0);
+    box-shadow: 0 0 0 0 rgba(201, 123, 123, 0);
   }
 }
 

@@ -5,7 +5,7 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: radial-gradient(circle at center, var(--espresso-3) 0%, var(--espresso) 45%, #160c08 100%);
+  background: radial-gradient(circle at center, var(--cocoa-3) 0%, var(--cocoa) 45%, #2e0c16 100%);
   color: var(--cream);
   cursor: pointer;
   overflow: hidden;
@@ -20,9 +20,9 @@
 .intro__logo {
   border-radius: 50%;
   box-shadow:
-    0 0 0 3px var(--gold),
-    0 0 60px rgba(196, 154, 92, 0.55),
-    0 0 140px rgba(238, 181, 176, 0.35);
+    0 0 0 3px var(--accent),
+    0 0 60px rgba(201, 123, 123, 0.55),
+    0 0 140px rgba(201, 123, 123, 0.35);
   margin-bottom: 28px;
 }
 
@@ -40,7 +40,7 @@
   margin: 10px 0 0;
   font-family: var(--font-script);
   font-size: clamp(1.8rem, 5vw, 2.6rem);
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .intro__skip {
@@ -52,5 +52,5 @@
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(246, 239, 229, 0.5);
+  color: rgba(251, 244, 239, 0.5);
 }

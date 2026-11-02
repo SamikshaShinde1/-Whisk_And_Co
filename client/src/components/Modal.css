@@ -73,7 +73,7 @@ body:has(.modal[open]) {
 
 .modal__close:hover {
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
   transform: rotate(90deg);
 }
 

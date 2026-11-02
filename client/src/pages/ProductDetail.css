@@ -29,26 +29,56 @@
   align-items: start;
 }
 
-.product__photo {
+.product__word {
+  top: 70px;
+}
+
+.product__visual {
   position: sticky;
   top: calc(var(--nav-h) + 24px);
+}
+
+/* a rose card turned behind the photo, like a stack of prints */
+.product__visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: var(--rose);
+  opacity: 0.8;
+  transform: rotate(-4deg);
+}
+
+.product__photo {
+  position: relative;
   aspect-ratio: 1;
   border-radius: var(--radius);
+  border: 10px solid var(--surface);
+  background: var(--surface);
   box-shadow: 0 30px 60px rgba(var(--shadow-rgb), 0.2);
+}
+
+.product__photo img {
+  border-radius: calc(var(--radius) - 10px);
 }
 
 .product__photo .img-fallback {
   font-size: 8rem;
 }
 
+/* "Best seller" sticker */
 .product__badge {
   position: absolute;
   top: 20px;
   left: 20px;
   padding: 8px 16px;
   border-radius: 999px;
-  background: var(--ink);
-  color: var(--on-ink);
+  background: var(--blush);
+  color: var(--cocoa);
+  outline: 1px dashed rgba(59, 36, 32, 0.4);
+  outline-offset: -4px;
+  transform: rotate(-5deg);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -56,13 +86,15 @@
 }
 
 .product__info h1 {
-  font-size: clamp(2.3rem, 5vw, 3.6rem);
+  font-size: var(--fs-h1);
   margin-bottom: 14px;
 }
 
 .product__price {
   font-family: var(--font-head);
-  font-size: 2rem;
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: var(--fs-h2);
   margin-bottom: 18px;
 }
 
@@ -73,7 +105,8 @@
 }
 
 .product__desc {
-  font-size: 1.08rem;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-body);
   color: var(--text-muted);
   margin-bottom: 32px;
 }
@@ -131,11 +164,11 @@
     gap: 36px;
   }
 
-  .product__photo {
+  .product__visual {
     position: relative;
     top: 0;
-    max-width: 520px;
-    width: 100%;
+    max-width: 480px;
+    width: 92%;
     margin: 0 auto;
   }
 

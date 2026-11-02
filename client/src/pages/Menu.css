@@ -29,8 +29,8 @@
 
 .menu__search input:focus {
   outline: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 0 4px rgba(196, 154, 92, 0.22), var(--shadow);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(201, 123, 123, 0.22), var(--shadow);
 }
 
 /* hide the browser's own ✕, because we draw our own */
@@ -44,7 +44,7 @@
   left: 20px;
   translate: 0 -50%;
   font-size: 1.15rem;
-  color: var(--gold-deep);
+  color: var(--accent);
   pointer-events: none;
 }
 
@@ -68,7 +68,7 @@
 
 .menu__search-clear:hover {
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
 }
 
 /* ---------- "No treats found" ---------- */
@@ -91,9 +91,9 @@
 .menu__empty h2 {
   margin: 0 0 8px;
   font-family: var(--font-head);
-  font-size: 1.6rem;
-  font-weight: 400;
-  text-transform: uppercase;
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: var(--fs-h3);
 }
 
 .menu__empty p {
@@ -174,4 +174,15 @@
     grid-template-columns: 1fr 1fr;
     gap: 14px;
   }
+}
+
+/* The chosen category's name, huge and faint behind the filters */
+.menu__word-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.menu .menu__word {
+  top: 110px;
 }

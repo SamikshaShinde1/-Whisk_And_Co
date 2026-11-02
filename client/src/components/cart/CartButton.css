@@ -5,7 +5,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1.5px solid rgba(246, 239, 229, 0.35);
+  border: 1.5px solid rgba(251, 244, 239, 0.35);
   background: transparent;
   color: var(--cream);
   font-size: 1.15rem;
@@ -16,7 +16,7 @@
 .cart-button:hover {
   background: var(--rose);
   border-color: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
 }
 
 .cart-button__icon {
@@ -48,7 +48,7 @@
   padding: 0 5px;
   border-radius: 999px;
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
   font-size: 0.68rem;
   font-weight: 800;
   line-height: 20px;

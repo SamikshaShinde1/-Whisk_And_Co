@@ -2,19 +2,20 @@
    Brand colours & fonts – change them here, they update everywhere
    ========================================================= */
 :root {
-  --espresso: #2b1a14;
-  --espresso-2: #3a241c;
-  --espresso-3: #4a3026;
-  --cream: #f6efe5;
-  --cream-2: #ede2d2;
-  --blush: #f6d6cf;
-  --rose: #eeb5b0;
-  --gold: #c49a5c;
-  --gold-deep: #8a6431; /* darker gold, readable on cream */
+  /* "Blush & Cocoa" palette */
+  --cocoa: #3b2420; /* main text, dark sections, primary buttons */
+  --cocoa-2: #2e1b18; /* a little darker */
+  --cocoa-3: #523631; /* a little lighter (hover) */
+  --cream: #fbf4ef; /* main background */
+  --cream-2: #f1e3da;
+  --blush: #f6d6cf; /* soft sections and cards */
+  --rose: #c97b7b; /* accent: on cocoa, badge backgrounds, big decorative shapes */
+  --rose-deep: #8f4545; /* the same rose, deeper: readable as text on cream and blush */
+  --gold: #c49a5c; /* only for festive specials, so they stand out */
   --whatsapp: #25d366;
 
   --text-light: var(--cream);
-  --text-light-muted: rgba(246, 239, 229, 0.72);
+  --text-light-muted: rgba(251, 244, 239, 0.76);
 
   /* ----- Colours that change in dark mode -----
      Use these (not the brand colours above) for page backgrounds, cards, text and lines,
@@ -22,17 +23,18 @@
   color-scheme: light; /* tells the browser to draw light scrollbars, date pickers, etc. */
   --bg: var(--cream); /* page background */
   --bg-2: var(--cream-2); /* slightly darker boxes, tracks, small buttons */
-  --surface: #fffaf4; /* cards, forms, pop-ups */
+  --surface: #fffaf6; /* cards, forms, pop-ups */
   --blush-bg: var(--blush); /* soft pink backgrounds */
-  --night: var(--espresso); /* navbar, footer, hero and dark sections */
-  --night-2: var(--espresso-2);
-  --ink: var(--espresso); /* filled buttons, badges, active pills */
+  --night: var(--cocoa); /* navbar, footer, hero and dark sections */
+  --night-2: var(--cocoa-2);
+  --ink: var(--cocoa); /* filled buttons, badges, active pills */
   --on-ink: var(--cream); /* text on --ink */
-  --ink-hover: var(--espresso-3);
-  --text: var(--espresso);
-  --text-muted: #6b574d;
-  --line-rgb: 43, 26, 20; /* for lines: rgba(var(--line-rgb), 0.15) */
-  --shadow-rgb: 43, 26, 20;
+  --ink-hover: var(--cocoa-3);
+  --accent: var(--rose-deep); /* script words, icons, numbers, dashed borders (rose on cocoa areas) */
+  --text: var(--cocoa);
+  --text-muted: #6e5650;
+  --line-rgb: 59, 36, 32; /* for lines: rgba(var(--line-rgb), 0.15) */
+  --shadow-rgb: 59, 36, 32;
   --danger-bg: #fbe3e1;
   --danger-ink: #8a2a22;
   --danger-text: #c0392b;
@@ -43,35 +45,55 @@
   --switch-off: #e3c9c4;
   --offer: #a3303d; /* offer prices */
 
-  --font-head: 'DM Serif Display', Georgia, serif;
+  /* ----- Fonts -----
+     Headings + wordmark: Fraunces, heavy and soft (a chunky, rounded, retro serif).
+     Small accents: Pinyon Script. Everything else: Manrope. */
+  --font-head: 'Fraunces', Georgia, serif;
   --font-script: 'Pinyon Script', cursive;
   --font-body: 'Manrope', system-ui, sans-serif;
+  --head-weight: 800;
+  --head-soft: 'SOFT' 100; /* Fraunces' rounded letter shapes */
+
+  /* ----- Type scale: one size per level, used everywhere ----- */
+  --fs-display: clamp(2.5rem, 5.4vw, 4.6rem); /* the big Home hero title */
+  --fs-h1: clamp(2.2rem, 4.6vw, 3.6rem); /* page titles */
+  --fs-h2: clamp(1.9rem, 3.6vw, 2.9rem); /* section titles */
+  --fs-h3: clamp(1.3rem, 2vw, 1.55rem); /* subheadings, card titles */
+  --fs-h4: 1.125rem;
+  --fs-lead: clamp(1.05rem, 1.3vw, 1.18rem); /* intro text under a title */
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-label: 0.72rem; /* small uppercase labels and buttons */
+  --fs-script: clamp(1.8rem, 3.2vw, 2.4rem); /* "the art of baking" style accents */
+  --lh-heading: 1.08;
+  --lh-sub: 1.3;
+  --lh-body: 1.7;
 
   --radius: 28px;
   --radius-sm: 18px;
-  --shadow: 0 12px 30px rgba(43, 26, 20, 0.1);
-  --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.35);
+  --shadow: 0 12px 30px rgba(59, 36, 32, 0.1);
+  --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.3);
   --max: 1200px;
   --nav-h: 76px;
 }
 
-/* Dark mode: cream turns into warm dark brown. Blush, rose and gold accents stay.
+/* Dark mode: cocoa backgrounds, cream text, blush and rose accents.
    The data-theme attribute is set by index.html (before the page draws) and by useTheme. */
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #241813;
-  --bg-2: #33241d;
-  --surface: #2e2019;
-  --blush-bg: #432a25;
-  --night: #160e0b;
-  --night-2: #22160f;
+  --bg: #2a1a17;
+  --bg-2: #3f2925;
+  --surface: #35221e;
+  --blush-bg: #4a2f2b;
+  --night: #1c110f;
+  --night-2: #261714;
   --ink: var(--cream);
-  --on-ink: var(--espresso);
-  --ink-hover: #e8dccb;
-  --text: #f3e9dd;
-  --text-muted: #c2ad9e;
-  --gold-deep: #d4ae74; /* gold text needs to be lighter on a dark page */
-  --line-rgb: 246, 239, 229;
+  --on-ink: var(--cocoa);
+  --ink-hover: var(--blush);
+  --accent: #e3a3a3; /* a lighter tint of the rose, readable on cocoa */
+  --text: var(--cream);
+  --text-muted: #d2bab2;
+  --line-rgb: 251, 244, 239;
   --shadow-rgb: 0, 0, 0;
   --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
   --danger-bg: #4d2522;
@@ -115,8 +137,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.65;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
@@ -144,11 +166,35 @@ h2,
 h3,
 h4 {
   font-family: var(--font-head);
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  line-height: 1.05;
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  letter-spacing: -0.01em;
+  line-height: var(--lh-heading);
   margin: 0 0 0.5em;
+  text-wrap: balance; /* no lonely last word on a line */
+}
+
+/* The size levels (components may pick a different level, but never a random size) */
+h1 {
+  font-size: var(--fs-h1);
+}
+
+h2 {
+  font-size: var(--fs-h2);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-sub);
+}
+
+h4 {
+  font-size: var(--fs-h4);
+  line-height: var(--lh-sub);
+}
+
+small {
+  font-size: var(--fs-small);
 }
 
 p {
@@ -156,8 +202,17 @@ p {
 }
 
 :focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+/* The "Pastel n Postery" wordmark (navbar and footer): heavy, soft, slightly tight */
+.logo__name {
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-variation-settings: var(--head-soft);
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 /* =========================================================
@@ -192,30 +247,134 @@ p {
 }
 
 .section-title {
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-size: var(--fs-h2);
 }
 
 .section-text {
   color: var(--text-muted);
-  font-size: 1.05rem;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-body);
 }
 
 .section--dark .section-text {
   color: var(--text-light-muted);
 }
 
-/* Small decorative handwritten word above headings */
+/* Small decorative handwritten words above headings, e.g. "the art of baking" */
 .script {
   display: block;
   font-family: var(--font-script);
-  font-size: clamp(1.9rem, 3.5vw, 2.5rem);
-  line-height: 1;
-  color: var(--gold-deep);
+  font-weight: 400;
+  font-size: var(--fs-script);
+  line-height: 1.1;
+  color: var(--accent);
   margin-bottom: 8px;
 }
 
-.section--dark .script {
-  color: var(--gold);
+/* On the cocoa areas, accents use the rose itself (readable there) */
+.section--dark,
+.navbar,
+.footer,
+.hero,
+.page-header,
+.intro {
+  --accent: var(--rose);
+}
+
+/* =========================================================
+   Storytelling pieces (Instagram-poster style)
+   ========================================================= */
+
+/* "01 ——" chapter number at the start of a Home section */
+.chapter-no {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  font-family: var(--font-head);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+.chapter-no::after {
+  content: '';
+  width: 56px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+/* The huge display word behind a photo, e.g. "COOKIES".
+   It is decoration only (aria-hidden), the real name is always written elsewhere. */
+.bg-word {
+  position: absolute;
+  display: block;
+  z-index: 0;
+  margin: 0;
+  font-family: var(--font-head);
+  font-variation-settings: var(--head-soft);
+  font-weight: 900;
+  font-size: clamp(5rem, 17vw, 15rem);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* <BigWord>: the word behind a whole section, across its width (sized from its length, --len).
+   Each section moves it with its own class (top / bottom). Content sits above it. */
+.big-word {
+  left: 0;
+  right: 0;
+  top: 40px;
+  text-align: center;
+  font-size: min(15rem, calc(min(1250px, 100vw) / (var(--len) * 0.74)));
+  color: var(--blush-bg);
+}
+
+.section--blush .big-word {
+  color: rgba(var(--line-rgb), 0.06);
+}
+
+.section--dark .big-word,
+.page-header .big-word,
+.footer .big-word {
+  color: rgba(251, 244, 239, 0.05);
+}
+
+.has-big-word {
+  position: relative;
+  overflow: clip; /* "clip", not "hidden": hidden would stop sticky parts inside from sticking */
+}
+
+.has-big-word > .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Home chapters: land just under the navbar when jumped to */
+.chapter {
+  scroll-margin-top: var(--nav-h);
+}
+
+/* Sticker-style tag: slightly turned, with a dashed line inside like a printed label */
+.sticker {
+  display: inline-grid;
+  justify-items: center;
+  padding: 12px 18px;
+  border-radius: 18px;
+  background: var(--blush);
+  color: var(--cocoa);
+  outline: 1.5px dashed rgba(59, 36, 32, 0.4);
+  outline-offset: -7px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+  transform: rotate(-6deg);
 }
 
 /* =========================================================
@@ -258,7 +417,7 @@ p {
 
 .btn-rose {
   background: var(--rose);
-  color: var(--espresso);
+  color: var(--cocoa);
 }
 
 .btn-rose:hover {
@@ -277,14 +436,14 @@ p {
 
 /* Outline button for dark backgrounds */
 .btn-outline-light {
-  border-color: rgba(246, 239, 229, 0.6);
+  border-color: rgba(251, 244, 239, 0.6);
   color: var(--cream);
 }
 
 .btn-outline-light:hover {
   background: var(--cream);
   border-color: var(--cream);
-  color: var(--espresso);
+  color: var(--cocoa);
 }
 
 .btn-whatsapp {
@@ -378,7 +537,7 @@ p {
   padding: 6px 14px;
   border-radius: 999px;
   background: linear-gradient(135deg, #e9c98f, var(--gold) 55%, #b98a4a);
-  color: var(--espresso);
+  color: var(--cocoa);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -414,7 +573,6 @@ p {
   color: var(--offer);
 }
 
-/* Hidden on screen, but read out by screen readers */
 /* "We only use your details…" under the checkout and track forms (components/PrivacyNote.jsx) */
 .privacy-note {
   display: flex;
@@ -429,9 +587,10 @@ p {
 
 .privacy-note svg {
   flex-shrink: 0;
-  color: var(--gold-deep);
+  color: var(--accent);
 }
 
+/* Hidden on screen, but read out by screen readers */
 .visually-hidden {
   position: absolute;
   width: 1px;

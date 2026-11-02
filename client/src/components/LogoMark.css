@@ -9,7 +9,9 @@
   display: grid;
   place-items: center;
   background: var(--blush);
-  color: var(--espresso);
+  color: var(--cocoa);
   font-family: var(--font-head);
-  border: 2px solid var(--gold);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  border: 2px solid var(--accent);
 }

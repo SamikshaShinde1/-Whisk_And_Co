@@ -5,12 +5,14 @@ import SmartImage from './SmartImage'
 import PriceTag from './PriceTag'
 import { getCategory } from '../data/menu'
 import useCart from '../hooks/useCart'
+import { twoDigits } from '../numbers'
 import './ProductCard.css'
 
 // A menu item card. Clicking it opens the item's detail page; the round + button adds one to the cart.
 // Sold-out items stay on the menu, with a grey photo and a "Sold out" label (and no + button).
 // Specials running today get a gold "Diwali Special"-style label and their offer price.
-export default function ProductCard({ item }) {
+// "number" (optional) shows a panel number like "01" in the corner, as on a numbered post.
+export default function ProductCard({ item, number }) {
   const category = getCategory(item.category)
   const soldOut = !item.available
   const special = item.specialActive
@@ -36,6 +38,9 @@ export default function ProductCard({ item }) {
             <span className="special-badge product-card__badge-pos">✨ {item.specialTag}</span>
           ) : (
             item.bestSeller && <span className="product-card__badge">Best seller</span>
+          )}
+          {number && (
+            <span className="product-card__no" aria-hidden="true">{twoDigits(number)}</span>
           )}
         </div>
         <div className="product-card__body">

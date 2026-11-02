@@ -1,0 +1,125 @@
+/* ---------- Phones and tablets: a thin progress line under the navbar ---------- */
+.chapter-bar {
+  position: fixed;
+  top: var(--nav-h);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  height: 3px;
+  background: var(--rose);
+  transform-origin: left;
+}
+
+/* ---------- Big screens: chapter numbers down the left side ---------- */
+.chapter-nav {
+  display: none;
+}
+
+@media (min-width: 1300px) {
+  .chapter-bar {
+    display: none;
+  }
+
+  .chapter-nav {
+    position: fixed;
+    left: 18px;
+    top: 50%;
+    z-index: 40;
+    display: block;
+    padding: 10px 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 86%, transparent);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 26px rgba(var(--shadow-rgb), 0.16);
+    transform: translateY(-50%);
+  }
+
+  .chapter-nav ol {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chapter-nav li {
+    position: relative;
+  }
+
+  /* the line behind the numbers, filled as you scroll */
+  .chapter-nav__track {
+    position: absolute;
+    top: 24px;
+    bottom: 24px;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    background: rgba(var(--line-rgb), 0.12);
+  }
+
+  .chapter-nav__fill {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transform-origin: top;
+  }
+
+  .chapter-nav__dot {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--surface);
+    color: var(--text-muted);
+    font-family: var(--font-head);
+    font-weight: var(--head-weight);
+    font-variation-settings: var(--head-soft);
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, transform 0.3s;
+  }
+
+  .chapter-nav__dot:hover {
+    transform: scale(1.12);
+    color: var(--text);
+  }
+
+  .chapter-nav__dot.is-done {
+    color: var(--accent);
+  }
+
+  .chapter-nav__dot.is-active {
+    background: var(--ink);
+    color: var(--on-ink);
+    transform: scale(1.12);
+  }
+
+  /* the chapter's title pops out on hover */
+  .chapter-nav__label {
+    position: absolute;
+    left: calc(100% + 14px);
+    top: 50%;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--on-ink);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-6px, -50%);
+    transition: opacity 0.25s, transform 0.25s;
+  }
+
+  .chapter-nav li:hover .chapter-nav__label,
+  .chapter-nav__dot:focus-visible + .chapter-nav__label {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}

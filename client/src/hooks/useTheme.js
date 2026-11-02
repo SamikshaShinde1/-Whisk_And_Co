@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 
 const STORAGE_KEY = 'pnp-theme'
 const DARK_QUERY = '(prefers-color-scheme: dark)'
-const BAR_COLOURS = { light: '#2b1a14', dark: '#160e0b' } // the phone's browser bar, same as the navbar
+const BAR_COLOURS = { light: '#3b2420', dark: '#1c110f' } // the phone's browser bar, same as the navbar
 
 function getSavedChoice() {
   try {

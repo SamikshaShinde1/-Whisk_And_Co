@@ -5,6 +5,7 @@ import { FaWhatsapp } from 'react-icons/fa'
 import SmartImage from '../components/SmartImage'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
+import BigWord from '../components/BigWord'
 import OrderPanel from '../components/OrderPanel'
 import { LoadError, LoadingNote } from '../components/MenuStatus'
 import NotFound from './NotFound'
@@ -69,7 +70,9 @@ export default function ProductDetail() {
 
   return (
     <>
-      <section className="product">
+      <section className="product has-big-word">
+        {/* the category, e.g. "CAKES", huge behind the photo */}
+        <BigWord word={category.name.split(' & ')[0]} className="product__word" />
         <div className="container">
           <nav className="product__crumbs" aria-label="Breadcrumb">
             <Link to="/menu">Menu</Link>
@@ -80,21 +83,24 @@ export default function ProductDetail() {
           </nav>
 
           <div className="product__grid">
+            {/* the photo as a framed print on a rose card; it stays in view while you scroll (sticky) */}
             <motion.div
               key={item.slug}
-              className={`product__photo zoom-img ${soldOut ? 'is-soldout' : ''}`}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
+              className="product__visual"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
             >
-              <SmartImage src={item.image} alt={item.name} emoji={category.emoji} tone={category.tone} eager />
-              {soldOut ? (
-                <span className="soldout-badge product__badge-pos">Sold out</span>
-              ) : item.specialActive ? (
-                <span className="special-badge product__badge-pos">✨ {item.specialTag}</span>
-              ) : (
-                item.bestSeller && <span className="product__badge">Best seller</span>
-              )}
+              <div className={`product__photo zoom-img ${soldOut ? 'is-soldout' : ''}`}>
+                <SmartImage src={item.image} alt={item.name} emoji={category.emoji} tone={category.tone} eager />
+                {soldOut ? (
+                  <span className="soldout-badge product__badge-pos">Sold out</span>
+                ) : item.specialActive ? (
+                  <span className="special-badge product__badge-pos">✨ {item.specialTag}</span>
+                ) : (
+                  item.bestSeller && <span className="product__badge">Best seller</span>
+                )}
+              </div>
             </motion.div>
 
             <motion.div

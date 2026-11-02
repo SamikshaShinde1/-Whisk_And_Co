@@ -12,7 +12,7 @@
 }
 
 .logo__name {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
 }
 
 .navbar__inner {
@@ -46,7 +46,7 @@
   right: 0;
   bottom: -6px;
   height: 1.5px;
-  background: var(--gold);
+  background: var(--accent);
   transform: scaleX(0);
   transition: transform 0.3s;
 }
@@ -78,7 +78,7 @@
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  border: 1.5px solid rgba(246, 239, 229, 0.35);
+  border: 1.5px solid rgba(251, 244, 239, 0.35);
   background: transparent;
   color: var(--cream);
   font-size: 1.35rem;
@@ -88,7 +88,7 @@
 
 .navbar__mobile {
   overflow: hidden;
-  border-top: 1px solid rgba(246, 239, 229, 0.12);
+  border-top: 1px solid rgba(251, 244, 239, 0.12);
 }
 
 .navbar__mobile-inner {
@@ -101,9 +101,10 @@
 .navbar__mobile-inner > a:not(.btn) {
   padding: 14px 0;
   font-family: var(--font-head);
-  font-size: 1.7rem;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(246, 239, 229, 0.1);
+  font-weight: var(--head-weight);
+  font-variation-settings: var(--head-soft);
+  font-size: var(--fs-h3);
+  border-bottom: 1px solid rgba(251, 244, 239, 0.1);
 }
 
 .navbar__mobile-inner > a.active {

@@ -1,10 +1,13 @@
 import { motion } from 'motion/react'
+import BigWord from './BigWord'
 import './PageHeader.css'
 
-// Dark banner at the top of inner pages (Menu, 404, Admin…)
+// Dark banner at the top of inner pages (Menu, 404, Admin…).
+// The page's own title is repeated huge and faint behind it, like a poster.
 export default function PageHeader({ script, title, text, children }) {
   return (
-    <section className="page-header">
+    <section className="page-header has-big-word">
+      <BigWord word={title} className="page-header__word" speed={40} />
       <motion.div
         className="container page-header__inner"
         initial={{ opacity: 0, y: 30 }}
