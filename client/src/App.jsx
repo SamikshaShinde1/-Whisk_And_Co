@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { lazy, Suspense, useCallback, useState } from 'react'
 import { Navigate, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'motion/react'
 import Intro from './components/Intro'
@@ -17,9 +17,11 @@ import ProductDetail from './pages/ProductDetail'
 import NotFound from './pages/NotFound'
 import Track from './pages/Track'
 import Checkout from './pages/Checkout'
-import AdminLogin from './pages/admin/AdminLogin'
-import AdminOrders from './pages/admin/AdminOrders'
-import AdminMenu from './pages/admin/AdminMenu'
+// The admin pages are only for the bakery owner, so they are loaded only when someone opens them.
+// Customers never download their code, and the website opens a little faster.
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'))
+const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'))
+const AdminMenu = lazy(() => import('./pages/admin/AdminMenu'))
 
 // The intro plays once per visit (until the browser tab is closed).
 function shouldShowIntro() {
@@ -54,18 +56,21 @@ export default function App() {
       <Navbar />
       {!isAdmin && <SpecialBanner />}
       <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/menu/:slug" element={<ProductDetail />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/track" element={<Track />} />
-          <Route path="/admin" element={<Navigate to="/admin/orders" replace />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
-          <Route path="/admin/menu" element={<AdminMenu />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        {/* while an admin page is being loaded, a short note is shown */}
+        <Suspense fallback={<p className="page-loading" role="status">Loading…</p>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/menu/:slug" element={<ProductDetail />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/track" element={<Track />} />
+            <Route path="/admin" element={<Navigate to="/admin/orders" replace />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/menu" element={<AdminMenu />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
       <Footer compact={isAdmin} />
       {!isAdmin && <FloatingButtons />}

@@ -151,6 +151,7 @@ Backend tests live in `server/tests/*.test.js` and use `tests/helpers.js` (`star
 
 **App shell (`App.jsx`):**
 - The `Intro` overlay plays once per tab session, tracked by `sessionStorage.introSeen`. It is skipped when the user prefers reduced motion. The logo builds itself (circle, W, the wires draw line by line, a little whisk wiggle, drips), sparkles pop, then the name and "baked with love" fade in (3.8 s).
+- The admin pages (`AdminLogin`, `AdminOrders`, `AdminMenu`) are loaded with `React.lazy` inside one `<Suspense>` (fallback `.page-loading` "Loading…"), so customers never download admin code. Keep any new admin page lazy too.
 - Then come `ScrollManager`, `Navbar`, the routes, `Footer` (which has `id="contact"`) and `FloatingButtons` (Instagram + WhatsApp, bottom-right).
 - `ScrollManager` scrolls to `#hash` sections, otherwise back to the top. It does nothing when the navigation state has `keepScroll: true`; the Menu filter pills set this.
 
